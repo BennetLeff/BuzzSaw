@@ -130,7 +130,9 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 	{
 		for (auto i = 0; i < mainInputOutput.getNumChannels(); ++i)                   
 			*mainInputOutput.getWritePointer(i, j) = 
-							gain * dsp::FastMathApproximations::sin(*mainInputOutput.getReadPointer(i, j));
+							*mainInputOutput.getReadPointer(i, j)
+							+ gain
+							* dsp::FastMathApproximations::sin(*mainInputOutput.getReadPointer(i, j));
 	}
 }
 
