@@ -1,2 +1,28 @@
-﻿  PluginEditor.cpp
+﻿  PluginProcessor.cpp
+  PluginEditor.cpp
+  include_juce_audio_basics.cpp
+  include_juce_audio_devices.cpp
+  include_juce_audio_formats.cpp
+  include_juce_audio_plugin_client_utils.cpp
+  include_juce_audio_processors.cpp
+  include_juce_audio_utils.cpp
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(74,54): warning C4100:  'index': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(78,59): warning C4100:  'index': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(83,75): warning C4100:  'newName': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(83,54): warning C4100:  'index': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(88,69): warning C4100:  'samplesPerBlock': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(88,53): warning C4100:  'sampleRate': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(123,85): warning C4100:  'midiMessages': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(148,65): warning C4100:  'destData': unreferenced formal parameter
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(155,74): warning C4100:  'sizeInBytes': unreferenced formal parameter
+  include_juce_core.cpp
+  include_juce_cryptography.cpp
+  include_juce_data_structures.cpp
+  include_juce_dsp.cpp
+  include_juce_events.cpp
+  include_juce_graphics.cpp
+  include_juce_gui_basics.cpp
+  include_juce_gui_extra.cpp
+  include_juce_opengl.cpp
+C:\Users\bennet\Documents\Workspace\ThaiBasil\Source\PluginProcessor.cpp(155,64): warning C4100:  'data': unreferenced formal parameter
   ThaiBasil_SharedCode.vcxproj -> C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\Shared Code\ThaiBasil.lib

@@ -6,6 +6,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThaiBasil - Standalone Plug
 		{266FB6ED-9A34-4926-35D2-F0FEACF0D7E0} = {266FB6ED-9A34-4926-35D2-F0FEACF0D7E0}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThaiBasil - VST", "ThaiBasil_VST.vcxproj", "{38589C6B-C38C-0A01-8B1D-267EEB64C13E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{266FB6ED-9A34-4926-35D2-F0FEACF0D7E0} = {266FB6ED-9A34-4926-35D2-F0FEACF0D7E0}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ThaiBasil - VST3", "ThaiBasil_VST3.vcxproj", "{82AE477B-53A2-87DA-DB44-2024734DF9AD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{266FB6ED-9A34-4926-35D2-F0FEACF0D7E0} = {266FB6ED-9A34-4926-35D2-F0FEACF0D7E0}
@@ -19,6 +24,10 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38589C6B-C38C-0A01-8B1D-267EEB64C13E}.Debug|x64.ActiveCfg = Debug|x64
+		{38589C6B-C38C-0A01-8B1D-267EEB64C13E}.Debug|x64.Build.0 = Debug|x64
+		{38589C6B-C38C-0A01-8B1D-267EEB64C13E}.Release|x64.ActiveCfg = Release|x64
+		{38589C6B-C38C-0A01-8B1D-267EEB64C13E}.Release|x64.Build.0 = Release|x64
 		{82AE477B-53A2-87DA-DB44-2024734DF9AD}.Debug|x64.ActiveCfg = Debug|x64
 		{82AE477B-53A2-87DA-DB44-2024734DF9AD}.Debug|x64.Build.0 = Debug|x64
 		{82AE477B-53A2-87DA-DB44-2024734DF9AD}.Release|x64.ActiveCfg = Release|x64
