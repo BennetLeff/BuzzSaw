@@ -1,4 +1,1 @@
-﻿  include_juce_audio_plugin_client_VST2.cpp
-  LINK : C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\VST\\ThaiBasil.dll not found or not built by the last incremental link; performing full link
-     Creating library C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\VST\ThaiBasil.lib and object C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\VST\ThaiBasil.exp
-  ThaiBasil_VST.vcxproj -> C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\VST\ThaiBasil.dll
+﻿  ThaiBasil_VST.vcxproj -> C:\Users\bennet\Documents\Workspace\ThaiBasil\Builds\VisualStudio2019\x64\Debug\VST\ThaiBasil.dll
