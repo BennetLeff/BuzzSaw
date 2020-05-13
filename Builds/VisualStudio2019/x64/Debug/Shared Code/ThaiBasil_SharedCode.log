@@ -1,3 +1,0 @@
-﻿  PluginEditor.cpp
-C:\Users\harpershapiro\Documents\ThaiBasil\Source\PluginEditor.cpp(78,64): warning C4100: 'slider': unreferenced formal parameter
-  ThaiBasil_SharedCode.vcxproj -> C:\Users\harpershapiro\Documents\ThaiBasil\Builds\VisualStudio2019\x64\Debug\Shared Code\ThaiBasil.lib
