@@ -18,6 +18,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
 {
 	// addParameter(gain = new AudioParameterFloat("Gain", "Gain", 0, 6.0, 1.0));
 	gain = 1.0;
+    preGain = 1.0;
 }
 
 ThaiBasilAudioProcessor::~ThaiBasilAudioProcessor()
@@ -130,9 +131,7 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 	{
 		for (auto i = 0; i < mainInputOutput.getNumChannels(); ++i)                   
 			*mainInputOutput.getWritePointer(i, j) = 
-							*mainInputOutput.getReadPointer(i, j)
-							+ gain
-							* dsp::FastMathApproximations::sin(*mainInputOutput.getReadPointer(i, j));
+							gain * dsp::FastMathApproximations::sin(*mainInputOutput.getReadPointer(i, j)*preGain);
 	}
 }
 

@@ -15,6 +15,7 @@
 ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
+    //postgain
 	gainControl.setSliderStyle(Slider::LinearBarVertical);
 	gainControl.setRange(0.0, 127.0, 1.0);
 	gainControl.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
@@ -22,14 +23,32 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
 	gainControl.setTextValueSuffix(" Gain");
 	gainControl.setValue(1.0);
 
+    //pregain control
+    preGainControl.setSliderStyle(Slider::LinearBarVertical);
+    preGainControl.setRange(0.0, 127.0, 1.0);
+    preGainControl.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
+    preGainControl.setPopupDisplayEnabled(true, false, this);
+    preGainControl.setTextValueSuffix(" Gain");
+    preGainControl.setValue(1.0);
+
 	// this function adds the slider to the editor
 	addAndMakeVisible(&gainControl);
+    addAndMakeVisible(&preGainControl);
+
+
+    preGainControl.addListener(this);
+	gainControl.addListener(this);
+    
+
+
+
+    // this function adds the slider to the editor
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (800, 600);
+    setSize(800, 600);
 
-	gainControl.addListener(this);
+ 
 }
 
 ThaiBasilAudioProcessorEditor::~ThaiBasilAudioProcessorEditor()
@@ -52,9 +71,12 @@ void ThaiBasilAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 	gainControl.setBounds(40, 30, 20, getHeight() - 60);
+    preGainControl.setBounds(70, 30, 20, getHeight() - 60);
+
 }
 
 void ThaiBasilAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
 	processor.gain = static_cast<float>(gainControl.getValue());
+    processor.preGain = static_cast<float>(preGainControl.getValue());
 }
