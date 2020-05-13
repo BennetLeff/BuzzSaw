@@ -36,9 +36,9 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
     addAndMakeVisible(&preGainControl);
 
 
-
-	gainControl.addListener(this);
     preGainControl.addListener(this);
+	gainControl.addListener(this);
+    
 
 
 
