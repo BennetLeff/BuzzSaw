@@ -90,7 +90,15 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 //==============================================================================
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    clipper = std::make_unique<ClipperCircuit<float>>(sampleRate);
 
+    postFilter = std::make_unique <LowShelfFilter<float>>(sampleRate);
+    postFilter->setCutoff(filterCutoff);
+
+    setBrightness(brightness);
+    setWarmth(warmth);
+    setDistortion(distortion);
+    setPregain(getPregain());
 }
 
 void ThaiBasilAudioProcessor::releaseResources()
@@ -127,12 +135,25 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 {
 	auto mainInputOutput = getBusBuffer(buffer, true, 0);
 
-	for (auto j = 0; j < buffer.getNumSamples(); ++j)
+	/*for (auto j = 0; j < buffer.getNumSamples(); ++j)
 	{
 		for (auto i = 0; i < mainInputOutput.getNumChannels(); ++i)                   
 			*mainInputOutput.getWritePointer(i, j) = 
 							gain * dsp::FastMathApproximations::sin(*mainInputOutput.getReadPointer(i, j)*preGain);
-	}
+	}*/
+   
+    for (int channel = 0; channel < getTotalNumInputChannels(); ++channel)
+    {
+        // float* channelData = buffer.getWritePointer(channel);
+
+        for (auto nn = 0; nn < buffer.getNumSamples(); nn++)
+        {
+            *mainInputOutput.getWritePointer(channel, nn) =
+                clipper->run(preGain * (*mainInputOutput.getWritePointer(channel, nn)));
+            *mainInputOutput.getWritePointer(channel, nn) =
+                postFilter->run((*mainInputOutput.getWritePointer(channel, nn)));
+        }
+    }
 }
 
 //==============================================================================
@@ -165,4 +186,32 @@ void ThaiBasilAudioProcessor::setStateInformation (const void* data, int sizeInB
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new ThaiBasilAudioProcessor();
+}
+
+void ThaiBasilAudioProcessor::setDistortion(double newDistortion)
+{
+    distortion = newDistortion;
+    clipper->setIdeality(2 - (-1.2250 * std::pow(0.1837, distortion) + 1.2250));
+}
+
+void ThaiBasilAudioProcessor::setWarmth(double newWarmth)
+{
+    warmth = newWarmth;
+    clipper->setAsymmetry(1 + (2 * (1 - warmth)));
+}
+
+void ThaiBasilAudioProcessor::setBrightness(double newBrightness)
+{
+    brightness = newBrightness;
+    postFilter->setGain(-brightness * 15);
+}
+
+void ThaiBasilAudioProcessor::setPregain(double newGainFactor)
+{
+    preGain = std::pow(10., newGainFactor / 2);
+}
+
+double ThaiBasilAudioProcessor::getPregain()
+{
+    return 2 * std::log10(preGain);
 }

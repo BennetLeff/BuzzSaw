@@ -37,5 +37,12 @@ private:
 	Slider gainControl;
     Slider preGainControl;
 
+    Slider distKnob;
+    Slider brightKnob;
+    Slider warmthKnob;
+
+    int edgeBound = 30;
+    int knobSize = 40;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessorEditor)
 };
