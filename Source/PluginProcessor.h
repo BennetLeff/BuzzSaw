@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include"WavefolderProcessor.h"
+
 //==============================================================================
 /**
 */
@@ -55,10 +57,25 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    AudioProcessorValueTreeState& getVTS() { return vts; }
+    static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    
 	float gain;
     float preGain;
 private:
     //==============================================================================
+    AudioProcessorValueTreeState vts;
+
+    float* freqParam;
+    float* depthParam;
+    float* ffParam;
+    float* fbParam;
+    float* satParam;
+    float* waveParam;
+
+    WavefolderProcessor wfProc[2];
+
+    dsp::Oversampling<float> oversampling;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessor)
 };
