@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Dmtb1k" name="ThaiBasil" projectType="audioplug" jucerVersion="5.4.7"
-              pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3">
+              pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
       <FILE id="ELtApQ" name="Saturators.h" compile="0" resource="0" file="Source/Saturators.h"/>
@@ -26,21 +26,21 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../../../../Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_dsp" path="../../../../../Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_devices" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_formats" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_processors" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_utils" path="..\JUCE"/>
+        <MODULEPATH id="juce_core" path="..\JUCE"/>
+        <MODULEPATH id="juce_cryptography" path="..\JUCE"/>
+        <MODULEPATH id="juce_data_structures" path="..\JUCE"/>
+        <MODULEPATH id="juce_events" path="..\JUCE"/>
+        <MODULEPATH id="juce_graphics" path="..\JUCE"/>
+        <MODULEPATH id="juce_gui_basics" path="..\JUCE"/>
+        <MODULEPATH id="juce_gui_extra" path="..\JUCE"/>
+        <MODULEPATH id="juce_opengl" path="..\JUCE"/>
+        <MODULEPATH id="juce_dsp" path="..\JUCE"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
