@@ -4,6 +4,10 @@
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
+      <FILE id="p6lwZB" name="WavefolderComponent.cpp" compile="1" resource="0"
+            file="Source/WavefolderComponent.cpp"/>
+      <FILE id="wkmjf4" name="WavefolderComponent.h" compile="0" resource="0"
+            file="Source/WavefolderComponent.h"/>
       <FILE id="ELtApQ" name="Saturators.h" compile="0" resource="0" file="Source/Saturators.h"/>
       <FILE id="yv720H" name="WavefolderProcessor.cpp" compile="1" resource="0"
             file="Source/WavefolderProcessor.cpp"/>

@@ -136,6 +136,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\WavefolderComponent.cpp"/>
     <ClCompile Include="..\..\Source\WavefolderProcessor.cpp"/>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
@@ -2028,6 +2029,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_opengl.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\WavefolderComponent.h"/>
     <ClInclude Include="..\..\Source\Saturators.h"/>
     <ClInclude Include="..\..\Source\WavefolderProcessor.h"/>
     <ClInclude Include="..\..\Source\Waves.h"/>

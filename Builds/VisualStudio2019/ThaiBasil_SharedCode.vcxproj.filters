@@ -454,6 +454,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\WavefolderComponent.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\WavefolderProcessor.cpp">
       <Filter>ThaiBasil\Source</Filter>
     </ClCompile>
@@ -2508,6 +2511,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\WavefolderComponent.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Saturators.h">
       <Filter>ThaiBasil\Source</Filter>
     </ClInclude>

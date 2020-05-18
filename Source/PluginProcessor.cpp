@@ -49,7 +49,6 @@ ThaiBasilAudioProcessor::~ThaiBasilAudioProcessor()
 {
 }
 
-//==============================================================================
 const String ThaiBasilAudioProcessor::getName() const
 {
     return JucePlugin_Name;
@@ -111,7 +110,6 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 {
 }
 
-//==============================================================================
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     oversampling.initProcessing(samplesPerBlock);
@@ -178,7 +176,6 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     oversampling.processSamplesDown(block);
 }
 
-//==============================================================================
 bool ThaiBasilAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
@@ -189,7 +186,6 @@ AudioProcessorEditor* ThaiBasilAudioProcessor::createEditor()
     return new ThaiBasilAudioProcessorEditor (*this);
 }
 
-//==============================================================================
 void ThaiBasilAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
@@ -211,7 +207,6 @@ void ThaiBasilAudioProcessor::setStateInformation (const void* data, int sizeInB
             vts.replaceState(ValueTree::fromXml(*xmlState));
 }
 
-//==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
