@@ -13,6 +13,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include"WavefolderProcessor.h"
+#include "SubharmonicProcessor.h"
+#include "EQFilter.h"
+#include "Gain.h"
 
 //==============================================================================
 /**
@@ -65,15 +68,40 @@ public:
 private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
+    
+    /*
+    std::atomic<float>* freqParam;
+    std::atomic<float>* depthParam;
+    std::atomic<float>* ffParam;
+    std::atomic<float>* fbParam;
+    std::atomic<float>* satParam;
+    std::atomic<float>* waveParam;
+    */
 
-    float* freqParam;
-    float* depthParam;
-    float* ffParam;
-    float* fbParam;
-    float* satParam;
-    float* waveParam;
+    //Subharmonic Generator Params
+    std::atomic<float>* shgPreCutoffParam;
+    std::atomic<float>* shgPostCutoffParam;
+    std::atomic<float>* shgMainGainParam;
+    std::atomic<float>* shgSideGainParam;
+    std::atomic<float>* shgAttackParam;
+    std::atomic<float>* shgReleaseParam;
 
-    WavefolderProcessor wfProc[2];
+    const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
+
+    AudioBuffer<float> sidechainBuffer;
+
+    SubharmonicProcessor subProc[2];
+    EQFilter preEQ[2];
+    EQFilter postEQ[3][2];
+    EQFilter dcBlocker[2];
+    Gain mainGain[2];
+    Gain sideGain[2];
+
+
+
+
+
+    
 
     dsp::Oversampling<float> oversampling;
 

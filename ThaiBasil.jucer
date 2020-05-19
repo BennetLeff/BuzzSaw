@@ -4,6 +4,14 @@
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
+      <FILE id="wTFh9U" name="SubharmonicComponent.cpp" compile="1" resource="0"
+            file="Source/SubharmonicComponent.cpp"/>
+      <FILE id="XxbmKH" name="SubharmonicComponent.h" compile="0" resource="0"
+            file="Source/SubharmonicComponent.h"/>
+      <FILE id="rds9rz" name="Gain.h" compile="0" resource="0" file="Source/Gain.h"/>
+      <FILE id="RpBkN5" name="Biquad.h" compile="0" resource="0" file="Source/Biquad.h"/>
+      <FILE id="F66PZq" name="EQFilter.cpp" compile="1" resource="0" file="Source/EQFilter.cpp"/>
+      <FILE id="WB6ZcR" name="EQFilter.h" compile="0" resource="0" file="Source/EQFilter.h"/>
       <FILE id="ssWf2c" name="LevelDetector.cpp" compile="1" resource="0"
             file="Source/LevelDetector.cpp"/>
       <FILE id="A5ZvnS" name="LevelDetector.h" compile="0" resource="0" file="Source/LevelDetector.h"/>
