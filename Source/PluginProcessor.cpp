@@ -201,17 +201,17 @@ void ThaiBasilAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
-        mainGain[ch].setGain(Decibels::decibelsToGain(*mainGainParam));
-        sideGain[ch].setGain(Decibels::decibelsToGain(*sideGainParam));
+        mainGain[ch].setGain(Decibels::decibelsToGain(shgMainGainParam->load()));
+        sideGain[ch].setGain(Decibels::decibelsToGain(shgSideGainParam->load()));
 
-        sub[ch].setDetector(*attackParam, *releaseParam);
+        subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
 
-        preEQ[ch].setFrequency(*preCutoffParam);
+        preEQ[ch].setFrequency(*shgPreCutoffParam);
         preEQ[ch].setQ(0.7071f);
 
         for (int i = 0; i < 3; ++i)
         {
-            postEQ[i][ch].setFrequency(*postCutoffParam);
+            postEQ[i][ch].setFrequency(*shgPostCutoffParam);
             postEQ[i][ch].setQ(butterQs[i]);
         }
     }
@@ -223,11 +223,17 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
     dsp::AudioBlock<float> block(buffer);
     dsp::AudioBlock<float> osBlock(buffer);
+ 
+
+    updateParams();
+
+    sidechainBuffer.makeCopyOf(buffer, true);
 
     osBlock = oversampling.processSamplesUp(block);
 
     float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
     AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
+    const int numSamples = osBuffer.getNumSamples(); //not sure if this is using right buffer
 
     for (int ch = 0; ch < osBuffer.getNumChannels(); ++ch)
     {
@@ -243,7 +249,21 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         wfProc[ch].processBlock(osBuffer.getWritePointer(ch), osBuffer.getNumSamples());
         */
         
-        //subProc[ch].setDetector()
+        //Subharmonic
+        auto main = buffer.getWritePointer(ch);
+        auto side = sidechainBuffer.getWritePointer(ch);
+
+        preEQ[ch].processBlock(side, numSamples);
+        subProc[ch].processBlock(side, numSamples);
+        for (int i = 0; i < 3; ++i)
+            postEQ[i][ch].processBlock(side, numSamples);
+
+        dcBlocker[ch].processBlock(side, numSamples);
+
+        mainGain[ch].processBlock(main, numSamples);
+        sideGain[ch].processBlock(side, numSamples);
+
+        buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
     }
 
     oversampling.processSamplesDown(block);

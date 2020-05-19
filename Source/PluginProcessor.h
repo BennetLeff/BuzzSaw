@@ -63,8 +63,11 @@ public:
     AudioProcessorValueTreeState& getVTS() { return vts; }
     static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     
-	float gain;
-    float preGain;
+    void updateParams();
+
+    //old gain controls
+	//float gain;
+    //float preGain;
 private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
