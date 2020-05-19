@@ -47,6 +47,9 @@
  #pragma clang diagnostic ignored "-Wdeprecated-declarations"
  #pragma clang diagnostic ignored "-Wextra-semi"
  #pragma clang diagnostic ignored "-Wmissing-braces"
+ #if __has_warning("-Wshadow-field")
+  #pragma clang diagnostic ignored "-Wshadow-field"
+ #endif
  #if __has_warning("-Wpragma-pack")
   #pragma clang diagnostic ignored "-Wpragma-pack"
  #endif
@@ -61,6 +64,12 @@
  #endif
  #if __has_warning("-Wcast-align")
   #pragma clang diagnostic ignored "-Wcast-align"
+ #endif
+ #if __has_warning("-Wignored-qualifiers")
+  #pragma clang diagnostic ignored "-Wignored-qualifiers"
+ #endif
+ #if __has_warning("-Wmissing-field-initializers")
+  #pragma clang diagnostic ignored "-Wmissing-field-initializers"
  #endif
 #endif
 
@@ -145,15 +154,17 @@
 namespace Steinberg
 {
     /** Missing IIDs */
+  #if VST_VERSION < 0x03060d   // 3.6.13
     DEF_CLASS_IID (IPluginBase)
-    DEF_CLASS_IID (IPlugView)
-    DEF_CLASS_IID (IPlugFrame)
-   #if VST_VERSION < 0x030608
-    DEF_CLASS_IID (IBStream)
-   #endif
     DEF_CLASS_IID (IPluginFactory)
     DEF_CLASS_IID (IPluginFactory2)
     DEF_CLASS_IID (IPluginFactory3)
+   #if VST_VERSION < 0x030608
+    DEF_CLASS_IID (IBStream)
+   #endif
+  #endif
+    DEF_CLASS_IID (IPlugView)
+    DEF_CLASS_IID (IPlugFrame)
     DEF_CLASS_IID (IPlugViewContentScaleSupport)
 }
 #endif //JUCE_VST3HEADERS_INCLUDE_HEADERS_ONLY

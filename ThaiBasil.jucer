@@ -4,6 +4,11 @@
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
+      <FILE id="ssWf2c" name="LevelDetector.cpp" compile="1" resource="0"
+            file="Source/LevelDetector.cpp"/>
+      <FILE id="A5ZvnS" name="LevelDetector.h" compile="0" resource="0" file="Source/LevelDetector.h"/>
+      <FILE id="Xy1U1l" name="SubharmonicProcessor.h" compile="0" resource="0"
+            file="Source/SubharmonicProcessor.h"/>
       <FILE id="p6lwZB" name="WavefolderComponent.cpp" compile="1" resource="0"
             file="Source/WavefolderComponent.cpp"/>
       <FILE id="wkmjf4" name="WavefolderComponent.h" compile="0" resource="0"
