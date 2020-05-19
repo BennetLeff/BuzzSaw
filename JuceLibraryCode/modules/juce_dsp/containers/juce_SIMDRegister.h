@@ -40,7 +40,7 @@ namespace dsp
     A wrapper around the platform's native SIMD register type.
 
     This class is only available on SIMD machines. Use JUCE_USE_SIMD to query
-    if SIMD is avaialble for your system.
+    if SIMD is available for your system.
 
     SIMDRegister<Type> is a templated class representing the native
     vectorized version of FloatingType. SIMDRegister supports all numerical
@@ -50,9 +50,9 @@ namespace dsp
     the individual elements.
 
     If you are using SIMDRegister as a pointer, then you must ensure that the
-    memory is suffeciently aligned for SIMD vector operations. Failing to do so
+    memory is sufficiently aligned for SIMD vector operations. Failing to do so
     will result in crashes or very slow code. Use SIMDRegister::isSIMDAligned
-    to query if a pointer is suffeciently aligned for SIMD vector operations.
+    to query if a pointer is sufficiently aligned for SIMD vector operations.
 
     Note that using SIMDRegister without enabling optimizations will result
     in code with very poor performance.
@@ -117,7 +117,7 @@ struct SIMDRegister
     /** Constructs an object from a scalar type by broadcasting it to all elements. */
     inline SIMDRegister (Type s) noexcept  { *this = s; }
 
-    /** Destrutor. */
+    /** Destructor. */
     inline ~SIMDRegister() noexcept = default;
 
     //==============================================================================
@@ -204,23 +204,23 @@ struct SIMDRegister
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator*= (ElementType s) noexcept       { value = CmplxOps::mul (value, CmplxOps::expand (s)); return *this; }
 
     //==============================================================================
-    /** Bit-and the reciver with SIMDRegister v and store the result in the receiver. */
+    /** Bit-and the receiver with SIMDRegister v and store the result in the receiver. */
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator&= (vMaskType v) noexcept         { value = NativeOps::bit_and (value, toVecType (v.value)); return *this; }
 
-    /** Bit-or the reciver with SIMDRegister v and store the result in the receiver. */
+    /** Bit-or the receiver with SIMDRegister v and store the result in the receiver. */
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator|= (vMaskType v) noexcept         { value = NativeOps::bit_or  (value, toVecType (v.value)); return *this; }
 
-    /** Bit-xor the reciver with SIMDRegister v and store the result in the receiver. */
+    /** Bit-xor the receiver with SIMDRegister v and store the result in the receiver. */
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator^= (vMaskType v) noexcept         { value = NativeOps::bit_xor (value, toVecType (v.value)); return *this; }
 
     //==============================================================================
-    /** Bit-and each element of the reciver with the scalar s and store the result in the receiver.*/
+    /** Bit-and each element of the receiver with the scalar s and store the result in the receiver.*/
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator&= (MaskType s) noexcept           { value = NativeOps::bit_and (value, toVecType (s)); return *this; }
 
-    /** Bit-or each element of the reciver with the scalar s and store the result in the receiver.*/
+    /** Bit-or each element of the receiver with the scalar s and store the result in the receiver.*/
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator|= (MaskType s) noexcept           { value = NativeOps::bit_or  (value, toVecType (s)); return *this; }
 
-    /** Bit-xor each element of the reciver with the scalar s and store the result in the receiver.*/
+    /** Bit-xor each element of the receiver with the scalar s and store the result in the receiver.*/
     inline SIMDRegister& JUCE_VECTOR_CALLTYPE operator^= (MaskType s) noexcept           { value = NativeOps::bit_xor (value, toVecType (s)); return *this; }
 
     //==============================================================================
@@ -267,10 +267,10 @@ struct SIMDRegister
     inline SIMDRegister JUCE_VECTOR_CALLTYPE operator^ (MaskType s) const noexcept      { return { NativeOps::bit_xor (value, toVecType (s)) }; }
 
     //==============================================================================
-    /** Returns true if all elements-wise comparisons return true. */
+    /** Returns true if all element-wise comparisons return true. */
     inline bool JUCE_VECTOR_CALLTYPE operator== (SIMDRegister other) const noexcept    { return  NativeOps::allEqual (value, other.value); }
 
-    /** Returns true if any elements-wise comparisons return false. */
+    /** Returns true if any element-wise comparisons return false. */
     inline bool JUCE_VECTOR_CALLTYPE operator!= (SIMDRegister other) const noexcept    { return ! (*this == other); }
 
     /** Returns true if all elements are equal to the scalar. */
@@ -329,7 +329,19 @@ struct SIMDRegister
     inline ElementType sum() const noexcept          { return CmplxOps::sum (value); }
 
     //==============================================================================
-    /** Checks if the given pointer is suffeciently aligned for using SIMD operations. */
+    /** Truncates each element to its integer part.
+        Effectively discards the fractional part of each element. A.k.a. round to zero. */
+    static inline SIMDRegister JUCE_VECTOR_CALLTYPE truncate (SIMDRegister a) noexcept    { return { NativeOps::truncate (a.value) }; }
+
+    //==============================================================================
+    /** Returns the absolute value of each element. */
+    static inline SIMDRegister JUCE_VECTOR_CALLTYPE abs (SIMDRegister a) noexcept
+    {
+        return a - (a * (expand (ElementType (2)) & lessThan (a, expand (ElementType (0)))));
+    }
+
+    //==============================================================================
+    /** Checks if the given pointer is sufficiently aligned for using SIMD operations. */
     static inline bool isSIMDAligned (const ElementType* ptr) noexcept
     {
         uintptr_t bitmask = SIMDRegisterSize - 1;
@@ -345,13 +357,6 @@ struct SIMDRegister
     {
         return snapPointerToAlignment (ptr, SIMDRegisterSize);
     }
-
-   #ifndef DOXYGEN
-    static inline const ElementType* getNextSIMDAlignedPtr (const ElementType* ptr) noexcept
-    {
-        return snapPointerToAlignment (ptr, SIMDRegisterSize);
-    }
-   #endif
 
 private:
     static inline vMaskType JUCE_VECTOR_CALLTYPE toMaskType (vSIMDType a) noexcept

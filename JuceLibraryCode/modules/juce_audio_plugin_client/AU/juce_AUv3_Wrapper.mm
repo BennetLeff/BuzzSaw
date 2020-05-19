@@ -29,10 +29,6 @@
 
 #if JucePlugin_Build_AUv3
 
-#import <CoreAudioKit/CoreAudioKit.h>
-#import <AudioToolbox/AudioToolbox.h>
-#import <AVFoundation/AVFoundation.h>
-
 #if JUCE_MAC
  #if (! defined MAC_OS_X_VERSION_MIN_REQUIRED) || (! defined MAC_OS_X_VERSION_10_11) || (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_11)
   #error AUv3 needs Deployment Target OS X 10.11 or higher to compile
@@ -61,8 +57,12 @@
 
 #include "../utility/juce_IncludeSystemHeaders.h"
 #include "../utility/juce_IncludeModuleHeaders.h"
-#include "../../juce_graphics/native/juce_mac_CoreGraphicsHelpers.h"
 
+#import <CoreAudioKit/CoreAudioKit.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <AVFoundation/AVFoundation.h>
+
+#include "../../juce_graphics/native/juce_mac_CoreGraphicsHelpers.h"
 #include "../../juce_audio_basics/native/juce_mac_CoreAudioLayouts.h"
 #include "../../juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp"
 #include "../../juce_audio_processors/format_types/juce_AU_Shared.h"
@@ -131,7 +131,7 @@ public:
         initialiseJuce_GUI();
     }
 
-    virtual ~JuceAudioUnitv3Base() {}
+    virtual ~JuceAudioUnitv3Base() = default;
 
     //==============================================================================
     AUAudioUnit* getAudioUnit() noexcept                                   { return au; }
@@ -441,7 +441,7 @@ public:
         init();
     }
 
-    ~JuceAudioUnitv3()
+    ~JuceAudioUnitv3() override
     {
         auto& processor = getAudioProcessor();
         processor.removeListener (this);
@@ -566,7 +566,12 @@ public:
         }
 
         juce::MemoryBlock state;
+
+       #if JUCE_AU_WRAPPERS_SAVE_PROGRAM_STATES
         getAudioProcessor().getCurrentProgramStateInformation (state);
+       #else
+        getAudioProcessor().getStateInformation (state);
+       #endif
 
         if (state.getSize() > 0)
         {
@@ -612,7 +617,13 @@ public:
                 const juce::uint8* const rawBytes = reinterpret_cast< const juce::uint8* const> ([data bytes]);
 
                 if (numBytes > 0)
+                {
+                   #if JUCE_AU_WRAPPERS_SAVE_PROGRAM_STATES
                     getAudioProcessor().setCurrentProgramStateInformation (rawBytes, numBytes);
+                   #else
+                    getAudioProcessor().setStateInformation (rawBytes, numBytes);
+                   #endif
+                }
             }
         }
 
@@ -1167,8 +1178,9 @@ private:
                                                   | kAudioUnitParameterFlag_HasCFNameString
                                                   | kAudioUnitParameterFlag_ValuesHaveStrings);
 
-        if (! forceLegacyParamIDs)
-            flags |= (UInt32) kAudioUnitParameterFlag_IsHighResolution;
+       #if ! JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
+        flags |= (UInt32) kAudioUnitParameterFlag_IsHighResolution;
+       #endif
 
         // Set whether the param is automatable (unnamed parameters aren't allowed to be automated).
         if (name.isEmpty() || ! parameter->isAutomatable())
@@ -1193,24 +1205,23 @@ private:
         }
         else
         {
-            if (! forceLegacyParamIDs)
+           #if ! JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
+            if (parameter->isDiscrete())
             {
-                if (parameter->isDiscrete())
-                {
-                    unit = parameter->isBoolean() ? kAudioUnitParameterUnit_Boolean : kAudioUnitParameterUnit_Indexed;
-                    auto maxValue = getMaximumParameterValue (parameter);
-                    auto numSteps = parameter->getNumSteps();
+                unit = parameter->isBoolean() ? kAudioUnitParameterUnit_Boolean : kAudioUnitParameterUnit_Indexed;
+                auto maxValue = getMaximumParameterValue (parameter);
+                auto numSteps = parameter->getNumSteps();
 
-                    // Some hosts can't handle the huge numbers of discrete parameter values created when
-                    // using the default number of steps.
-                    jassert (numSteps != AudioProcessor::getDefaultNumParameterSteps());
+                // Some hosts can't handle the huge numbers of discrete parameter values created when
+                // using the default number of steps.
+                jassert (numSteps != AudioProcessor::getDefaultNumParameterSteps());
 
-                    valueStrings.reset ([NSMutableArray new]);
+                valueStrings.reset ([NSMutableArray new]);
 
-                    for (int i = 0; i < numSteps; ++i)
-                        [valueStrings.get() addObject: juceStringToNS (parameter->getText ((float) i / maxValue, 0))];
-                }
+                for (int i = 0; i < numSteps; ++i)
+                    [valueStrings.get() addObject: juceStringToNS (parameter->getText ((float) i / maxValue, 0))];
             }
+           #endif
         }
 
         AUParameterAddress address = generateAUParameterAddress (parameter);
@@ -1522,12 +1533,14 @@ private:
 
             // send MIDI
            #if JucePlugin_ProducesMidiOutput && JUCE_AUV3_MIDI_OUTPUT_SUPPORTED
-            auto midiOut = [au MIDIOutputEventBlock];
-            MidiMessage msg;
-            int samplePosition;
+            if (auto midiOut = [au MIDIOutputEventBlock])
+            {
+                MidiMessage msg;
+                int samplePosition;
 
-            for (MidiBuffer::Iterator it (midiMessages); it.getNextEvent (msg, samplePosition);)
-                midiOut (samplePosition, 0, msg.getRawDataSize(), msg.getRawData());
+                for (MidiBuffer::Iterator it (midiMessages); it.getNextEvent (msg, samplePosition);)
+                    midiOut (samplePosition, 0, msg.getRawDataSize(), msg.getRawData());
+            }
            #endif
 
             midiMessages.clear();
