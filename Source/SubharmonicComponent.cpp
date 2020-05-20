@@ -97,8 +97,8 @@ void SubharmonicComponent::resized()
     postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, 415, 90, 80);
     mainGainSlide.setBounds(postCutoffSlide.getRight() - 30, 415, 90, 80);
     sideGainSlide.setBounds(mainGainSlide.getRight() - 30, 415, 90, 80);
-    attackSlide.setBounds(sideGainSlide.getRight() - 10, 440, 70, 20);
-    releaseSlide.setBounds(attackSlide.getRight() + 10, 440, 70, 20);
+    attackSlide.setBounds(sideGainSlide.getRight() - 30, 415, 90, 80);
+    releaseSlide.setBounds(attackSlide.getRight() - 30, 415, 90, 80);
 }
 
 void SubharmonicComponent::sliderValueChanged(Slider* slider)
