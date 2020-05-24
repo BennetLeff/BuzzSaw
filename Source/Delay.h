@@ -18,6 +18,15 @@ public:
     Delay();
     ~Delay();
 
+    void initialize(double sampleRate);
+    void processBlock(float* buffer, const int numSamples);
+    void setDelaySec(float ds);
+    void setFeedback(float fb);
+    void setWetLevel(float wl);
+    void setDryLevel(float dl);
+
+
+
     //params (potentially slider controlled)
     float delaySec;
     float feedback;

@@ -16,6 +16,7 @@
 #include "SubharmonicProcessor.h"
 #include "EQFilter.h"
 #include "Gain.h"
+#include "Delay.h"
 
 //==============================================================================
 /**
@@ -91,6 +92,10 @@ private:
 
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 
+    //for now the stereo effect will be static
+    const float leftDelayTime = 11.0;
+    const float rightDelayTime = 10.0;
+
     AudioBuffer<float> sidechainBuffer;
 
     SubharmonicProcessor subProc[2];
@@ -99,6 +104,8 @@ private:
     EQFilter dcBlocker[2];
     Gain mainGain[2];
     Gain sideGain[2];
+    Delay delay[2];
+
 
 
 

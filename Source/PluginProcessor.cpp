@@ -148,9 +148,10 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
     wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
 
-    //Subharmonic Processing
+
     for (int ch = 0; ch < 2; ++ch)
     {
+        //Subharmonic Processing
         subProc[ch].reset((float)sampleRate);
 
         mainGain[ch].prepare();
@@ -165,6 +166,12 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         dcBlocker[ch].setFrequency(35.0f);
         dcBlocker[ch].setQ(0.7071f);
 
+        //delay
+        delay[ch].initialize(sampleRate);
+        delay[ch].setWetLevel(1.0);
+        delay[ch].setDryLevel(0.0);
+        delay[ch].setFeedback(0.75);
+
         for (int i = 0; i < 3; ++i)
         {
             postEQ[i][ch].reset(sampleRate);
@@ -172,6 +179,10 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
             postEQ[i][ch].toggleOnOff(true);
         }
     }
+
+    //other delay settings
+    delay[0].setDelaySec(leftDelayTime);
+    delay[1].setDelaySec(rightDelayTime);
 
     sidechainBuffer.setSize(2, samplesPerBlock);
 }
@@ -269,6 +280,9 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
         mainGain[ch].processBlock(main, numSamples);
         sideGain[ch].processBlock(side, numSamples);
+
+        //delay stereo effect
+        delay[ch].processBlock(side, numSamples);
 
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
     }
