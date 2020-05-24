@@ -136,6 +136,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Delay.cpp"/>
     <ClCompile Include="..\..\Source\SubharmonicComponent.cpp"/>
     <ClCompile Include="..\..\Source\EQFilter.cpp"/>
     <ClCompile Include="..\..\Source\LevelDetector.cpp"/>
@@ -2047,6 +2048,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_opengl.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Delay.h"/>
     <ClInclude Include="..\..\Source\SubharmonicComponent.h"/>
     <ClInclude Include="..\..\Source\Gain.h"/>
     <ClInclude Include="..\..\Source\Biquad.h"/>

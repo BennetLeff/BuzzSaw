@@ -454,6 +454,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Delay.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SubharmonicComponent.cpp">
       <Filter>ThaiBasil\Source</Filter>
     </ClCompile>
@@ -2535,6 +2538,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Delay.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\SubharmonicComponent.h">
       <Filter>ThaiBasil\Source</Filter>
     </ClInclude>

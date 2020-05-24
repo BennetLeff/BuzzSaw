@@ -4,6 +4,8 @@
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
+      <FILE id="c7Q4Ee" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
+      <FILE id="LBJLmQ" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
       <FILE id="wTFh9U" name="SubharmonicComponent.cpp" compile="1" resource="0"
             file="Source/SubharmonicComponent.cpp"/>
       <FILE id="XxbmKH" name="SubharmonicComponent.h" compile="0" resource="0"
