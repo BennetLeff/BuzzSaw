@@ -10,7 +10,8 @@
 
 #include "Delay.h"
 
-Delay::Delay() {
+Delay::Delay() : delayWritePosition(0), delayReadPosition(0)
+{
     
 }
 

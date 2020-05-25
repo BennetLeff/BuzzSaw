@@ -168,8 +168,8 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
         //delay
         delay[ch].initialize(sampleRate);
-        delay[ch].setWetLevel(1.0);
-        delay[ch].setDryLevel(0.0);
+        delay[ch].setWetLevel(0.5);
+        delay[ch].setDryLevel(0.5);
         delay[ch].setFeedback(0.75);
 
         for (int i = 0; i < 3; ++i)
@@ -275,14 +275,16 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         subProc[ch].processBlock(side, numSamples);
         for (int i = 0; i < 3; ++i)
             postEQ[i][ch].processBlock(side, numSamples);
+        //delay stereo effect
+
+        delay[ch].processBlock(side, numSamples);
 
         dcBlocker[ch].processBlock(side, numSamples);
 
         mainGain[ch].processBlock(main, numSamples);
         sideGain[ch].processBlock(side, numSamples);
 
-        //delay stereo effect
-        delay[ch].processBlock(side, numSamples);
+
 
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
     }
