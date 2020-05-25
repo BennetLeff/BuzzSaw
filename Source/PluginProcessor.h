@@ -89,12 +89,15 @@ private:
     std::atomic<float>* shgSideGainParam;
     std::atomic<float>* shgAttackParam;
     std::atomic<float>* shgReleaseParam;
+    
+    //stereo params
+    //std::atomic<float>* stereoOnParam;
 
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 
     //for now the stereo effect will be static
-    const float leftDelayTime = 11.0;
-    const float rightDelayTime = 10.0;
+    const float leftDelayTime = 0.5;
+    const float rightDelayTime = 0.6;
 
     AudioBuffer<float> sidechainBuffer;
 

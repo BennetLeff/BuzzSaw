@@ -38,6 +38,9 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     shgSideGainParam = vts.getRawParameterValue("shgSideGain");
     shgAttackParam = vts.getRawParameterValue("shgAttack");
     shgReleaseParam = vts.getRawParameterValue("shgRelease");
+
+    //Stereo Effect Param Tree Pointers
+    //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
@@ -143,6 +146,7 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     oversampling.initProcessing(samplesPerBlock);
+    DBG("preparing");
 
     //WaveFolder Processing
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
