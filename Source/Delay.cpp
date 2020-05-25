@@ -24,7 +24,7 @@ void Delay::initialize(double sampleRate) { //is a double ok here?
 // Sanity check the result so we don't end up with any zero-length calculations
     delayBufferLength = static_cast<int>(2.0 * sampleRate);
     if (delayBufferLength < 1) delayBufferLength = 1;
-    delayBuffer.setSize(2, delayBufferLength);
+    delayBuffer.setSize(1, delayBufferLength);
     delayBuffer.clear();
 
     // This method gives us the sample rate. Use this to figure out what the delay position
@@ -33,7 +33,7 @@ void Delay::initialize(double sampleRate) { //is a double ok here?
     delayReadPosition = static_cast<int>(delayWritePosition - (delaySec * sampleRate)
         + delayBufferLength) % delayBufferLength;
 
-    DBG("Delay Write: " << delayWritePosition << " Delay Read: " << delayReadPosition);
+    //DBG("Delay Write: " << delayWritePosition << " Delay Read: " << delayReadPosition);
 }
 
 //process a single channel
@@ -53,9 +53,9 @@ void Delay::processBlock(float* buffer, const int numSamples) {
         float out = 0.0;
 
         //output blended
-        DBG("DPR: " << dpr);
+        //DBG("DPR: " << dpr);
         out = (dryLevel * in) + (wetLevel * delayData[dpr]);
-        DBG("Read delayData: " << delayData[dpr]);
+        //DBG("Read delayData: " << delayData[dpr]);
 
         delayData[dpw] = in + (delayData[dpr] * feedback);
 
