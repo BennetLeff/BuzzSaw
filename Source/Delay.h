@@ -24,6 +24,7 @@ public:
     void setFeedback(float fb);
     void setWetLevel(float wl);
     void setDryLevel(float dl);
+    void setActive(bool state);
 
 
 
@@ -32,6 +33,7 @@ public:
     float feedback;
     float dryLevel;
     float wetLevel;
+    bool isActive;
 
 
 

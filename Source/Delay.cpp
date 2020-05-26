@@ -38,6 +38,10 @@ void Delay::initialize(double sampleRate) { //is a double ok here?
 
 //process a single channel
 void Delay::processBlock(float* buffer, const int numSamples) {
+    //bypassed
+    if (!isActive) {
+        return;
+    }
 
     //temps for write and read positions
     int dpr = delayReadPosition;
@@ -88,4 +92,12 @@ void Delay::setWetLevel(float wl) {
 
 void Delay::setDryLevel(float dl) {
     dryLevel = dl;
+}
+
+void Delay::setActive(bool state) {
+    isActive = state;
+    //clear buffer when disabled
+    if (!state) {
+        delayBuffer.clear();
+    }
 }
