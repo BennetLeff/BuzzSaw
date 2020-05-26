@@ -157,7 +157,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset((float)sampleRate);
+        subProc[ch].reset((float)sampleRate * (float) oversampling.getOversamplingFactor());
 
         mainGain[ch].prepare();
         sideGain[ch].prepare();
