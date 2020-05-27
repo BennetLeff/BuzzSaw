@@ -2,6 +2,9 @@
 
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="ThaiBasil\Images">
+      <UniqueIdentifier>{D17D93DB-A0E3-0C75-5008-E310B89CE593}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThaiBasil\Source">
       <UniqueIdentifier>{5143344C-FF21-C548-5A9E-AA4A9F1956E8}</UniqueIdentifier>
     </Filter>
@@ -454,6 +457,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Delay.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SubharmonicComponent.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EQFilter.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LevelDetector.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\WavefolderComponent.cpp">
       <Filter>ThaiBasil\Source</Filter>
     </ClCompile>
@@ -2491,6 +2506,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_opengl\juce_opengl.mm">
       <Filter>JUCE Modules\juce_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\BinaryData.cpp">
+      <Filter>JUCE Library Code</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_basics.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
@@ -2538,6 +2556,27 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Delay.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SubharmonicComponent.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Gain.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Biquad.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\EQFilter.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LevelDetector.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SubharmonicProcessor.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\WavefolderComponent.h">
       <Filter>ThaiBasil\Source</Filter>
     </ClInclude>
@@ -4863,11 +4902,17 @@
     <ClInclude Include="..\..\JuceLibraryCode\AppConfig.h">
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\BinaryData.h">
+      <Filter>JUCE Library Code</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\OneDrive\Pictures\vst assets\thaibasiltest.png">
+      <Filter>ThaiBasil\Images</Filter>
+    </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_formats\codecs\flac\Flac Licence.txt">
       <Filter>JUCE Modules\juce_audio_formats\codecs\flac</Filter>
     </None>

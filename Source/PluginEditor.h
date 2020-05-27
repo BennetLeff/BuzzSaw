@@ -12,7 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "WavefolderComponent.h"
+#include "SubharmonicComponent.h"
+//#include "WavefolderComponent.h"
 
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
 using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
@@ -41,7 +42,7 @@ private:
 	Slider gainControl;
     Slider preGainControl;
 
-    std::unique_ptr<WavefolderComponent> waveFolder;
+    std::unique_ptr<SubharmonicComponent> subharmonicComponent;
 
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;
