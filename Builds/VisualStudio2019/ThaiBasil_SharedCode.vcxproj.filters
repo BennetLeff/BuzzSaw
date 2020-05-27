@@ -2,6 +2,9 @@
 
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="ThaiBasil\Images">
+      <UniqueIdentifier>{D17D93DB-A0E3-0C75-5008-E310B89CE593}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ThaiBasil\Source">
       <UniqueIdentifier>{5143344C-FF21-C548-5A9E-AA4A9F1956E8}</UniqueIdentifier>
     </Filter>
@@ -2503,6 +2506,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_opengl\juce_opengl.mm">
       <Filter>JUCE Modules\juce_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\BinaryData.cpp">
+      <Filter>JUCE Library Code</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_basics.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
@@ -4896,11 +4902,17 @@
     <ClInclude Include="..\..\JuceLibraryCode\AppConfig.h">
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\BinaryData.h">
+      <Filter>JUCE Library Code</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\OneDrive\Pictures\vst assets\thaibasiltest.png">
+      <Filter>ThaiBasil\Images</Filter>
+    </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_formats\codecs\flac\Flac Licence.txt">
       <Filter>JUCE Modules\juce_audio_formats\codecs\flac</Filter>
     </None>
