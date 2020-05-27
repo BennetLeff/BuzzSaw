@@ -112,13 +112,6 @@ private:
     Gain sideGain[2];
     Delay delay[2];
 
-
-
-
-
-
-    
-
     dsp::Oversampling<float> oversampling;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessor)
