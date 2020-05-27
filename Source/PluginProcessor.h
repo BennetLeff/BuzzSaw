@@ -16,6 +16,7 @@
 #include "SubharmonicProcessor.h"
 #include "EQFilter.h"
 #include "Gain.h"
+#include "Delay.h"
 
 //==============================================================================
 /**
@@ -88,8 +89,18 @@ private:
     std::atomic<float>* shgSideGainParam;
     std::atomic<float>* shgAttackParam;
     std::atomic<float>* shgReleaseParam;
+    
+    //stereo params
+    std::atomic<float>* stereoOnParam;
 
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
+
+    //stereo effect comes from 2 slightly out of sync channels
+    const float leftDelayTime = 0.04;
+    const float rightDelayTime = 0.07;
+    const float feedback = 0.1;
+    const float wetLevel = 0.5;
+    const float dryLevel = 0.5;
 
     AudioBuffer<float> sidechainBuffer;
 
@@ -99,6 +110,8 @@ private:
     EQFilter dcBlocker[2];
     Gain mainGain[2];
     Gain sideGain[2];
+    Delay delay[2];
+
 
 
 

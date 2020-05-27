@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
+using ButtonAttachment = AudioProcessorValueTreeState::ButtonAttachment;
 using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
 
 //==============================================================================
@@ -48,6 +49,9 @@ private:
 
     Slider releaseSlide;
     std::unique_ptr<SliderAttachment> releaseAttach;
+
+    ToggleButton stereoOnButton;
+    std::unique_ptr<ButtonAttachment> stereoOnAttach;
 
 
 

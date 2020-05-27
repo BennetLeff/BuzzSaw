@@ -35,6 +35,26 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
         slider.onValueChange = onValueChange;
     };
 
+    auto setupToggleButton = [this](ToggleButton& button, AudioProcessorValueTreeState& vts, String paramID,
+        std::unique_ptr<ButtonAttachment>& attachment, String name = {},
+        std::function<void()> onValueChange = {}, std::function<String(double)> textFromValue = {},
+        std::function<double(String)> valueFromText = {})
+    {
+        addAndMakeVisible(button);
+        attachment.reset(new ButtonAttachment(vts, paramID, button));
+
+        //button.setButtonStyle(DrawableButton::ImageAboveTextLabel);
+        button.setName(name);
+        //button.textFromValueFunction = textFromValue;
+        //slider.valueFromTextFunction = valueFromText;
+        //slider.setNumDecimalPlacesToDisplay(2);
+        //button.setTextBoxStyle(Slider::TextBoxBelow, false, 60, 15);
+        button.setColour(DrawableButton::backgroundColourId, Colours::transparentBlack);
+        button.setColour(DrawableButton::backgroundOnColourId, Colours::peru);
+
+        //button.onValueChange = onValueChange;
+    };
+
     setupSlider(preCutoffSlide, valueTreeState, "shgPreCutoff", preCutoffAttach, "PreCutoff", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(postCutoffSlide, valueTreeState, "shgPostCutoff", preCutoffAttach, "PostCutoff", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(mainGainSlide, valueTreeState, "shgMainGain", mainGainAttach, "MainGain", [this] { /*nlViewer.updateCurve();*/ });
@@ -42,6 +62,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
     
+    setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
 
     auto setupBox = [this](ComboBox& box, AudioProcessorValueTreeState& vts, String paramID,
         std::unique_ptr<ComboBoxAttachment>& attachment, StringArray choices,
@@ -79,7 +100,8 @@ void SubharmonicComponent::paint(Graphics& g)
     auto makeName = [this, &g](Component& comp, String name)
     {
         const int height = 20;
-        Rectangle<int> nameBox(comp.getX(), 402, comp.getWidth(), height);
+        //Rectangle<int> nameBox(comp.getX(), 402, comp.getWidth(), height);
+        Rectangle<int> nameBox(comp.getX(), comp.getY()-13, comp.getWidth(), height);
         g.drawFittedText(name, nameBox, Justification::centred, 1);
     };
 
@@ -89,6 +111,8 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(sideGainSlide, "SideGain");
     makeName(attackSlide, "Attack");
     makeName(releaseSlide, "Release");
+
+    makeName(stereoOnButton, "Widen");
 }
 
 void SubharmonicComponent::resized()
@@ -99,6 +123,8 @@ void SubharmonicComponent::resized()
     sideGainSlide.setBounds(mainGainSlide.getRight() - 30, 415, 90, 80);
     attackSlide.setBounds(sideGainSlide.getRight() - 30, 415, 90, 80);
     releaseSlide.setBounds(attackSlide.getRight() - 30, 415, 90, 80);
+
+    stereoOnButton.setBounds(80, 315, 40, 20);
 }
 
 void SubharmonicComponent::sliderValueChanged(Slider* slider)
