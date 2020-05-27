@@ -12,11 +12,12 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include"WavefolderProcessor.h"
-#include "SubharmonicProcessor.h"
+#include "CompressorProcessor.h"
+#include "Delay.h"
 #include "EQFilter.h"
 #include "Gain.h"
-#include "Delay.h"
+#include "SubharmonicProcessor.h"
+#include"WavefolderProcessor.h"
 
 //==============================================================================
 /**
@@ -111,6 +112,8 @@ private:
     Gain mainGain[2];
     Gain sideGain[2];
     Delay delay[2];
+
+    CompressorProcessor compressorProc;
 
     dsp::Oversampling<float> oversampling;
 

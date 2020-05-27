@@ -36,8 +36,8 @@ void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
     g.setFont (15.0f);
     //background
 
-    Image background = ImageCache::getFromMemory(BinaryData::thaibasiltest_png, BinaryData::thaibasiltest_pngSize);
-    g.drawImageAt(background, 0, 0);
+    // Image background = ImageCache::getFromMemory(BinaryData::thaibasiltest_png, BinaryData::thaibasiltest_pngSize);
+    // g.drawImageAt(background, 0, 0);
 
     subharmonicComponent->paint(g);
 }

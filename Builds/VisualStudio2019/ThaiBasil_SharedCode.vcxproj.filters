@@ -457,6 +457,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\CompressorProcessor.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Delay.cpp">
       <Filter>ThaiBasil\Source</Filter>
     </ClCompile>
@@ -2506,9 +2509,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_opengl\juce_opengl.mm">
       <Filter>JUCE Modules\juce_opengl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\BinaryData.cpp">
-      <Filter>JUCE Library Code</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_basics.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
@@ -2556,6 +2556,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\CompressorProcessor.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Delay.h">
       <Filter>ThaiBasil\Source</Filter>
     </ClInclude>
@@ -4900,9 +4903,6 @@
       <Filter>JUCE Modules\juce_opengl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\AppConfig.h">
-      <Filter>JUCE Library Code</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\BinaryData.h">
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">

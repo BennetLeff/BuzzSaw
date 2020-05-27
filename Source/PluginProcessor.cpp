@@ -13,8 +13,9 @@
 
 //==============================================================================
 ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
-     : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo()) 
-		 .withOutput("Output", AudioChannelSet::stereo())),
+    : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo())
+        .withOutput("Output", AudioChannelSet::stereo())),
+    compressorProc(getSampleRate()),
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
     oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
