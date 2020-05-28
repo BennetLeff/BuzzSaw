@@ -104,6 +104,7 @@ private:
 
     AudioBuffer<float> sidechainBuffer;
 
+    WavefolderProcessor wfProc[2];
     SubharmonicProcessor subProc[2];
     EQFilter preEQ[2];
     EQFilter postEQ[3][2];

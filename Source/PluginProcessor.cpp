@@ -153,33 +153,35 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
     wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
 
+    auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
 
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset((float)sampleRate * (float) oversampling.getOversamplingFactor());
+        subProc[ch].reset(oversampledRate);
+        wfProc[ch].reset(oversampledRate);
 
         mainGain[ch].prepare();
         sideGain[ch].prepare();
 
-        preEQ[ch].reset(sampleRate);
+        preEQ[ch].reset(oversampledRate);
         preEQ[ch].setEqShape(EqShape::lowPass);
         preEQ[ch].toggleOnOff(true);
 
-        dcBlocker[ch].reset(sampleRate);
+        dcBlocker[ch].reset(oversampledRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
         dcBlocker[ch].setFrequency(35.0f);
         dcBlocker[ch].setQ(0.7071f);
 
         //delay
-        delay[ch].initialize(sampleRate);
+        delay[ch].initialize(oversampledRate);
         delay[ch].setWetLevel(wetLevel);
         delay[ch].setDryLevel(dryLevel);
         delay[ch].setFeedback(feedback);
 
         for (int i = 0; i < 3; ++i)
         {
-            postEQ[i][ch].reset(sampleRate);
+            postEQ[i][ch].reset(oversampledRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
         }
@@ -227,8 +229,21 @@ void ThaiBasilAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
+
+
         mainGain[ch].setGain(Decibels::decibelsToGain(shgMainGainParam->load()));
         sideGain[ch].setGain(Decibels::decibelsToGain(shgSideGainParam->load()));
+
+        //WaveFolder Param Updates
+        
+        wfProc[ch].setFreq(*freqParam);
+        wfProc[ch].setDepth(*depthParam);
+        wfProc[ch].setFF(*ffParam);
+        wfProc[ch].setFB(*fbParam);
+        wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
+        wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
+
+        
 
         subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
 
@@ -249,54 +264,51 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 {
     ScopedNoDenormals noDenormals;
 
-    //WaveFolder implementation (includes oversampling)
-    /*dsp::AudioBlock<float> block(buffer);
-    dsp::AudioBlock<float> osBlock(buffer);
+    //sidechainBuffer.makeCopyOf(buffer, true);
+    //sidechainBuffer = buffer; //just gonna point straight to original buffer to test oversampling
+
+    //Oversample only sidechain buffer
+    dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
+    dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
     osBlock = oversampling.processSamplesUp(block);
     float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
-    AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));*/
+    AudioBuffer<float> osSideBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
     
     updateParams();
-    sidechainBuffer.makeCopyOf(buffer, true);
-    const int numSamples = buffer.getNumSamples(); //not sure if this is using right buffer
+    const int numSamples = osSideBuffer.getNumSamples();  //change back to osSideBuffer
 
-    for (int ch = 0; ch < buffer.getNumChannels();ch++) //osBuffer.getNumChannels(); ++ch)
+    //All processing for the oversampled block (wet signal)
+    //I took out all the dry signal for now
+    for (int ch = 0; ch < osSideBuffer.getNumChannels();ch++) //osBuffer.getNumChannels(); ++ch)
     {
-        //WaveFolder Param Updates
-        /*
-        wfProc[ch].setFreq(*freqParam);
-        wfProc[ch].setDepth(*depthParam);
-        wfProc[ch].setFF(*ffParam);
-        wfProc[ch].setFB(*fbParam);
-        wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
-        wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
 
-        wfProc[ch].processBlock(osBuffer.getWritePointer(ch), osBuffer.getNumSamples());
-        */
-        
         //Subharmonic
-        auto main = buffer.getWritePointer(ch);
-        auto side = sidechainBuffer.getWritePointer(ch);
+        //auto main = buffer.getWritePointer(ch);
+        auto side = osSideBuffer.getWritePointer(ch); //change back to osSideBuffer here and in for loop
 
         preEQ[ch].processBlock(side, numSamples);
         subProc[ch].processBlock(side, numSamples);
         for (int i = 0; i < 3; ++i)
             postEQ[i][ch].processBlock(side, numSamples);
-        //delay stereo effect
 
+        //delay stereo effect
         delay[ch].processBlock(side, numSamples);
+
+        //wavefolder
+        wfProc[ch].processBlock(side,numSamples);
 
         dcBlocker[ch].processBlock(side, numSamples);
 
-        mainGain[ch].processBlock(main, numSamples);
+        //mainGain[ch].processBlock(main, numSamples);
         sideGain[ch].processBlock(side, numSamples);
 
 
 
-        buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+        //buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
     }
 
-    //oversampling.processSamplesDown(block);
+    oversampling.processSamplesDown(block);
+
 }
 
 bool ThaiBasilAudioProcessor::hasEditor() const
