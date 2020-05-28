@@ -73,14 +73,14 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
     
-    /*
+    
     std::atomic<float>* freqParam;
     std::atomic<float>* depthParam;
     std::atomic<float>* ffParam;
     std::atomic<float>* fbParam;
     std::atomic<float>* satParam;
     std::atomic<float>* waveParam;
-    */
+    
 
     //Subharmonic Generator Params
     std::atomic<float>* shgPreCutoffParam;

@@ -24,12 +24,12 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //preGain = 1.0;
 
     //WaveFolder Param Tree Pointers
-    //freqParam = vts.getRawParameterValue("freq");
-    //depthParam = vts.getRawParameterValue("depth");
-    //ffParam = vts.getRawParameterValue("feedforward");
-    //fbParam = vts.getRawParameterValue("feedback");
-    //satParam = vts.getRawParameterValue("sat");
-    //waveParam = vts.getRawParameterValue("wave"); 
+    freqParam = vts.getRawParameterValue("freq");
+    depthParam = vts.getRawParameterValue("depth");
+    ffParam = vts.getRawParameterValue("feedforward");
+    fbParam = vts.getRawParameterValue("feedback");
+    satParam = vts.getRawParameterValue("sat");
+    waveParam = vts.getRawParameterValue("wave"); 
     
     //WaveFolder Param Tree Pointers
     shgPreCutoffParam = vts.getRawParameterValue("shgPreCutoff");
@@ -48,13 +48,13 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
     //WaveFolder Params
-    /*params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
+    params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
     params.push_back(std::make_unique<AudioParameterFloat>("depth", "Depth", 0.0f, 0.5f, 0.1f));
     params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("feedforward", "Feedforward", 0.0f, 1.0f, 1.0f));
 
     params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
-    params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));*///WaveFolder Params
+    params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));
     
     //Subharmonic Params
 

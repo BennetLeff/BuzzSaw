@@ -94,8 +94,8 @@ void SubharmonicComponent::paint(Graphics& g)
 
     g.setColour(Colours::white);
     g.setFont(14.0f);
-    g.drawText("SubharmonicComponent", getLocalBounds(),
-        Justification::centred, true);   // draw some placeholder text
+    //g.drawText("SubharmonicComponent", getLocalBounds(),
+        //Justification::centred, true);   // draw some placeholder text
 
     auto makeName = [this, &g](Component& comp, String name)
     {
@@ -117,14 +117,14 @@ void SubharmonicComponent::paint(Graphics& g)
 
 void SubharmonicComponent::resized()
 {
-    preCutoffSlide.setBounds(-10, 415, 90, 80);
-    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, 415, 90, 80);
-    mainGainSlide.setBounds(postCutoffSlide.getRight() - 30, 415, 90, 80);
-    sideGainSlide.setBounds(mainGainSlide.getRight() - 30, 415, 90, 80);
-    attackSlide.setBounds(sideGainSlide.getRight() - 30, 415, 90, 80);
-    releaseSlide.setBounds(attackSlide.getRight() - 30, 415, 90, 80);
+    preCutoffSlide.setBounds(-10, this->getHeight()/4, 90, 80);
+    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    mainGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    attackSlide.setBounds(sideGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
 
-    stereoOnButton.setBounds(80, 315, 40, 20);
+    stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);
 }
 
 void SubharmonicComponent::sliderValueChanged(Slider* slider)

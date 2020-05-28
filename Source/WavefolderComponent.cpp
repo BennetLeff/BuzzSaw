@@ -68,13 +68,13 @@ void WavefolderComponent::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (14.0f);
-    g.drawText ("WavefolderComponent", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+   // g.drawText ("WavefolderComponent", getLocalBounds(),
+               // Justification::centred, true);   // draw some placeholder text
 
     auto makeName = [this, &g](Component& comp, String name)
     {
         const int height = 20;
-        Rectangle<int> nameBox(comp.getX(), 402, comp.getWidth(), height);
+        Rectangle<int> nameBox(comp.getX(), comp.getY() - 13, comp.getWidth(), height);
         g.drawFittedText(name, nameBox, Justification::centred, 1);
     };
 
@@ -88,12 +88,12 @@ void WavefolderComponent::paint (Graphics& g)
 
 void WavefolderComponent::resized()
 {
-    freqSlide.setBounds(-10, 415, 90, 80);
-    depthSlide.setBounds(freqSlide.getRight() - 30, 415, 90, 80);
-    ffSlide.setBounds(depthSlide.getRight() - 30, 415, 90, 80);
-    fbSlide.setBounds(ffSlide.getRight() - 30, 415, 90, 80);
-    satBox.setBounds(fbSlide.getRight() - 10, 440, 70, 20);
-    waveBox.setBounds(satBox.getRight() + 10, 440, 70, 20);
+    freqSlide.setBounds(-10, this->getHeight() / 4, 90, 80);
+    depthSlide.setBounds(freqSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    ffSlide.setBounds(depthSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    fbSlide.setBounds(ffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    satBox.setBounds(fbSlide.getRight() - 10, this->getHeight() / 4, 70, 20);
+    waveBox.setBounds(satBox.getRight() + 10, this->getHeight() / 4, 70, 20);
 }
 
 void WavefolderComponent::sliderValueChanged(Slider* slider)
