@@ -15,7 +15,7 @@
 class CompressorProcessor
 {
 public:
-    CompressorProcessor(float sampleRate);
+    CompressorProcessor(AudioProcessorValueTreeState& state, float sampleRate);
 
     void reset(float sampleRate);
     void processBlock(float* buffer, int numSamples);
@@ -26,12 +26,17 @@ public:
     void setRatio(float ratio) { ratio = ratio;  }
     void setThreshold(float threshold) { threshold = threshold;  }
 private:
+    AudioProcessorValueTreeState& state;
+    std::atomic<float>* threshold;
+    std::atomic<float>* ratio;
+    std::atomic<float>* outputGain;
+
     // in seconds
     float attack = 0.1;
     float release = 0.25;
 
     // Any samples above this volume will be compressed. 
-    float threshold = -3.0;
+    //float threshold = -3.0;
 
     // The ratio determines the factor of gain reduction.
     // A ratio of n or n:1 will cause a sample n dB over the threshold
@@ -39,7 +44,7 @@ private:
     // For a ratio of 4:1, a sample 4 dB over the threshold is attenuated
     // to 1 dB over the threshold. A sample of 8 dB will be attenuated to
     // 3 dB over the threshold.
-    float ratio = 4.0;
+    // float ratio = 4.0;    
 
     float sampleRate = 44100.0f;
 

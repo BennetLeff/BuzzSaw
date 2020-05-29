@@ -8,6 +8,10 @@
             file="../../OneDrive/Pictures/vst assets/thaibasiltest.png"/>
     </GROUP>
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
+      <FILE id="DOAsyP" name="CompressorComponent.cpp" compile="1" resource="0"
+            file="Source/CompressorComponent.cpp"/>
+      <FILE id="PZkQiT" name="CompressorComponent.h" compile="0" resource="0"
+            file="Source/CompressorComponent.h"/>
       <FILE id="SsUVaY" name="CompressorProcessor.cpp" compile="1" resource="0"
             file="Source/CompressorProcessor.cpp"/>
       <FILE id="QA6zrm" name="CompressorProcessor.h" compile="0" resource="0"

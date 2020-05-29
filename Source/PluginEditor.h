@@ -14,6 +14,7 @@
 #include "PluginProcessor.h"
 #include "SubharmonicComponent.h"
 //#include "WavefolderComponent.h"
+#include "CompressorComponent.h"
 
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
 using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
@@ -43,6 +44,8 @@ private:
     Slider preGainControl;
 
     std::unique_ptr<SubharmonicComponent> subharmonicComponent;
+
+    std::unique_ptr<CompressorComponent> compressorComponent;
 
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;

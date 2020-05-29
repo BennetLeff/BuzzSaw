@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -91,6 +81,12 @@ private:
     std::atomic<float>* shgAttackParam;
     std::atomic<float>* shgReleaseParam;
     
+
+    // Parameters for CompressorProcessor
+    std::atomic<float>* thresholdDBParameter;
+    std::atomic<float>* ratioParameter;
+    std::atomic<float>* outputGainDBParameter;
+
     //stereo params
     std::atomic<float>* stereoOnParam;
 
@@ -113,7 +109,7 @@ private:
     Gain sideGain[2];
     Delay delay[2];
 
-    CompressorProcessor compressorProc;
+    std::unique_ptr<CompressorProcessor> compressorProc;
 
     dsp::Oversampling<float> oversampling;
 

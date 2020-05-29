@@ -136,6 +136,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\CompressorComponent.cpp"/>
     <ClCompile Include="..\..\Source\CompressorProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Delay.cpp"/>
     <ClCompile Include="..\..\Source\SubharmonicComponent.cpp"/>
@@ -2061,6 +2062,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_opengl.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\CompressorComponent.h"/>
     <ClInclude Include="..\..\Source\CompressorProcessor.h"/>
     <ClInclude Include="..\..\Source\Delay.h"/>
     <ClInclude Include="..\..\Source\SubharmonicComponent.h"/>

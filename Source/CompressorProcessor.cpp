@@ -11,13 +11,18 @@
 #include "CompressorProcessor.h"
 
 
-CompressorProcessor::CompressorProcessor(float sampleRate)
+CompressorProcessor::CompressorProcessor(AudioProcessorValueTreeState& state, float sampleRate)
+    : state(state)
 {
     envelope.setSampleRate(sampleRate);
 
     // Set the ADSR parameters via struct from the ADSR class.
     ADSR::Parameters adsrParameters{this->attack, 0.001f, 1.0f, this->release};
     envelope.setParameters(adsrParameters);
+
+    threshold = state.getRawParameterValue("compThreshold");
+    ratio = state.getRawParameterValue("compRatio");
+    outputGain = state.getRawParameterValue("compOutputGain");
 }
 
 void CompressorProcessor::reset(float sampleRate)
@@ -35,32 +40,28 @@ void CompressorProcessor::reset(float sampleRate)
  */
 void CompressorProcessor::processBlock(float* buffer, int numSamples) 
 {
-    for (int i = 0; i < numSamples; i++)
-    {
-        if (buffer[i] >= threshold)
-        {
-            envelope.noteOn();
-        }
-
-        else if (buffer[i] < threshold)
-        {
-            envelope.noteOff();
-        }
-
-        auto amountOverThreshold = buffer[i] - threshold;
-
-        // At the beginning of the attack, the envelope should be at 1.
-        // At the end of the release the envelope should be at 0.
-        // We'll have to keep an eye on this to ensure there's no floating point
-        // arithmetic errors resulting in a negative value.
-        auto inverseEnvelope = 1.0001 - (envelope.getNextSample() + 0.0001);
-
-        buffer[i] = threshold + ((amountOverThreshold / ratio) * inverseEnvelope);
-
-    }
+    
 }
 
 void CompressorProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer&)
 {
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    {
+        const int numSamples = buffer.getNumSamples();
+        const float peak = buffer.getMagnitude(channel, 0, numSamples);
+        const float peakDB = Decibels::gainToDecibels<float>(peak);
 
+        // Peak Sensing
+        // attack time is 0 (FIXME)
+        // release time is the time it takes to play the buffer (FIXME)
+        if (peakDB > *threshold) {
+            const float cs = 1.0f - (1.0f / *ratio);
+            float gainDB = cs * (*threshold - peakDB);
+            gainDB = jmin<float>(0, gainDB);
+            const float gain = Decibels::decibelsToGain<float>(gainDB);
+            buffer.applyGain(channel, 0, numSamples, gain);
+        }
+    }
+    const float outputGainFromDB = Decibels::decibelsToGain<float>(*outputGain);
+    buffer.applyGain(outputGainFromDB);
 }

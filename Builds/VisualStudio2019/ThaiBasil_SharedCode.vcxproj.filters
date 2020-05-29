@@ -457,6 +457,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\CompressorComponent.cpp">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\CompressorProcessor.cpp">
       <Filter>ThaiBasil\Source</Filter>
     </ClCompile>
@@ -2556,6 +2559,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\CompressorComponent.h">
+      <Filter>ThaiBasil\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\CompressorProcessor.h">
       <Filter>ThaiBasil\Source</Filter>
     </ClInclude>

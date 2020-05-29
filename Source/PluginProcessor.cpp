@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -15,14 +5,11 @@
 ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo())
         .withOutput("Output", AudioChannelSet::stereo())),
-    compressorProc(getSampleRate()),
+    //compressorProc(44100),
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
     oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
-    //Old Gain Controls
-	// addParameter(gain = new AudioParameterFloat("Gain", "Gain", 0, 6.0, 1.0));
-	//gain = 1.0;
-    //preGain = 1.0;
+    compressorProc = std::make_unique<CompressorProcessor>(getVTS(), 44100);
 
     //WaveFolder Param Tree Pointers
     //freqParam = vts.getRawParameterValue("freq");
@@ -32,13 +19,18 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //satParam = vts.getRawParameterValue("sat");
     //waveParam = vts.getRawParameterValue("wave"); 
     
-    //WaveFolder Param Tree Pointers
+    // Subharmonic Generator Param Tree Pointers
     shgPreCutoffParam = vts.getRawParameterValue("shgPreCutoff");
     shgPostCutoffParam = vts.getRawParameterValue("shgPostCutoff");
     shgMainGainParam = vts.getRawParameterValue("shgMainGain");
     shgSideGainParam = vts.getRawParameterValue("shgSideGain");
     shgAttackParam = vts.getRawParameterValue("shgAttack");
     shgReleaseParam = vts.getRawParameterValue("shgRelease");
+
+    // Compressor Parameters
+    thresholdDBParameter = vts.getRawParameterValue("compThreshold");
+    ratioParameter = vts.getRawParameterValue("compRatio");
+    outputGainDBParameter = vts.getRawParameterValue("compOutputGain");
 
     //Stereo Effect Param Tree Pointers
     stereoOnParam = vts.getRawParameterValue("stereoOn");
@@ -48,7 +40,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
 {
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
-    //WaveFolder Params
+    // WaveFolder Params
     /*params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
     params.push_back(std::make_unique<AudioParameterFloat>("depth", "Depth", 0.0f, 0.5f, 0.1f));
     params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
@@ -57,8 +49,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
     params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));*///WaveFolder Params
     
-    //Subharmonic Params
-
+    // Subharmonic Params
     NormalisableRange<float> freqRange(20.0f, 20000.0f);
     freqRange.setSkewForCentre(1000.0f);
 
@@ -75,8 +66,17 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
-    params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
+    // Compressor Params
+    NormalisableRange<float> thresholdRange(-60.0f, 6.0f);
+    NormalisableRange<float> ratioRange(1.0f, 60.0f);
+    NormalisableRange<float> outputGainRange(0.0f, 20.0f);
+    
+    params.push_back(std::make_unique<AudioParameterFloat>("compThreshold", "Threshold", thresholdRange, 1.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("compRatio", "Ratio", ratioRange, 1.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("compOutputGain", "Output Gain", outputGainRange, 1.0f));
 
+    // Stereo Effect Parameter
+    params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
    
     return { params.begin(), params.end() };
 }
@@ -149,6 +149,8 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     oversampling.initProcessing(samplesPerBlock);
+
+    compressorProc->reset(sampleRate);
 
     //WaveFolder Processing
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
@@ -258,46 +260,38 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));*/
     
     updateParams();
-    sidechainBuffer.makeCopyOf(buffer, true);
+    //sidechainBuffer.makeCopyOf(buffer, true);
     const int numSamples = buffer.getNumSamples(); //not sure if this is using right buffer
 
-    for (int ch = 0; ch < buffer.getNumChannels();ch++) //osBuffer.getNumChannels(); ++ch)
-    {
-        //WaveFolder Param Updates
-        /*
-        wfProc[ch].setFreq(*freqParam);
-        wfProc[ch].setDepth(*depthParam);
-        wfProc[ch].setFF(*ffParam);
-        wfProc[ch].setFB(*fbParam);
-        wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
-        wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
+    //for (int ch = 0; ch < buffer.getNumChannels();ch++) //osBuffer.getNumChannels(); ++ch)
+    //{
 
-        wfProc[ch].processBlock(osBuffer.getWritePointer(ch), osBuffer.getNumSamples());
-        */
         
         //Subharmonic
-        auto main = buffer.getWritePointer(ch);
-        auto side = sidechainBuffer.getWritePointer(ch);
+        //auto main = buffer.getWritePointer(ch);
+        //auto side = sidechainBuffer.getWritePointer(ch);
 
-        preEQ[ch].processBlock(side, numSamples);
-        subProc[ch].processBlock(side, numSamples);
-        for (int i = 0; i < 3; ++i)
-            postEQ[i][ch].processBlock(side, numSamples);
-        //delay stereo effect
+        //preEQ[ch].processBlock(side, numSamples);
+        //subProc[ch].processBlock(side, numSamples);
+        //for (int i = 0; i < 3; ++i)
+        //    postEQ[i][ch].processBlock(side, numSamples);
+        ////delay stereo effect
 
-        delay[ch].processBlock(side, numSamples);
+        //delay[ch].processBlock(side, numSamples);
 
-        dcBlocker[ch].processBlock(side, numSamples);
+        //dcBlocker[ch].processBlock(side, numSamples);
 
-        mainGain[ch].processBlock(main, numSamples);
-        sideGain[ch].processBlock(side, numSamples);
+        //mainGain[ch].processBlock(main, numSamples);
+        //sideGain[ch].processBlock(side, numSamples);
 
 
 
-        buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
-    }
+        //buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+    //}
 
     //oversampling.processSamplesDown(block);
+
+    compressorProc->processBlock(buffer, midiMessages);
 }
 
 bool ThaiBasilAudioProcessor::hasEditor() const
