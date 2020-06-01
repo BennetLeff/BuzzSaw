@@ -21,7 +21,7 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
     addAndMakeVisible(*subharmonicComponent);
     addAndMakeVisible(*wavefolderComponent);
 
-    setSize(400, 500);
+    setSize(620, 400);
 }
 
 ThaiBasilAudioProcessorEditor::~ThaiBasilAudioProcessorEditor()
