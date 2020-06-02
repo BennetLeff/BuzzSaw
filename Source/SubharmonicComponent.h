@@ -39,11 +39,14 @@ private:
     std::unique_ptr<SliderAttachment> postCutoffAttach;
 
     
-    Slider mainGainSlide;
-    std::unique_ptr<SliderAttachment> mainGainAttach;
+    Slider outGainSlide;
+    std::unique_ptr<SliderAttachment> outGainAttach;
 
-    Slider sideGainSlide;
-    std::unique_ptr<SliderAttachment> sideGainAttach;
+    Slider blendSlide; 
+    std::unique_ptr<SliderAttachment> blendAttach;
+
+    //Slider sideGainSlide;
+    //std::unique_ptr<SliderAttachment> sideGainAttach;
     
     Slider attackSlide;
     std::unique_ptr<SliderAttachment> attackAttach;

@@ -57,8 +57,9 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
 
     setupSlider(preCutoffSlide, valueTreeState, "shgPreCutoff", preCutoffAttach, "PreCutoff", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(postCutoffSlide, valueTreeState, "shgPostCutoff", preCutoffAttach, "PostCutoff", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(mainGainSlide, valueTreeState, "shgMainGain", mainGainAttach, "MainGain", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
+    setupSlider(outGainSlide, valueTreeState, "outGain", outGainAttach, "outGain", [this] { /*nlViewer.updateCurve();*/ });
+    setupSlider(blendSlide, valueTreeState, "mainBlend", blendAttach, "Blend", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
     
@@ -107,8 +108,9 @@ void SubharmonicComponent::paint(Graphics& g)
 
     makeName(preCutoffSlide, "PreCutoff");
     makeName(postCutoffSlide, "PostCutoff");
-    makeName(mainGainSlide, "Gain");
-    makeName(sideGainSlide, "SideGain");
+    makeName(outGainSlide, "Gain");
+   // makeName(sideGainSlide, "SideGain");
+    makeName(blendSlide, "Blend");
     makeName(attackSlide, "Attack");
     makeName(releaseSlide, "Release");
 
@@ -119,9 +121,10 @@ void SubharmonicComponent::resized()
 {
     preCutoffSlide.setBounds(-10, this->getHeight()/4, 90, 80);
     postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    mainGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    attackSlide.setBounds(sideGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    outGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+   // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    blendSlide.setBounds(outGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    attackSlide.setBounds(blendSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
 
     stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);

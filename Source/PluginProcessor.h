@@ -74,6 +74,12 @@ private:
     AudioProcessorValueTreeState vts;
     
     std::atomic<float>* driveParam;
+    std::atomic<float>* outGainParam;
+    std::atomic<float>* mainBlend; //0 to 100
+    float mainDryLevel;//0 to 1
+    float mainWetLevel;//0 to 1
+    float mainDryGain; 
+    float mainWetGain;
     
     //Waveshaper params
     std::atomic<float>* freqParam;
@@ -87,10 +93,12 @@ private:
     //Subharmonic Generator Params
     std::atomic<float>* shgPreCutoffParam;
     std::atomic<float>* shgPostCutoffParam;
-    std::atomic<float>* shgMainGainParam;
-    std::atomic<float>* shgSideGainParam;
+    //std::atomic<float>* shgMainGainParam;
+    //std::atomic<float>* shgSideGainParam;
     std::atomic<float>* shgAttackParam;
     std::atomic<float>* shgReleaseParam;
+
+ 
     
     //stereo params
     std::atomic<float>* stereoOnParam;
@@ -101,8 +109,8 @@ private:
     const float leftDelayTime = 0.04;
     const float rightDelayTime = 0.07;
     const float feedback = 0.1;
-    const float wetLevel = 0.5;
-    const float dryLevel = 0.5;
+    const float delayWetLevel = 0.5;
+    const float delayDryLevel = 0.5;
 
     AudioBuffer<float> sidechainBuffer;
 
@@ -112,8 +120,9 @@ private:
     EQFilter postEQ[3][2];
     EQFilter dcBlocker[2];
     Gain drive[2];
-    Gain mainGain[2];
-    Gain sideGain[2];
+    Gain dryGain[2];
+    Gain wetGain[2];
+    Gain outGain[2];
     Delay delay[2];
 
     dsp::Oversampling<float> oversampling;

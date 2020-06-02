@@ -24,6 +24,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //preGain = 1.0;
     
     //Standard Param Tree Pointers
+    mainBlend = vts.getRawParameterValue("mainBlend"); //blend % is same as wet level, dry level is (100 - wet level)
     driveParam = vts.getRawParameterValue("drive");
 
     //WaveFolder Param Tree Pointers
@@ -37,8 +38,9 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //WaveFolder Param Tree Pointers
     shgPreCutoffParam = vts.getRawParameterValue("shgPreCutoff");
     shgPostCutoffParam = vts.getRawParameterValue("shgPostCutoff");
-    shgMainGainParam = vts.getRawParameterValue("shgMainGain");
-    shgSideGainParam = vts.getRawParameterValue("shgSideGain");
+    //shgMainGainParam = vts.getRawParameterValue("shgMainGain");
+    //shgSideGainParam = vts.getRawParameterValue("shgSideGain");
+    outGainParam = vts.getRawParameterValue("outGain");
     shgAttackParam = vts.getRawParameterValue("shgAttack");
     shgReleaseParam = vts.getRawParameterValue("shgRelease");
 
@@ -52,6 +54,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
 
     //standard params
     params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 100.0f, 0.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("mainBlend", "Blend", 0.0f, 100.0f, 50.0f));
 
     //WaveFolder Params
     params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
@@ -75,8 +78,9 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
 
     params.push_back(std::make_unique<AudioParameterFloat>("shgPreCutoff", "PreCutoff", freqRange, 500.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 500.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -60.0f, 0.0f, -32.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
@@ -168,8 +172,9 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         wfProc[ch].reset(oversampledRate);
 
         drive[ch].prepare();
-        mainGain[ch].prepare();
-        sideGain[ch].prepare();
+        dryGain[ch].prepare();
+        wetGain[ch].prepare();
+        outGain[ch].prepare();
 
         preEQ[ch].reset(oversampledRate);
         preEQ[ch].setEqShape(EqShape::highPass);
@@ -182,8 +187,8 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
         //delay
         delay[ch].initialize(oversampledRate);
-        delay[ch].setWetLevel(wetLevel);
-        delay[ch].setDryLevel(dryLevel);
+        delay[ch].setWetLevel(delayWetLevel);
+        delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
         for (int i = 0; i < 3; ++i)
@@ -237,9 +242,15 @@ void ThaiBasilAudioProcessor::updateParams()
     for (int ch = 0; ch < 2; ++ch)
     {
 
+
+         mainWetLevel = (*mainBlend)/100.0f;
+         mainDryLevel = (100 - mainWetLevel);
+
         drive[ch].setGain(Decibels::decibelsToGain(driveParam->load()));
-        mainGain[ch].setGain(Decibels::decibelsToGain(shgMainGainParam->load()));
-        sideGain[ch].setGain(Decibels::decibelsToGain(shgSideGainParam->load()));
+        //need a multiplier on levels?
+        dryGain[ch].setGain(mainDryLevel);//Decibels::decibelsToGain(shgMainGainParam->load()));
+        wetGain[ch].setGain(mainWetLevel);//Decibels::decibelsToGain(shgSideGainParam->load()));
+        outGain[ch].setGain(Decibels::decibelsToGain(outGainParam->load()));
 
         //WaveFolder Param Updates
         
@@ -311,12 +322,14 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
         dcBlocker[ch].processBlock(side, numSamples);
 
-        mainGain[ch].processBlock(main, numSamples);
-        sideGain[ch].processBlock(side, numSamples);
+        wetGain[ch].processBlock(side, numSamples);
+        dryGain[ch].processBlock(main, numSamples);
 
 
 
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+        outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples); //these buffer references are messed up
+
     }
 
     //oversampling.processSamplesDown(block);
