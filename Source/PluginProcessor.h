@@ -73,7 +73,9 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
     
+    std::atomic<float>* driveParam;
     
+    //Waveshaper params
     std::atomic<float>* freqParam;
     std::atomic<float>* depthParam;
     std::atomic<float>* ffParam;
@@ -109,6 +111,7 @@ private:
     EQFilter preEQ[2];
     EQFilter postEQ[3][2];
     EQFilter dcBlocker[2];
+    Gain drive[2];
     Gain mainGain[2];
     Gain sideGain[2];
     Delay delay[2];

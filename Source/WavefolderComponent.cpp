@@ -34,6 +34,7 @@ WavefolderComponent::WavefolderComponent(AudioProcessorValueTreeState& valueTree
         slider.onValueChange = onValueChange;
     };
 
+    setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(freqSlide, valueTreeState, "freq", freqAttach, "Freq", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(depthSlide, valueTreeState, "depth", depthAttach, "Depth", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(ffSlide, valueTreeState, "feedforward", ffAttach, "Feedforward", [this] {/* nlViewer.updateCurve();*/ });
@@ -78,6 +79,7 @@ void WavefolderComponent::paint (Graphics& g)
         g.drawFittedText(name, nameBox, Justification::centred, 1);
     };
 
+    makeName(driveSlide, "Drive");
     makeName(freqSlide, "Frequency");
     makeName(depthSlide, "Depth");
     makeName(ffSlide, "FF");
@@ -94,6 +96,7 @@ void WavefolderComponent::resized()
     fbSlide.setBounds(ffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     satBox.setBounds(fbSlide.getRight() - 10, this->getHeight() / 4, 70, 20);
     waveBox.setBounds(satBox.getRight() + 10, this->getHeight() / 4, 70, 20);
+    driveSlide.setBounds(waveBox.getRight() - 10, this->getHeight() / 4, 90, 80);
 }
 
 void WavefolderComponent::sliderValueChanged(Slider* slider)

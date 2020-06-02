@@ -37,6 +37,7 @@ private:
 
     Slider postCutoffSlide;
     std::unique_ptr<SliderAttachment> postCutoffAttach;
+
     
     Slider mainGainSlide;
     std::unique_ptr<SliderAttachment> mainGainAttach;
