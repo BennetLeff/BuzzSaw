@@ -38,7 +38,7 @@ void WavefolderProcessor::processBlock(float* buffer, int numSamples)
 {
     for (int n = 0; n < numSamples; ++n)
     {
-        auto curFF = feedforward.getNextValue();
+        auto curFF = feedforward.getNextValue(); 
         auto curFB = feedback.getNextValue();
 
         float ff = curFF * ffSat(buffer[n]) + (1.0f - curFF) * buffer[n];

@@ -83,11 +83,12 @@ private:
     
     //Waveshaper params
     std::atomic<float>* freqParam;
-    std::atomic<float>* depthParam;
-    std::atomic<float>* ffParam;
-    std::atomic<float>* fbParam;
-    std::atomic<float>* satParam;
-    std::atomic<float>* waveParam;
+    std::atomic<float>* depthParam; 
+    //std::atomic<float>* ffParam;
+    //const float ffParam = 1.0f; //just setting this to 1 here for now, need to set it in the Wavefolder class instead
+    std::atomic<float>* fbParam; 
+    std::atomic<float>* satParam; //set this at Atanh
+    std::atomic<float>* waveParam; //set this at none
     
 
     //Subharmonic Generator Params

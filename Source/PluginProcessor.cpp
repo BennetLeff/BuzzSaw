@@ -30,7 +30,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //WaveFolder Param Tree Pointers
     freqParam = vts.getRawParameterValue("freq");
     depthParam = vts.getRawParameterValue("depth");
-    ffParam = vts.getRawParameterValue("feedforward");
+    //ffParam = vts.getRawParameterValue("feedforward");
     fbParam = vts.getRawParameterValue("feedback");
     satParam = vts.getRawParameterValue("sat");
     waveParam = vts.getRawParameterValue("wave"); 
@@ -80,7 +80,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 500.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -60.0f, 0.0f, -32.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -60.0f, -20.0f, -32.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
@@ -256,7 +256,7 @@ void ThaiBasilAudioProcessor::updateParams()
         
         wfProc[ch].setFreq(*freqParam);
         wfProc[ch].setDepth(*depthParam);
-        wfProc[ch].setFF(*ffParam);
+        //wfProc[ch].setFF(ffParam); //we finalized this at 1.0f
         wfProc[ch].setFB(*fbParam);
         wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
         wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
@@ -295,13 +295,11 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     updateParams();
     const int numSamples = buffer.getNumSamples(); 
 
-    //All processing for the oversampled block (wet signal)
-    //I took out all the dry signal for now
     for (int ch = 0; ch < buffer.getNumChannels();ch++) 
     {
         
         auto main = buffer.getWritePointer(ch);
-        auto side = sidechainBuffer.getWritePointer(ch); //change back to osSideBuffer here and in for loop
+        auto side = sidechainBuffer.getWritePointer(ch); 
 
         drive[ch].processBlock(side, numSamples);
 
@@ -328,7 +326,7 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
 
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
-        outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples); //these buffer references are messed up
+        outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples);
 
     }
 

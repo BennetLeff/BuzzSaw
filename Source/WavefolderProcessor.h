@@ -35,7 +35,7 @@ private:
 
     SmoothedValue<float, ValueSmoothingTypes::Linear> freq = 0.0f;
     SmoothedValue<float, ValueSmoothingTypes::Linear> depth = 0.0f;
-    SmoothedValue<float, ValueSmoothingTypes::Linear> feedforward = 1.0f;
+    SmoothedValue<float, ValueSmoothingTypes::Linear> feedforward = 1.0f; //doesnt need to be a smoothed value, we removed its slider
     SmoothedValue<float, ValueSmoothingTypes::Linear> feedback = 0.0f;
 
     float y1 = 0.0f;

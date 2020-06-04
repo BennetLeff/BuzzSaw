@@ -40,8 +40,8 @@ private:
     Slider depthSlide;
     std::unique_ptr<SliderAttachment> depthAttach;
 
-    Slider ffSlide;
-    std::unique_ptr<SliderAttachment> ffAttach;
+    //Slider ffSlide;
+    //std::unique_ptr<SliderAttachment> ffAttach;
 
     Slider fbSlide;
     std::unique_ptr<SliderAttachment> fbAttach;
