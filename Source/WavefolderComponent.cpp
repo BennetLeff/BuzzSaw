@@ -35,10 +35,10 @@ WavefolderComponent::WavefolderComponent(AudioProcessorValueTreeState& valueTree
     };
 
     setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(freqSlide, valueTreeState, "freq", freqAttach, "Freq", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(depthSlide, valueTreeState, "depth", depthAttach, "Depth", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(freqSlide, valueTreeState, "freq", freqAttach, "Freq", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(depthSlide, valueTreeState, "depth", depthAttach, "Depth", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(ffSlide, valueTreeState, "feedforward", ffAttach, "Feedforward", [this] {/* nlViewer.updateCurve();*/ });
-    setupSlider(fbSlide, valueTreeState, "feedback", fbAttach, "Feedback", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(fbSlide, valueTreeState, "feedback", fbAttach, "Feedback", [this] { /*nlViewer.updateCurve();*/ });
 
     auto setupBox = [this](ComboBox& box, AudioProcessorValueTreeState& vts, String paramID,
         std::unique_ptr<ComboBoxAttachment>& attachment, StringArray choices,
@@ -52,8 +52,8 @@ WavefolderComponent::WavefolderComponent(AudioProcessorValueTreeState& valueTree
         attachment.reset(new ComboBoxAttachment(vts, paramID, box));
     };
 
-    setupBox(satBox, valueTreeState, "sat", satBoxAttach, satChoices, [this] {/* nlViewer.updateCurve();*/ });
-    setupBox(waveBox, valueTreeState, "wave", waveBoxAttach, waveChoices, [this] { /*nlViewer.updateCurve();*/ });
+    //setupBox(satBox, valueTreeState, "sat", satBoxAttach, satChoices, [this] {/* nlViewer.updateCurve();*/ });
+    //setupBox(waveBox, valueTreeState, "wave", waveBoxAttach, waveChoices, [this] { /*nlViewer.updateCurve();*/ });
 }
 
 WavefolderComponent::~WavefolderComponent()
@@ -80,23 +80,23 @@ void WavefolderComponent::paint (Graphics& g)
     };
 
     makeName(driveSlide, "Drive");
-    makeName(freqSlide, "Frequency");
-    makeName(depthSlide, "Depth");
+    //makeName(freqSlide, "Frequency");
+    //makeName(depthSlide, "Depth");
    // makeName(ffSlide, "FF");
-    makeName(fbSlide, "FB");
-    makeName(satBox, "Saturators");
-    makeName(waveBox, "Waves");
+    //makeName(fbSlide, "FB");
+    //makeName(satBox, "Saturators");
+    //makeName(waveBox, "Waves");
 }
 
 void WavefolderComponent::resized()
 {
-    freqSlide.setBounds(-10, this->getHeight() / 4, 90, 80);
-    depthSlide.setBounds(freqSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    //freqSlide.setBounds(-10, this->getHeight() / 4, 90, 80);
+    //depthSlide.setBounds(freqSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     //ffSlide.setBounds(depthSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    fbSlide.setBounds(depthSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    satBox.setBounds(fbSlide.getRight() - 10, this->getHeight() / 4, 70, 20);
-    waveBox.setBounds(satBox.getRight() + 10, this->getHeight() / 4, 70, 20);
-    driveSlide.setBounds(waveBox.getRight() - 10, this->getHeight() / 4, 90, 80);
+    //fbSlide.setBounds(depthSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    //satBox.setBounds(fbSlide.getRight() - 10, this->getHeight() / 4, 70, 20);
+    //waveBox.setBounds(satBox.getRight() + 10, this->getHeight() / 4, 70, 20);
+    driveSlide.setBounds(-10, this->getHeight() / 4, 90, 80);
 }
 
 void WavefolderComponent::sliderValueChanged(Slider* slider)

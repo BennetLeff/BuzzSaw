@@ -53,17 +53,17 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
     //standard params
-    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 100.0f, 0.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 200.0f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("mainBlend", "Blend", 0.0f, 100.0f, 50.0f));
 
     //WaveFolder Params
-    params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
-    params.push_back(std::make_unique<AudioParameterFloat>("depth", "Depth", 0.0f, 0.5f, 0.1f));
-    params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("feedforward", "Feedforward", 0.0f, 1.0f, 1.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("depth", "Depth", 0.0f, 0.5f, 0.1f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("feedforward", "Feedforward", 0.0f, 1.0f, 1.0f));
 
-    params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
-    params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));
+    //params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
+    //params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));
     
     //Subharmonic Params
 
@@ -163,37 +163,38 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
     wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
 
+    //not used at the moment
     auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
 
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset(oversampledRate);
-        wfProc[ch].reset(oversampledRate);
+        subProc[ch].reset(sampleRate);
+        wfProc[ch].reset(sampleRate);
 
         drive[ch].prepare();
         dryGain[ch].prepare();
         wetGain[ch].prepare();
         outGain[ch].prepare();
 
-        preEQ[ch].reset(oversampledRate);
-        preEQ[ch].setEqShape(EqShape::highPass);
+        preEQ[ch].reset(sampleRate);
+        preEQ[ch].setEqShape(EqShape::lowPass);
         preEQ[ch].toggleOnOff(true);
 
-        dcBlocker[ch].reset(oversampledRate);
+        dcBlocker[ch].reset(sampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
         dcBlocker[ch].setFrequency(35.0f);
         dcBlocker[ch].setQ(0.7071f);
 
         //delay
-        delay[ch].initialize(oversampledRate);
+        delay[ch].initialize(sampleRate);
         delay[ch].setWetLevel(delayWetLevel);
         delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
         for (int i = 0; i < 3; ++i)
         {
-            postEQ[i][ch].reset(oversampledRate);
+            postEQ[i][ch].reset(sampleRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
         }
@@ -254,12 +255,12 @@ void ThaiBasilAudioProcessor::updateParams()
 
         //WaveFolder Param Updates
         
-        wfProc[ch].setFreq(*freqParam);
-        wfProc[ch].setDepth(*depthParam);
+       // wfProc[ch].setFreq(*freqParam);
+        //wfProc[ch].setDepth(*depthParam);
         //wfProc[ch].setFF(ffParam); //we finalized this at 1.0f
-        wfProc[ch].setFB(*fbParam);
-        wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
-        wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
+        //wfProc[ch].setFB(*fbParam);
+        //wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
+        //wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
 
         
 
@@ -305,7 +306,7 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
         //Subharmonic
         preEQ[ch].processBlock(side, numSamples);
-        //subProc[ch].processBlock(side, numSamples);
+        subProc[ch].processBlock(side, numSamples);
 
 
         //delay stereo effect
