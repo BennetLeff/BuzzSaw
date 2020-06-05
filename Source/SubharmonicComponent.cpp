@@ -59,6 +59,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     setupSlider(postCutoffSlide, valueTreeState, "shgPostCutoff", preCutoffAttach, "PostCutoff", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(outGainSlide, valueTreeState, "outGain", outGainAttach, "outGain", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(blendSlide, valueTreeState, "mainBlend", blendAttach, "Blend", [this] { /*nlViewer.updateCurve();*/ });
+    setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
@@ -109,6 +110,7 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(preCutoffSlide, "PreCutoff");
     makeName(postCutoffSlide, "PostCutoff");
     makeName(outGainSlide, "Gain");
+    makeName(driveSlide, "Drive");
    // makeName(sideGainSlide, "SideGain");
     makeName(blendSlide, "Blend");
     makeName(attackSlide, "Attack");
@@ -126,6 +128,7 @@ void SubharmonicComponent::resized()
     blendSlide.setBounds(outGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     attackSlide.setBounds(blendSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    driveSlide.setBounds(releaseSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
 
     stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);
 }

@@ -43,7 +43,7 @@ private:
     Slider preGainControl;
 
     std::unique_ptr<SubharmonicComponent> subharmonicComponent;
-    std::unique_ptr<WavefolderComponent> wavefolderComponent;
+    //std::unique_ptr<WavefolderComponent> wavefolderComponent;
 
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;

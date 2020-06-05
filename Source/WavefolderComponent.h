@@ -31,8 +31,8 @@ public:
     void sliderValueChanged(Slider* slider) override;
 private:
 
-    Slider driveSlide;
-    std::unique_ptr<SliderAttachment> driveAttach;
+    //Slider driveSlide;
+    //std::unique_ptr<SliderAttachment> driveAttach;
 
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;
