@@ -53,7 +53,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
     //standard params
-    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 200.0f, 0.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 300.0f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("mainBlend", "Blend", 0.0f, 100.0f, 50.0f));
 
     //WaveFolder Params
@@ -302,11 +302,13 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         auto main = buffer.getWritePointer(ch);
         auto side = sidechainBuffer.getWritePointer(ch); 
 
-        drive[ch].processBlock(side, numSamples);
+        //drive[ch].processBlock(side, numSamples);
 
         //Subharmonic
         preEQ[ch].processBlock(side, numSamples);
         subProc[ch].processBlock(side, numSamples);
+
+        drive[ch].processBlock(side, numSamples);
 
 
         //delay stereo effect
