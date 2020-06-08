@@ -37,12 +37,16 @@ private:
 
     Slider postCutoffSlide;
     std::unique_ptr<SliderAttachment> postCutoffAttach;
-    
-    Slider mainGainSlide;
-    std::unique_ptr<SliderAttachment> mainGainAttach;
 
-    Slider sideGainSlide;
-    std::unique_ptr<SliderAttachment> sideGainAttach;
+    
+    Slider outGainSlide;
+    std::unique_ptr<SliderAttachment> outGainAttach;
+
+    Slider blendSlide; 
+    std::unique_ptr<SliderAttachment> blendAttach;
+
+    //Slider sideGainSlide;
+    //std::unique_ptr<SliderAttachment> sideGainAttach;
     
     Slider attackSlide;
     std::unique_ptr<SliderAttachment> attackAttach;
@@ -50,8 +54,13 @@ private:
     Slider releaseSlide;
     std::unique_ptr<SliderAttachment> releaseAttach;
 
+    Slider driveSlide;
+    std::unique_ptr<SliderAttachment> driveAttach;
+
     ToggleButton stereoOnButton;
     std::unique_ptr<ButtonAttachment> stereoOnAttach;
+
+
 
 
 
