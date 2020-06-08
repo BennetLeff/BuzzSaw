@@ -33,6 +33,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
         slider.setTextBoxStyle(Slider::TextBoxBelow, false, 60, 15);
         slider.setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
         slider.onValueChange = onValueChange;
+        slider.setLookAndFeel(&customLookAndFeel); //all sliders will use the same look and feel
     };
 
     auto setupToggleButton = [this](ToggleButton& button, AudioProcessorValueTreeState& vts, String paramID,
@@ -121,14 +122,14 @@ void SubharmonicComponent::paint(Graphics& g)
 
 void SubharmonicComponent::resized()
 {
-    preCutoffSlide.setBounds(-10, this->getHeight()/4, 90, 80);
-    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    outGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    preCutoffSlide.setBounds(-10, this->getHeight()/4, 102, 102);
+    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
+    outGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
    // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     blendSlide.setBounds(outGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     attackSlide.setBounds(blendSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    driveSlide.setBounds(releaseSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    driveSlide.setBounds(releaseSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
 
     stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);
 }

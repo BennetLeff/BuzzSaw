@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "CustomLookAndFeel.h"
 
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
 using ButtonAttachment = AudioProcessorValueTreeState::ButtonAttachment;
@@ -31,7 +32,8 @@ public:
 
     void sliderValueChanged(Slider* slider) override;
 private:
-    
+    CustomLookAndFeel customLookAndFeel;
+
     Slider preCutoffSlide;
     std::unique_ptr<SliderAttachment> preCutoffAttach;
 
