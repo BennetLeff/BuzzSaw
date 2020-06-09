@@ -18,6 +18,7 @@ public:
 
     CustomLookAndFeel() {
         //setColour(Slider::backgroundColourId, dialColour);
+        setColour(ResizableWindow::backgroundColourId, bgColour);
 
     }
 
@@ -55,5 +56,6 @@ public:
 
 private:
     const Colour dialColour = Colour(196, 196, 196);
+    const Colour bgColour = Colour(48, 48, 48);
 
 };

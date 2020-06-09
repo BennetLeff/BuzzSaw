@@ -96,8 +96,11 @@ private:
     std::atomic<float>* shgPostCutoffParam;
     //std::atomic<float>* shgMainGainParam;
     //std::atomic<float>* shgSideGainParam;
-    std::atomic<float>* shgAttackParam;
-    std::atomic<float>* shgReleaseParam;
+    //std::atomic<float>* shgAttackParam;
+    //std::atomic<float>* shgReleaseParam;
+
+    const float shgAttack = 0.1;
+    const float shgRelease = 0.1;
 
  
     
@@ -107,6 +110,7 @@ private:
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 
     //stereo effect comes from 2 slightly out of sync channels
+    //MAY want to parameterize this effect for more control over sound
     const float leftDelayTime = 0.04;
     const float rightDelayTime = 0.07;
     const float feedback = 0.1;
