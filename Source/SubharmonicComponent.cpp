@@ -122,14 +122,22 @@ void SubharmonicComponent::paint(Graphics& g)
 
 void SubharmonicComponent::resized()
 {
-    preCutoffSlide.setBounds(-10, this->getHeight()/4, 102, 102);
-    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
-    outGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
+    float width = this->getWidth();
+    float height = this->getHeight();
+    float nameHeightPad = 20; //need to tweak this value here and in makeName
+    float bigDiam = width / 6;
+    float smallDiam = width / 10;
+    float spacing = 3;
+
+
+    preCutoffSlide.setBounds(10, height/4, bigDiam, bigDiam+nameHeightPad);
+    postCutoffSlide.setBounds(preCutoffSlide.getRight() + spacing, height / 4, bigDiam, bigDiam+nameHeightPad);
+    outGainSlide.setBounds(postCutoffSlide.getRight() + spacing, height / 4, bigDiam, bigDiam + nameHeightPad);
    // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    blendSlide.setBounds(outGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    attackSlide.setBounds(blendSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    driveSlide.setBounds(releaseSlide.getRight() - 30, this->getHeight() / 4, 102, 102);
+    blendSlide.setBounds(outGainSlide.getRight() + spacing, height / 4, smallDiam, smallDiam+nameHeightPad);
+    attackSlide.setBounds(blendSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+    releaseSlide.setBounds(attackSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+    driveSlide.setBounds(releaseSlide.getRight() + spacing, height / 4, bigDiam, bigDiam + nameHeightPad);
 
     stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);
 }
