@@ -118,6 +118,11 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(releaseSlide, "Release");
 
     makeName(stereoOnButton, "Widen");
+
+    //big stripe
+    g.setColour(customLookAndFeel.dialColour);
+    g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
+
 }
 
 void SubharmonicComponent::resized()
@@ -148,6 +153,7 @@ void SubharmonicComponent::resized()
     // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     //attackSlide.setBounds(blendSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
     //releaseSlide.setBounds(attackSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+
 
 }
 

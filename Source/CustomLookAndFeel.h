@@ -54,8 +54,9 @@ public:
         g.fillPath(p);
     }
 
-private:
     const Colour dialColour = Colour(196, 196, 196);
     const Colour bgColour = Colour(48, 48, 48);
+
+private:
 
 };
