@@ -127,19 +127,28 @@ void SubharmonicComponent::resized()
     float nameHeightPad = 20; //need to tweak this value here and in makeName
     float bigDiam = width / 6;
     float smallDiam = width / 10;
-    float spacing = 3;
+    float xSpacing = 20;
+    float bigYSpacing = 15, smallYSpacing = bigYSpacing + bigDiam / 2; //big spacing on knobs with bigDiam, small spacing on knobs with smallDiam
+    float baseHeight = height / 2;
 
+    //middle knob
+    driveSlide.setBounds(width/2-(bigDiam/2), baseHeight, bigDiam, bigDiam + nameHeightPad);
+    
+    //left knobs
+    postCutoffSlide.setBounds(driveSlide.getPosition().getX() - (xSpacing+bigDiam), baseHeight+bigYSpacing, bigDiam, bigDiam+nameHeightPad);
+    preCutoffSlide.setBounds(postCutoffSlide.getPosition().getX() - (xSpacing + smallDiam), baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+   
+    //right knobs
+    outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
+    blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+   
+    stereoOnButton.setBounds(80, baseHeight-50, 40, 20);
 
-    preCutoffSlide.setBounds(10, height/4, bigDiam, bigDiam+nameHeightPad);
-    postCutoffSlide.setBounds(preCutoffSlide.getRight() + spacing, height / 4, bigDiam, bigDiam+nameHeightPad);
-    driveSlide.setBounds(postCutoffSlide.getRight() + spacing, height / 4, bigDiam, bigDiam + nameHeightPad);
-    outGainSlide.setBounds(driveSlide.getRight() + spacing, height / 4, bigDiam, bigDiam + nameHeightPad);
-   // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    blendSlide.setBounds(outGainSlide.getRight() + spacing, height / 4, smallDiam, smallDiam+nameHeightPad);
+    //old knobs
+    // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
     //attackSlide.setBounds(blendSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
     //releaseSlide.setBounds(attackSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
 
-    stereoOnButton.setBounds(80, height*(0.8), 40, 20);
 }
 
 void SubharmonicComponent::sliderValueChanged(Slider* slider)
