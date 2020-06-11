@@ -41,8 +41,8 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //shgMainGainParam = vts.getRawParameterValue("shgMainGain");
     //shgSideGainParam = vts.getRawParameterValue("shgSideGain");
     outGainParam = vts.getRawParameterValue("outGain");
-    shgAttackParam = vts.getRawParameterValue("shgAttack");
-    shgReleaseParam = vts.getRawParameterValue("shgRelease");
+    //shgAttackParam = vts.getRawParameterValue("shgAttack");
+    //shgReleaseParam = vts.getRawParameterValue("shgRelease");
 
     //Stereo Effect Param Tree Pointers
     stereoOnParam = vts.getRawParameterValue("stereoOn");
@@ -81,8 +81,8 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -60.0f, -20.0f, -32.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
     params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
 
@@ -264,7 +264,8 @@ void ThaiBasilAudioProcessor::updateParams()
 
         
 
-        subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
+        //subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
+        subProc[ch].setDetector(shgAttack, shgRelease);
 
         preEQ[ch].setFrequency(*shgPreCutoffParam);
         preEQ[ch].setQ(butterQs[1]);

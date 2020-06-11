@@ -33,6 +33,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
         slider.setTextBoxStyle(Slider::TextBoxBelow, false, 60, 15);
         slider.setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
         slider.onValueChange = onValueChange;
+        slider.setLookAndFeel(&customLookAndFeel); //all sliders will use the same look and feel
     };
 
     auto setupToggleButton = [this](ToggleButton& button, AudioProcessorValueTreeState& vts, String paramID,
@@ -61,8 +62,8 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     setupSlider(blendSlide, valueTreeState, "mainBlend", blendAttach, "Blend", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
-    setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
+    //setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
     
     setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
 
@@ -89,7 +90,7 @@ SubharmonicComponent::~SubharmonicComponent()
 
 void SubharmonicComponent::paint(Graphics& g)
 {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
+    g.fillAll(customLookAndFeel.findColour(ResizableWindow::backgroundColourId));   // clear the background
 
     g.setColour(Colours::grey);
     g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
@@ -117,20 +118,43 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(releaseSlide, "Release");
 
     makeName(stereoOnButton, "Widen");
+
+    //big stripe
+    g.setColour(customLookAndFeel.dialColour);
+    g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
+
 }
 
 void SubharmonicComponent::resized()
 {
-    preCutoffSlide.setBounds(-10, this->getHeight()/4, 90, 80);
-    postCutoffSlide.setBounds(preCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    outGainSlide.setBounds(postCutoffSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-   // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    blendSlide.setBounds(outGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    attackSlide.setBounds(blendSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    releaseSlide.setBounds(attackSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    driveSlide.setBounds(releaseSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    float width = this->getWidth();
+    float height = this->getHeight();
+    float nameHeightPad = 20; //need to tweak this value here and in makeName
+    float bigDiam = width / 6;
+    float smallDiam = width / 10;
+    float xSpacing = 20;
+    float bigYSpacing = 15, smallYSpacing = bigYSpacing + bigDiam / 2; //big spacing on knobs with bigDiam, small spacing on knobs with smallDiam
+    float baseHeight = height / 2;
 
-    stereoOnButton.setBounds(80, this->getHeight()*(0.8), 40, 20);
+    //middle knob
+    driveSlide.setBounds(width/2-(bigDiam/2), baseHeight, bigDiam, bigDiam + nameHeightPad);
+    
+    //left knobs
+    postCutoffSlide.setBounds(driveSlide.getPosition().getX() - (xSpacing+bigDiam), baseHeight+bigYSpacing, bigDiam, bigDiam+nameHeightPad);
+    preCutoffSlide.setBounds(postCutoffSlide.getPosition().getX() - (xSpacing + smallDiam), baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+   
+    //right knobs
+    outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
+    blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+   
+    stereoOnButton.setBounds(80, baseHeight-50, 40, 20);
+
+    //old knobs
+    // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
+    //attackSlide.setBounds(blendSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+    //releaseSlide.setBounds(attackSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+
+
 }
 
 void SubharmonicComponent::sliderValueChanged(Slider* slider)

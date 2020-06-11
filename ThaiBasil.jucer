@@ -41,6 +41,8 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="gS6fBi" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="oiHcJA" name="CustomLookAndFeel.h" compile="0" resource="0"
+          file="Source/CustomLookAndFeel.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019">
