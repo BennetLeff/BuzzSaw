@@ -111,6 +111,7 @@ private:
 
     //stereo effect comes from 2 slightly out of sync channels
     //MAY want to parameterize this effect for more control over sound
+    std::atomic<float>* stereoWidthParam;
     const float leftDelayTime = 0.04;
     const float rightDelayTime = 0.07;
     const float feedback = 0.1;

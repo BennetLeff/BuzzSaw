@@ -45,6 +45,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //shgReleaseParam = vts.getRawParameterValue("shgRelease");
 
     //Stereo Effect Param Tree Pointers
+    stereoWidthParam = vts.getRawParameterValue("stereoWidth");
     stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
@@ -84,6 +85,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
+    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0, 0.1, 0.0));
     params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
 
    
@@ -278,6 +280,10 @@ void ThaiBasilAudioProcessor::updateParams()
             postEQ[i][ch].setQ(butterQs[i]);
         }
     }
+
+    //set L & R delay times slightly apart from each other
+    delay[0].setDelaySec(*stereoWidthParam);
+    delay[1].setDelaySec(*stereoWidthParam * 0.9);
 }
 
 void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -312,8 +318,6 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         drive[ch].processBlock(side, numSamples);
 
 
-        //delay stereo effect
-        delay[ch].processBlock(side, numSamples);
 
         //wavefolder
         wfProc[ch].processBlock(side,numSamples);
@@ -321,6 +325,9 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         for (int i = 0; i < 3; ++i) {
             postEQ[i][ch].processBlock(side, numSamples);
         }
+
+        //delay stereo effect
+        delay[ch].processBlock(side, numSamples);
 
         dcBlocker[ch].processBlock(side, numSamples);
 
