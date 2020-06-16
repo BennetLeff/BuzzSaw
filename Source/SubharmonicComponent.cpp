@@ -118,7 +118,7 @@ void SubharmonicComponent::paint(Graphics& g)
     //makeName(attackSlide, "Attack");
     //makeName(releaseSlide, "Release");
 
-    makeName(stereoWidthSlide,"Widen");
+    makeName(stereoWidthSlide,"Morph");
     makeName(stereoOnButton, "Widen");
 
     //big stripe
@@ -149,8 +149,8 @@ void SubharmonicComponent::resized()
     outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
     blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
    
-    stereoWidthSlide.setBounds((width / 2) - (smallDiam / 2), baseHeight - 50, smallDiam, smallDiam + nameHeightPad);
-    stereoOnButton.setBounds(80, baseHeight-50, 40, 20);
+    stereoWidthSlide.setBounds((width / 6) - (smallDiam / 2), baseHeight - 50, smallDiam, smallDiam + nameHeightPad);
+    stereoOnButton.setBounds(width/4, baseHeight-50, 40, 20);
 
     //old knobs
     // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);

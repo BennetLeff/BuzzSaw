@@ -318,11 +318,11 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
         drive[ch].processBlock(side, numSamples);
         //temp solution to balance dry/wet volumes
-        if (*driveParam < 50) {
+        if (*driveParam < 30) {
             drive[ch].processBlock(main, numSamples);
         } else {
             for (int i = 0; i < numSamples; i++) {
-                main[i] *= Decibels::decibelsToGain(50.f);
+                main[i] *= Decibels::decibelsToGain(30.f);
             }
         }
 
@@ -340,11 +340,12 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
         dcBlocker[ch].processBlock(side, numSamples);
 
+        //balance
         wetGain[ch].processBlock(side, numSamples);
         dryGain[ch].processBlock(main, numSamples);
 
 
-
+        //sum
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
         outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples);
 
