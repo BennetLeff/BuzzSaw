@@ -16,7 +16,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
      : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo()) 
 		 .withOutput("Output", AudioChannelSet::stereo())),
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout())
-    //,oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
+    ,oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
     //Old Gain Controls
 	// addParameter(gain = new AudioParameterFloat("Gain", "Gain", 0, 6.0, 1.0));
@@ -170,7 +170,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     {
         //Subharmonic Processing
         subProc[ch].reset(oversampledRate);
-        wfProc[ch].reset(sampleRate);
+        wfProc[ch].reset(oversampledRate);
 
         drive[ch].prepare();
         dryGain[ch].prepare();
@@ -283,23 +283,24 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 {
     ScopedNoDenormals noDenormals;
 
-    sidechainBuffer.makeCopyOf(buffer, true);
+    //sidechainBuffer.makeCopyOf(buffer, true);
     //sidechainBuffer = buffer; //just gonna point straight to original buffer to test oversampling
 
-    //Oversample only sidechain buffer
-    //dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
-    //dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
-    //osBlock = oversampling.processSamplesUp(block);
-    //float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
-    //AudioBuffer<float> osSideBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
+    dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
+    dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
+    osBlock = oversampling.processSamplesUp(block);
+    float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
+    AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
+    sidechainBuffer.makeCopyOf(osBuffer, true);
+
     
     updateParams();
-    const int numSamples = buffer.getNumSamples(); 
+    const int numSamples = osBuffer.getNumSamples(); 
 
-    for (int ch = 0; ch < buffer.getNumChannels();ch++) 
+    for (int ch = 0; ch < osBuffer.getNumChannels();ch++) 
     {
         
-        auto main = buffer.getWritePointer(ch);
+        auto main = osBuffer.getWritePointer(ch);
         auto side = sidechainBuffer.getWritePointer(ch); 
 
         //drive[ch].processBlock(side, numSamples);
@@ -328,12 +329,12 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
 
 
-        buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
-        outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples);
+        osBuffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+        outGain[ch].processBlock(osBuffer.getWritePointer(ch),numSamples);
 
     }
 
-    //oversampling.processSamplesDown(block);
+    oversampling.processSamplesDown(block);
 
 }
 
