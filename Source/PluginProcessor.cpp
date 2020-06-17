@@ -15,8 +15,8 @@
 ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
      : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo()) 
 		 .withOutput("Output", AudioChannelSet::stereo())),
-    vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
-    oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
+    vts(*this, nullptr, Identifier("Parameters"), createParameterLayout())
+    //,oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
     //Old Gain Controls
 	// addParameter(gain = new AudioParameterFloat("Gain", "Gain", 0, 6.0, 1.0));
@@ -169,7 +169,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset(sampleRate);
+        subProc[ch].reset(oversampledRate);
         wfProc[ch].reset(sampleRate);
 
         drive[ch].prepare();
@@ -177,24 +177,24 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         wetGain[ch].prepare();
         outGain[ch].prepare();
 
-        preEQ[ch].reset(sampleRate);
+        preEQ[ch].reset(oversampledRate);
         preEQ[ch].setEqShape(EqShape::lowPass);
         preEQ[ch].toggleOnOff(true);
 
-        dcBlocker[ch].reset(sampleRate);
+        dcBlocker[ch].reset(oversampledRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
         dcBlocker[ch].setFrequency(35.0f);
         dcBlocker[ch].setQ(0.7071f);
 
         //delay
-        delay[ch].initialize(sampleRate);
+        delay[ch].initialize(oversampledRate);
         delay[ch].setWetLevel(delayWetLevel);
         delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
         for (int i = 0; i < 3; ++i)
         {
-            postEQ[i][ch].reset(sampleRate);
+            postEQ[i][ch].reset(oversampledRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
         }
@@ -242,7 +242,6 @@ void ThaiBasilAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
-
 
          mainWetLevel = (*mainBlend)/100.0f;
          mainDryLevel = (100 - mainWetLevel);

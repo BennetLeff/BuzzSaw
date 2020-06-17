@@ -40,5 +40,7 @@ private:
 
     float y1 = 0.0f;
 
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WavefolderProcessor)
 };
