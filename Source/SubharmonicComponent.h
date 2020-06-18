@@ -60,7 +60,10 @@ private:
     std::unique_ptr<SliderAttachment> driveAttach;
 
     ToggleButton stereoOnButton;
-    std::unique_ptr<ButtonAttachment> stereoOnAttach;
+    std::unique_ptr<ButtonAttachment> stereoOnAttach;    
+    
+    ToggleButton oversamplingOnButton;
+    std::unique_ptr<ButtonAttachment> oversamplingOnAttach;
 
 
 

@@ -107,6 +107,9 @@ private:
     //stereo params
     std::atomic<float>* stereoOnParam;
 
+    //oversampling params
+    std::atomic<float>* oversamplingOnParam;
+
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 
     //stereo effect comes from 2 slightly out of sync channels

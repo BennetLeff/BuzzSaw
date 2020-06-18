@@ -11,6 +11,7 @@
 
 #include <JuceHeader.h>
 #include "SubharmonicComponent.h"
+#include "PluginProcessor.h"
 
 //==============================================================================
 SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTreeState)
@@ -66,6 +67,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     //setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
     
     setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
+    setupToggleButton(oversamplingOnButton, valueTreeState, "oversamplingOn", oversamplingOnAttach, "Oversample", [this] {PluginProcessor::prepareToPlay()});
 
     auto setupBox = [this](ComboBox& box, AudioProcessorValueTreeState& vts, String paramID,
         std::unique_ptr<ComboBoxAttachment>& attachment, StringArray choices,
@@ -118,6 +120,7 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(releaseSlide, "Release");
 
     makeName(stereoOnButton, "Widen");
+    makeName(oversamplingOnButton, "Oversample");
 
     //big stripe
     g.setColour(customLookAndFeel.dialColour);
@@ -148,6 +151,7 @@ void SubharmonicComponent::resized()
     blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
    
     stereoOnButton.setBounds(80, baseHeight-50, 40, 20);
+    oversamplingOnButton.setBounds(width-80, baseHeight-50, 40, 20);
 
     //old knobs
     // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);

@@ -46,6 +46,9 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
 
     //Stereo Effect Param Tree Pointers
     stereoOnParam = vts.getRawParameterValue("stereoOn");
+
+    //oversampling pointers
+    oversamplingOnParam = vts.getRawParameterValue("oversamplingOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
@@ -85,6 +88,8 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
     params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
+    params.push_back(std::make_unique<AudioParameterBool>("oversamplingOn", "Oversample",true));
+
 
    
     return { params.begin(), params.end() };
@@ -164,37 +169,43 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
 
     //not used at the moment
-    auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
+    float currentSampleRate;
+    if (*oversamplingOnParam) { 
+        currentSampleRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
+    } else {
+        currentSampleRate = sampleRate;
+    }
+
 
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset(oversampledRate);
-        wfProc[ch].reset(oversampledRate);
+        subProc[ch].reset(currentSampleRate);
+        wfProc[ch].reset(currentSampleRate);
 
         drive[ch].prepare();
         dryGain[ch].prepare();
         wetGain[ch].prepare();
         outGain[ch].prepare();
 
-        preEQ[ch].reset(oversampledRate);
+        preEQ[ch].reset(currentSampleRate);
         preEQ[ch].setEqShape(EqShape::lowPass);
         preEQ[ch].toggleOnOff(true);
 
-        dcBlocker[ch].reset(oversampledRate);
+        dcBlocker[ch].reset(currentSampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
         dcBlocker[ch].setFrequency(35.0f);
         dcBlocker[ch].setQ(0.7071f);
 
         //delay
-        delay[ch].initialize(oversampledRate);
+        delay[ch].initialize(currentSampleRate);
         delay[ch].setWetLevel(delayWetLevel);
         delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
         for (int i = 0; i < 3; ++i)
         {
-            postEQ[i][ch].reset(oversampledRate);
+            postEQ[i][ch].reset(currentSampleRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
         }
@@ -279,28 +290,41 @@ void ThaiBasilAudioProcessor::updateParams()
     }
 }
 
-void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void ThaiBasilAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
+    bool oversamplingOn = *oversamplingOnParam;
+    //AudioBuffer<float> processBuffer = buffer; 
+    int numSamples;
+    AudioBuffer<float> osBuffer;
+    dsp::AudioBlock<float> block(buffer); //for oversample
 
     //sidechainBuffer.makeCopyOf(buffer, true);
     //sidechainBuffer = buffer; //just gonna point straight to original buffer to test oversampling
-
-    dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
-    dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
-    osBlock = oversampling.processSamplesUp(block);
-    float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
-    AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
-    sidechainBuffer.makeCopyOf(osBuffer, true);
+    if (oversamplingOn){
+        dsp::AudioBlock<float> osBlock(buffer);         
+        osBlock = oversampling.processSamplesUp(block);
+        float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
+       // AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
+        osBuffer = AudioBuffer<float>(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
+        //processBuffer = osBuffer;
+        sidechainBuffer.makeCopyOf(osBuffer, true);
+        numSamples = osBuffer.getNumSamples();
+    }
+    else {
+        sidechainBuffer.makeCopyOf(buffer, true);
+        numSamples = buffer.getNumSamples();
+    }
 
     
     updateParams();
-    const int numSamples = osBuffer.getNumSamples(); 
 
-    for (int ch = 0; ch < osBuffer.getNumChannels();ch++) 
+    for (int ch = 0; ch < buffer.getNumChannels();ch++) //oversampling shouldn't add channels (?)
     {
-        
-        auto main = osBuffer.getWritePointer(ch);
+        auto main = buffer.getWritePointer(ch);
+        if (oversamplingOn) {
+            main = osBuffer.getWritePointer(ch);
+        }
         auto side = sidechainBuffer.getWritePointer(ch); 
 
         //drive[ch].processBlock(side, numSamples);
@@ -328,13 +352,20 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         dryGain[ch].processBlock(main, numSamples);
 
 
-
-        osBuffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
-        outGain[ch].processBlock(osBuffer.getWritePointer(ch),numSamples);
+        if (oversamplingOn) {
+            osBuffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+            outGain[ch].processBlock(osBuffer.getWritePointer(ch), numSamples);
+        }
+        else {
+            buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
+            outGain[ch].processBlock(buffer.getWritePointer(ch), numSamples);
+        }
 
     }
 
-    oversampling.processSamplesDown(block);
+    if (oversamplingOn) {
+        oversampling.processSamplesDown(block);
+    }
 
 }
 
