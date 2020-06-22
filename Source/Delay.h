@@ -42,6 +42,7 @@ private:
     AudioSampleBuffer delayBuffer;
     int delayBufferLength;
     int delayReadPosition, delayWritePosition;
+    double sampleRate;
 
 
 

@@ -45,6 +45,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //shgReleaseParam = vts.getRawParameterValue("shgRelease");
 
     //Stereo Effect Param Tree Pointers
+    stereoWidthParam = vts.getRawParameterValue("stereoWidth");
     stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
@@ -53,7 +54,7 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
     //standard params
-    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 300.0f, 0.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 100.0f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("mainBlend", "Blend", 0.0f, 100.0f, 50.0f));
 
     //WaveFolder Params
@@ -80,10 +81,11 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 500.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -60.0f, -20.0f, -32.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -50.0f, 20.0f, 0.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
+    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.1, 3, 0.0));//10x the actual range, needed a smaller step
     params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
 
    
@@ -157,6 +159,7 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    //DBG("50db to gain is "<<Decibels::decibelsToGain(50.f));
     oversampling.initProcessing(samplesPerBlock);
 
     //WaveFolder Processing
@@ -245,7 +248,7 @@ void ThaiBasilAudioProcessor::updateParams()
 
 
          mainWetLevel = (*mainBlend)/100.0f;
-         mainDryLevel = (100 - mainWetLevel);
+         mainDryLevel = (1 - mainWetLevel);
 
         drive[ch].setGain(Decibels::decibelsToGain(driveParam->load()));
         //need a multiplier on levels?
@@ -278,6 +281,10 @@ void ThaiBasilAudioProcessor::updateParams()
             postEQ[i][ch].setQ(butterQs[i]);
         }
     }
+
+    //set L & R delay times slightly apart from each other
+    delay[0].setDelaySec(*stereoWidthParam/100);
+    delay[1].setDelaySec((*stereoWidthParam /100)*0.9);
 }
 
 void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -310,10 +317,16 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         subProc[ch].processBlock(side, numSamples);
 
         drive[ch].processBlock(side, numSamples);
+        //temp solution to balance dry/wet volumes
+        if (*driveParam < 30) {
+            drive[ch].processBlock(main, numSamples);
+        } else {
+            for (int i = 0; i < numSamples; i++) {
+                main[i] *= Decibels::decibelsToGain(30.f);
+            }
+        }
 
 
-        //delay stereo effect
-        delay[ch].processBlock(side, numSamples);
 
         //wavefolder
         wfProc[ch].processBlock(side,numSamples);
@@ -322,13 +335,17 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
             postEQ[i][ch].processBlock(side, numSamples);
         }
 
+        //delay stereo effect
+        delay[ch].processBlock(side, numSamples);
+
         dcBlocker[ch].processBlock(side, numSamples);
 
+        //balance
         wetGain[ch].processBlock(side, numSamples);
         dryGain[ch].processBlock(main, numSamples);
 
 
-
+        //sum
         buffer.addFrom(ch, 0, sidechainBuffer, ch, 0, numSamples);
         outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples);
 

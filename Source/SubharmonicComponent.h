@@ -59,6 +59,9 @@ private:
     Slider driveSlide;
     std::unique_ptr<SliderAttachment> driveAttach;
 
+    Slider stereoWidthSlide;
+    std::unique_ptr<SliderAttachment> stereoWidthAttach;
+
     ToggleButton stereoOnButton;
     std::unique_ptr<ButtonAttachment> stereoOnAttach;
 

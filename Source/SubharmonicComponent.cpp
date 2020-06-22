@@ -61,6 +61,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     setupSlider(outGainSlide, valueTreeState, "outGain", outGainAttach, "outGain", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(blendSlide, valueTreeState, "mainBlend", blendAttach, "Blend", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
+    setupSlider(stereoWidthSlide, valueTreeState, "stereoWidth", stereoWidthAttach, "StereoWidth", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
@@ -114,9 +115,10 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(driveSlide, "Drive");
    // makeName(sideGainSlide, "SideGain");
     makeName(blendSlide, "Blend");
-    makeName(attackSlide, "Attack");
-    makeName(releaseSlide, "Release");
+    //makeName(attackSlide, "Attack");
+    //makeName(releaseSlide, "Release");
 
+    makeName(stereoWidthSlide,"Morph");
     makeName(stereoOnButton, "Widen");
 
     //big stripe
@@ -147,7 +149,8 @@ void SubharmonicComponent::resized()
     outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
     blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
    
-    stereoOnButton.setBounds(80, baseHeight-50, 40, 20);
+    stereoWidthSlide.setBounds((width / 6) - (smallDiam / 2), baseHeight - 50, smallDiam, smallDiam + nameHeightPad);
+    stereoOnButton.setBounds(width/4, baseHeight-50, 40, 20);
 
     //old knobs
     // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
