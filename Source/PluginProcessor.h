@@ -122,7 +122,7 @@ private:
 
     WavefolderProcessor wfProc[2];
     SubharmonicProcessor subProc[2];
-    EQFilter preEQ[2];
+    //EQFilter preEQ[2];
     EQFilter postEQ[3][2];
     EQFilter dcBlocker[2];
     Gain drive[2];

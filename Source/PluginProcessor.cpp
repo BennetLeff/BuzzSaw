@@ -180,9 +180,9 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         wetGain[ch].prepare();
         outGain[ch].prepare();
 
-        preEQ[ch].reset(sampleRate);
-        preEQ[ch].setEqShape(EqShape::lowPass);
-        preEQ[ch].toggleOnOff(true);
+        //preEQ[ch].reset(sampleRate);
+        //preEQ[ch].setEqShape(EqShape::lowPass);
+        //preEQ[ch].toggleOnOff(true);
 
         dcBlocker[ch].reset(sampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
@@ -313,7 +313,7 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         //drive[ch].processBlock(side, numSamples);
 
         //Subharmonic
-        preEQ[ch].processBlock(side, numSamples);
+        //preEQ[ch].processBlock(side, numSamples);
         subProc[ch].processBlock(side, numSamples);
 
         drive[ch].processBlock(side, numSamples);
