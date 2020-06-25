@@ -331,10 +331,10 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         //wavefolder
         wfProc[ch].processBlock(side,numSamples);
 
-        /*
+        
         for (int i = 0; i < 3; ++i) {
             postEQ[i][ch].processBlock(side, numSamples);
-        }*/
+        }
 
         //delay stereo effect
         delay[ch].processBlock(side, numSamples);
