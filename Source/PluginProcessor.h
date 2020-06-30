@@ -105,7 +105,7 @@ private:
  
     
     //stereo params
-    std::atomic<float>* stereoOnParam;
+    //std::atomic<float>* stereoOnParam;
 
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 

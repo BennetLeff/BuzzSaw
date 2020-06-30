@@ -35,13 +35,14 @@ void Delay::initialize(double sampleRate) { //is a double ok here?
     delayReadPosition = static_cast<int>(delayWritePosition - (delaySec * sampleRate)
         + delayBufferLength) % delayBufferLength;
 
+    setActive(true);
     //DBG("Delay Write: " << delayWritePosition << " Delay Read: " << delayReadPosition);
 }
 
 //process a single channel
 void Delay::processBlock(float* buffer, const int numSamples) {
     //bypassed
-    if (!isActive) {
+    if (!isActive || delaySec<=0) {
         return;
     }
 

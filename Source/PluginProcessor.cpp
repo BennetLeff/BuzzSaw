@@ -46,7 +46,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
 
     //Stereo Effect Param Tree Pointers
     stereoWidthParam = vts.getRawParameterValue("stereoWidth");
-    stereoOnParam = vts.getRawParameterValue("stereoOn");
+    //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
@@ -85,8 +85,8 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
-    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.1, 3, 0.0));//10x the actual range, needed a smaller step
-    params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
+    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.0, 3, 0.0));//10x the actual range, needed a smaller step
+    //params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
 
    
     return { params.begin(), params.end() };
@@ -278,7 +278,7 @@ void ThaiBasilAudioProcessor::updateParams()
         //preEQ[ch].setFrequency(*shgPreCutoffParam);
         //preEQ[ch].setQ(butterQs[1]);
 
-        delay[ch].setActive(*stereoOnParam);
+        //delay[ch].setActive(*stereoOnParam);
 
         //Biquad version of filtering block
         /*
