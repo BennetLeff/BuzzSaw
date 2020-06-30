@@ -66,7 +66,7 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     //setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
     //setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
     
-    setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
+    //setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
 
     auto setupBox = [this](ComboBox& box, AudioProcessorValueTreeState& vts, String paramID,
         std::unique_ptr<ComboBoxAttachment>& attachment, StringArray choices,
@@ -119,7 +119,7 @@ void SubharmonicComponent::paint(Graphics& g)
     //makeName(releaseSlide, "Release");
 
     makeName(stereoWidthSlide,"Morph");
-    makeName(stereoOnButton, "Widen");
+    //makeName(stereoOnButton, "Widen");
 
     //big stripe
     g.setColour(customLookAndFeel.dialColour);
@@ -143,14 +143,14 @@ void SubharmonicComponent::resized()
     
     //left knobs
     postCutoffSlide.setBounds(driveSlide.getPosition().getX() - (xSpacing+bigDiam), baseHeight+bigYSpacing, bigDiam, bigDiam+nameHeightPad);
-    preCutoffSlide.setBounds(postCutoffSlide.getPosition().getX() - (xSpacing + smallDiam), baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+    //preCutoffSlide.setBounds(postCutoffSlide.getPosition().getX() - (xSpacing + smallDiam), baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
+    stereoWidthSlide.setBounds(postCutoffSlide.getPosition().getX() - (xSpacing + smallDiam), baseHeight + smallYSpacing, smallDiam, smallDiam + nameHeightPad);
    
     //right knobs
     outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
     blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
    
-    stereoWidthSlide.setBounds((width / 6) - (smallDiam / 2), baseHeight - 50, smallDiam, smallDiam + nameHeightPad);
-    stereoOnButton.setBounds(width/4, baseHeight-50, 40, 20);
+    //stereoOnButton.setBounds(width/4, baseHeight-50, 40, 20);
 
     //old knobs
     // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);

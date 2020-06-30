@@ -46,7 +46,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
 
     //Stereo Effect Param Tree Pointers
     stereoWidthParam = vts.getRawParameterValue("stereoWidth");
-    stereoOnParam = vts.getRawParameterValue("stereoOn");
+    //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
@@ -85,8 +85,8 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
     //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
-    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.1, 3, 0.0));//10x the actual range, needed a smaller step
-    params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
+    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.0, 3, 0.0));//10x the actual range, needed a smaller step
+    //params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
 
    
     return { params.begin(), params.end() };
@@ -180,9 +180,9 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         wetGain[ch].prepare();
         outGain[ch].prepare();
 
-        preEQ[ch].reset(sampleRate);
-        preEQ[ch].setEqShape(EqShape::lowPass);
-        preEQ[ch].toggleOnOff(true);
+        //preEQ[ch].reset(sampleRate);
+        //preEQ[ch].setEqShape(EqShape::lowPass);
+        //preEQ[ch].toggleOnOff(true);
 
         dcBlocker[ch].reset(sampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
@@ -195,12 +195,17 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
-        for (int i = 0; i < 3; ++i)
+        //Biquad version of filtering block
+        /*for (int i = 0; i < 3; ++i)
         {
             postEQ[i][ch].reset(sampleRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
-        }
+        }*/
+
+        //built-in IIR vesion of filtering block
+        postEQ[ch].reset();
+        postEQ[ch].setCoefficients(IIRCoefficients::makeLowPass(sampleRate, 20000)); //lowpass at max cutoff
     }
 
     //other delay settings
@@ -270,16 +275,21 @@ void ThaiBasilAudioProcessor::updateParams()
         //subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
         subProc[ch].setDetector(shgAttack, shgRelease);
 
-        preEQ[ch].setFrequency(*shgPreCutoffParam);
-        preEQ[ch].setQ(butterQs[1]);
+        //preEQ[ch].setFrequency(*shgPreCutoffParam);
+        //preEQ[ch].setQ(butterQs[1]);
 
-        delay[ch].setActive(*stereoOnParam);
+        //delay[ch].setActive(*stereoOnParam);
 
+        //Biquad version of filtering block
+        /*
         for (int i = 0; i < 3; ++i)
         {
             postEQ[i][ch].setFrequency(*shgPostCutoffParam);
             postEQ[i][ch].setQ(butterQs[i]);
-        }
+        }*/
+        
+        //built-in IIR version of filtering block
+        postEQ[ch].setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), *shgPostCutoffParam));
     }
 
     //set L & R delay times slightly apart from each other
@@ -313,7 +323,7 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         //drive[ch].processBlock(side, numSamples);
 
         //Subharmonic
-        preEQ[ch].processBlock(side, numSamples);
+        //preEQ[ch].processBlock(side, numSamples);
         subProc[ch].processBlock(side, numSamples);
 
         drive[ch].processBlock(side, numSamples);
@@ -331,10 +341,14 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         //wavefolder
         wfProc[ch].processBlock(side,numSamples);
 
-        
+        //Biquad version
+       /*
         for (int i = 0; i < 3; ++i) {
             postEQ[i][ch].processBlock(side, numSamples);
-        }
+        }*/
+
+        //built-in IIR version
+        postEQ[ch].processSamples(side, numSamples);
 
         //delay stereo effect
         delay[ch].processBlock(side, numSamples);

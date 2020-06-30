@@ -62,8 +62,8 @@ private:
     Slider stereoWidthSlide;
     std::unique_ptr<SliderAttachment> stereoWidthAttach;
 
-    ToggleButton stereoOnButton;
-    std::unique_ptr<ButtonAttachment> stereoOnAttach;
+    //ToggleButton stereoOnButton;
+    //std::unique_ptr<ButtonAttachment> stereoOnAttach;
 
 
 
