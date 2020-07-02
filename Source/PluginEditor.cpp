@@ -17,10 +17,7 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
 {
     subharmonicComponent= std::make_unique<SubharmonicComponent>(p.getVTS());
  
-    compressorComponent = std::make_unique<CompressorComponent>(p.getVTS());
-
     // addAndMakeVisible(*subharmonicComponent);
-    addAndMakeVisible(*compressorComponent);
 
     setSize(400, 500);
 }
@@ -43,13 +40,11 @@ void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
     // g.drawImageAt(background, 0, 0);
 
     //subharmonicComponent->paint(g);
-    compressorComponent->paint(g);
 }
 
 void ThaiBasilAudioProcessorEditor::resized()
 {
     //subharmonicComponent->setBounds(0, 0, getWidth(), getHeight());
-    compressorComponent->setBounds(0, 0, getWidth(), getHeight());
 }
 
 void ThaiBasilAudioProcessorEditor::sliderValueChanged(Slider* slider)

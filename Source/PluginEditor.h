@@ -45,7 +45,6 @@ private:
 
     std::unique_ptr<SubharmonicComponent> subharmonicComponent;
 
-    std::unique_ptr<CompressorComponent> compressorComponent;
 
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;

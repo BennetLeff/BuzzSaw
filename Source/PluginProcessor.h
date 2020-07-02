@@ -7,7 +7,8 @@
 #include "EQFilter.h"
 #include "Gain.h"
 #include "SubharmonicProcessor.h"
-#include"WavefolderProcessor.h"
+#include "WavefolderProcessor.h"
+#include "juce_dsp/juce_dsp.h"
 
 //==============================================================================
 /**
@@ -109,9 +110,9 @@ private:
     Gain sideGain[2];
     Delay delay[2];
 
-    std::unique_ptr<CompressorProcessor> compressorProc;
-
     dsp::Oversampling<float> oversampling;
+
+    juce::dsp::Limiter<float> limiter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessor)
 };

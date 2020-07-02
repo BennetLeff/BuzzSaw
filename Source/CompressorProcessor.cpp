@@ -45,6 +45,7 @@ void CompressorProcessor::processBlock(float* buffer, int numSamples)
 
 void CompressorProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer&)
 {
+
     for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
     {
         const int numSamples = buffer.getNumSamples();
@@ -55,13 +56,27 @@ void CompressorProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer&)
         // attack time is 0 (FIXME)
         // release time is the time it takes to play the buffer (FIXME)
         if (peakDB > *threshold) {
+            if (!envelope.isActive())
+            {
+                envelope.noteOn();
+            }
+
             const float cs = 1.0f - (1.0f / *ratio);
             float gainDB = cs * (*threshold - peakDB);
             gainDB = jmin<float>(0, gainDB);
-            const float gain = Decibels::decibelsToGain<float>(gainDB);
+            const float gain = Decibels::decibelsToGain<float>(gainDB) * envelope.getNextSample();
             buffer.applyGain(channel, 0, numSamples, gain);
         }
+
+        if (peakDB < *threshold)
+        {
+            envelope.noteOff();
+        }
+
+
     }
+
     const float outputGainFromDB = Decibels::decibelsToGain<float>(*outputGain);
     buffer.applyGain(outputGainFromDB);
+
 }

@@ -9,7 +9,8 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
     oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
-    compressorProc = std::make_unique<CompressorProcessor>(getVTS(), 44100);
+    limiter.setThreshold(-3.0f);
+    limiter.setRelease(100.0f);
 
     //WaveFolder Param Tree Pointers
     //freqParam = vts.getRawParameterValue("freq");
@@ -150,7 +151,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 {
     oversampling.initProcessing(samplesPerBlock);
 
-    compressorProc->reset(sampleRate);
+    limiter.prepare({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2});
 
     //WaveFolder Processing
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
@@ -193,6 +194,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     delay[1].setDelaySec(rightDelayTime);
 
     sidechainBuffer.setSize(2, samplesPerBlock);
+
 }
 
 void ThaiBasilAudioProcessor::releaseResources()
@@ -200,6 +202,7 @@ void ThaiBasilAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     oversampling.reset();
+    limiter.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -291,7 +294,11 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
     //oversampling.processSamplesDown(block);
 
-    compressorProc->processBlock(buffer, midiMessages);
+    juce::dsp::AudioBlock<float> block(buffer, 0);
+
+    juce::dsp::ProcessContextReplacing<float> context(block);
+    limiter.process(context);
+
 }
 
 bool ThaiBasilAudioProcessor::hasEditor() const

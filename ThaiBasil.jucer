@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Dmtb1k" name="ThaiBasil" projectType="audioplug" jucerVersion="5.4.7"
-              pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3">
+              pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3"
+              displaySplashScreen="1">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
-    <GROUP id="{C9A71708-2534-D05A-C1B6-09E714A45A9D}" name="Images">
-      <FILE id="MOIMCq" name="thaibasiltest.png" compile="0" resource="1"
-            file="../../OneDrive/Pictures/vst assets/thaibasiltest.png"/>
-    </GROUP>
+    <GROUP id="{C9A71708-2534-D05A-C1B6-09E714A45A9D}" name="Images"/>
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
       <FILE id="DOAsyP" name="CompressorComponent.cpp" compile="1" resource="0"
             file="Source/CompressorComponent.cpp"/>
@@ -57,7 +55,7 @@
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="..\JUCE"/>
+        <MODULEPATH id="juce_audio_basics" path="D:\Libraries\JUCE"/>
         <MODULEPATH id="juce_audio_devices" path="..\JUCE"/>
         <MODULEPATH id="juce_audio_formats" path="..\JUCE"/>
         <MODULEPATH id="juce_audio_plugin_client" path="..\JUCE"/>
@@ -76,22 +74,22 @@
     </VS2019>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
-            useGlobalPath="0"/>
-    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
-    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="0"/>
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
     <WINDOWS/>
