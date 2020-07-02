@@ -40,10 +40,11 @@ private:
     // access the processor object that created it.
     ThaiBasilAudioProcessor& processor;
 
-	Slider gainControl;
-    Slider preGainControl;
+	//Slider gainControl;
+    //Slider preGainControl;
 
     std::unique_ptr<SubharmonicComponent> subharmonicComponent;
+    //std::unique_ptr<WavefolderComponent> wavefolderComponent;
 
 
     //Slider freqSlide;

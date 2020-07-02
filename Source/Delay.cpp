@@ -30,16 +30,19 @@ void Delay::initialize(double sampleRate) { //is a double ok here?
     // This method gives us the sample rate. Use this to figure out what the delay position
     // offset should be (since it is specified in seconds, and we need to convert it to a number
     // of samples)
+    this->sampleRate = sampleRate;
+
     delayReadPosition = static_cast<int>(delayWritePosition - (delaySec * sampleRate)
         + delayBufferLength) % delayBufferLength;
 
+    setActive(true);
     //DBG("Delay Write: " << delayWritePosition << " Delay Read: " << delayReadPosition);
 }
 
 //process a single channel
 void Delay::processBlock(float* buffer, const int numSamples) {
     //bypassed
-    if (!isActive) {
+    if (!isActive || delaySec<=0) {
         return;
     }
 
@@ -80,6 +83,9 @@ void Delay::processBlock(float* buffer, const int numSamples) {
 
 void Delay::setDelaySec(float ds) {
     delaySec = ds;
+    //just trying this to parameterize delaySec
+    delayReadPosition = static_cast<int>(delayWritePosition - (delaySec * sampleRate)
+        + delayBufferLength) % delayBufferLength;
 }
 
 void Delay::setFeedback(float fb) {

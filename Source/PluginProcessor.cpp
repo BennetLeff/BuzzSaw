@@ -13,20 +13,21 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     limiter.setRelease(100.0f);
 
     //WaveFolder Param Tree Pointers
-    //freqParam = vts.getRawParameterValue("freq");
-    //depthParam = vts.getRawParameterValue("depth");
+    freqParam = vts.getRawParameterValue("freq");
+    depthParam = vts.getRawParameterValue("depth");
     //ffParam = vts.getRawParameterValue("feedforward");
-    //fbParam = vts.getRawParameterValue("feedback");
-    //satParam = vts.getRawParameterValue("sat");
-    //waveParam = vts.getRawParameterValue("wave"); 
+    fbParam = vts.getRawParameterValue("feedback");
+    satParam = vts.getRawParameterValue("sat");
+    waveParam = vts.getRawParameterValue("wave"); 
     
     // Subharmonic Generator Param Tree Pointers
     shgPreCutoffParam = vts.getRawParameterValue("shgPreCutoff");
     shgPostCutoffParam = vts.getRawParameterValue("shgPostCutoff");
-    shgMainGainParam = vts.getRawParameterValue("shgMainGain");
-    shgSideGainParam = vts.getRawParameterValue("shgSideGain");
-    shgAttackParam = vts.getRawParameterValue("shgAttack");
-    shgReleaseParam = vts.getRawParameterValue("shgRelease");
+    //shgMainGainParam = vts.getRawParameterValue("shgMainGain");
+    //shgSideGainParam = vts.getRawParameterValue("shgSideGain");
+    outGainParam = vts.getRawParameterValue("outGain");
+    //shgAttackParam = vts.getRawParameterValue("shgAttack");
+    //shgReleaseParam = vts.getRawParameterValue("shgRelease");
 
     // Compressor Parameters
     thresholdDBParameter = vts.getRawParameterValue("compThreshold");
@@ -34,7 +35,8 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     outputGainDBParameter = vts.getRawParameterValue("compOutputGain");
 
     //Stereo Effect Param Tree Pointers
-    stereoOnParam = vts.getRawParameterValue("stereoOn");
+    stereoWidthParam = vts.getRawParameterValue("stereoWidth");
+    //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
@@ -47,8 +49,8 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("feedforward", "Feedforward", 0.0f, 1.0f, 1.0f));
 
-    params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
-    params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));*///WaveFolder Params
+    //params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
+    //params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));
     
     // Subharmonic Params
     NormalisableRange<float> freqRange(20.0f, 20000.0f);
@@ -61,11 +63,12 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     releaseRange.setSkewForCentre(100.0f);
 
     params.push_back(std::make_unique<AudioParameterFloat>("shgPreCutoff", "PreCutoff", freqRange, 500.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 500.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
-    params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 20000.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
+    params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -50.0f, 20.0f, 0.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
+    //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
     // Compressor Params
     NormalisableRange<float> thresholdRange(-60.0f, 6.0f);
@@ -149,6 +152,7 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    //DBG("50db to gain is "<<Decibels::decibelsToGain(50.f));
     oversampling.initProcessing(samplesPerBlock);
 
     limiter.prepare({sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2});
@@ -157,18 +161,23 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
     wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
 
+    //not used at the moment
+    auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
 
     for (int ch = 0; ch < 2; ++ch)
     {
         //Subharmonic Processing
-        subProc[ch].reset((float)sampleRate * (float) oversampling.getOversamplingFactor());
+        subProc[ch].reset(sampleRate);
+        wfProc[ch].reset(sampleRate);
 
-        mainGain[ch].prepare();
-        sideGain[ch].prepare();
+        drive[ch].prepare();
+        dryGain[ch].prepare();
+        wetGain[ch].prepare();
+        outGain[ch].prepare();
 
-        preEQ[ch].reset(sampleRate);
-        preEQ[ch].setEqShape(EqShape::lowPass);
-        preEQ[ch].toggleOnOff(true);
+        //preEQ[ch].reset(sampleRate);
+        //preEQ[ch].setEqShape(EqShape::lowPass);
+        //preEQ[ch].toggleOnOff(true);
 
         dcBlocker[ch].reset(sampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
@@ -177,16 +186,21 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
         //delay
         delay[ch].initialize(sampleRate);
-        delay[ch].setWetLevel(wetLevel);
-        delay[ch].setDryLevel(dryLevel);
+        delay[ch].setWetLevel(delayWetLevel);
+        delay[ch].setDryLevel(delayDryLevel);
         delay[ch].setFeedback(feedback);
 
-        for (int i = 0; i < 3; ++i)
+        //Biquad version of filtering block
+        /*for (int i = 0; i < 3; ++i)
         {
             postEQ[i][ch].reset(sampleRate);
             postEQ[i][ch].setEqShape(EqShape::lowPass);
             postEQ[i][ch].toggleOnOff(true);
-        }
+        }*/
+
+        //built-in IIR vesion of filtering block
+        postEQ[ch].reset();
+        postEQ[ch].setCoefficients(IIRCoefficients::makeLowPass(sampleRate, 20000)); //lowpass at max cutoff
     }
 
     //other delay settings
@@ -233,34 +247,66 @@ void ThaiBasilAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
-        mainGain[ch].setGain(Decibels::decibelsToGain(shgMainGainParam->load()));
-        sideGain[ch].setGain(Decibels::decibelsToGain(shgSideGainParam->load()));
 
-        subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
 
-        preEQ[ch].setFrequency(*shgPreCutoffParam);
-        preEQ[ch].setQ(0.7071f);
+         mainWetLevel = (*mainBlend)/100.0f;
+         mainDryLevel = (1 - mainWetLevel);
 
-        delay[ch].setActive(*stereoOnParam);
+        drive[ch].setGain(Decibels::decibelsToGain(driveParam->load()));
+        //need a multiplier on levels?
+        dryGain[ch].setGain(mainDryLevel);//Decibels::decibelsToGain(shgMainGainParam->load()));
+        wetGain[ch].setGain(mainWetLevel);//Decibels::decibelsToGain(shgSideGainParam->load()));
+        outGain[ch].setGain(Decibels::decibelsToGain(outGainParam->load()));
 
+        //WaveFolder Param Updates
+        
+       // wfProc[ch].setFreq(*freqParam);
+        //wfProc[ch].setDepth(*depthParam);
+        //wfProc[ch].setFF(ffParam); //we finalized this at 1.0f
+        //wfProc[ch].setFB(*fbParam);
+        //wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
+        //wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
+
+        
+
+        //subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
+        subProc[ch].setDetector(shgAttack, shgRelease);
+
+        //preEQ[ch].setFrequency(*shgPreCutoffParam);
+        //preEQ[ch].setQ(butterQs[1]);
+
+        //delay[ch].setActive(*stereoOnParam);
+
+        //Biquad version of filtering block
+        /*
         for (int i = 0; i < 3; ++i)
         {
             postEQ[i][ch].setFrequency(*shgPostCutoffParam);
             postEQ[i][ch].setQ(butterQs[i]);
-        }
+        }*/
+        
+        //built-in IIR version of filtering block
+        postEQ[ch].setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), *shgPostCutoffParam));
     }
+
+    //set L & R delay times slightly apart from each other
+    delay[0].setDelaySec(*stereoWidthParam/100);
+    delay[1].setDelaySec((*stereoWidthParam /100)*0.9);
 }
 
 void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
 
-    //WaveFolder implementation (includes oversampling)
-    /*dsp::AudioBlock<float> block(buffer);
-    dsp::AudioBlock<float> osBlock(buffer);
-    osBlock = oversampling.processSamplesUp(block);
-    float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
-    AudioBuffer<float> osBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));*/
+    sidechainBuffer.makeCopyOf(buffer, true);
+    //sidechainBuffer = buffer; //just gonna point straight to original buffer to test oversampling
+
+    //Oversample only sidechain buffer
+    //dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
+    //dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
+    //osBlock = oversampling.processSamplesUp(block);
+    //float* ptrArray[] = { osBlock.getChannelPointer(0), osBlock.getChannelPointer(1) };
+    //AudioBuffer<float> osSideBuffer(ptrArray, 2, static_cast<int> (osBlock.getNumSamples()));
     
     updateParams();
     //sidechainBuffer.makeCopyOf(buffer, true);
@@ -298,7 +344,6 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
     juce::dsp::ProcessContextReplacing<float> context(block);
     limiter.process(context);
-
 }
 
 bool ThaiBasilAudioProcessor::hasEditor() const

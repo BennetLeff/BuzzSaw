@@ -30,25 +30,29 @@ public:
 
     void sliderValueChanged(Slider* slider) override;
 private:
-    Slider freqSlide;
-    std::unique_ptr<SliderAttachment> freqAttach;
 
-    Slider depthSlide;
-    std::unique_ptr<SliderAttachment> depthAttach;
+    //Slider driveSlide;
+    //std::unique_ptr<SliderAttachment> driveAttach;
 
-    Slider ffSlide;
-    std::unique_ptr<SliderAttachment> ffAttach;
+    //Slider freqSlide;
+    //std::unique_ptr<SliderAttachment> freqAttach;
 
-    Slider fbSlide;
-    std::unique_ptr<SliderAttachment> fbAttach;
+    //Slider depthSlide;
+    //std::unique_ptr<SliderAttachment> depthAttach;
 
-    ComboBox satBox;
-    std::unique_ptr<ComboBoxAttachment> satBoxAttach;
-    const StringArray satChoices = StringArray({ "None", "Hard", "Soft", "Tanh", "ASinh" });
+    //Slider ffSlide;
+    //std::unique_ptr<SliderAttachment> ffAttach;
 
-    ComboBox waveBox;
-    std::unique_ptr<ComboBoxAttachment> waveBoxAttach;
-    const StringArray waveChoices = StringArray({ "Zero", "Tri", "Sine" });
+    //Slider fbSlide;
+    //std::unique_ptr<SliderAttachment> fbAttach;
+
+    //ComboBox satBox;
+    //std::unique_ptr<ComboBoxAttachment> satBoxAttach;
+    //const StringArray satChoices = StringArray({ "None", "Hard", "Soft", "Tanh", "ASinh" });
+
+    //ComboBox waveBox;
+    //std::unique_ptr<ComboBoxAttachment> waveBoxAttach;
+    //const StringArray waveChoices = StringArray({ "Zero", "Tri", "Sine" });
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WavefolderComponent)
 };

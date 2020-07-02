@@ -28,6 +28,8 @@ void WavefolderProcessor::reset(float sampleRate)
     fs = sampleRate;
     y1 = 0.0f;
 
+    Saturators::fillLUT();
+
     freq.setCurrentAndTargetValue(freq.getTargetValue());
     depth.setCurrentAndTargetValue(depth.getTargetValue());
     feedforward.setCurrentAndTargetValue(feedforward.getTargetValue());
@@ -38,7 +40,7 @@ void WavefolderProcessor::processBlock(float* buffer, int numSamples)
 {
     for (int n = 0; n < numSamples; ++n)
     {
-        auto curFF = feedforward.getNextValue();
+        auto curFF = feedforward.getNextValue(); 
         auto curFB = feedback.getNextValue();
 
         float ff = curFF * ffSat(buffer[n]) + (1.0f - curFF) * buffer[n];

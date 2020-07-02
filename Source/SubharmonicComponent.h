@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "CustomLookAndFeel.h"
 
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
 using ButtonAttachment = AudioProcessorValueTreeState::ButtonAttachment;
@@ -31,18 +32,23 @@ public:
 
     void sliderValueChanged(Slider* slider) override;
 private:
-    
+    CustomLookAndFeel customLookAndFeel;
+
     Slider preCutoffSlide;
     std::unique_ptr<SliderAttachment> preCutoffAttach;
 
     Slider postCutoffSlide;
     std::unique_ptr<SliderAttachment> postCutoffAttach;
-    
-    Slider mainGainSlide;
-    std::unique_ptr<SliderAttachment> mainGainAttach;
 
-    Slider sideGainSlide;
-    std::unique_ptr<SliderAttachment> sideGainAttach;
+    
+    Slider outGainSlide;
+    std::unique_ptr<SliderAttachment> outGainAttach;
+
+    Slider blendSlide; 
+    std::unique_ptr<SliderAttachment> blendAttach;
+
+    //Slider sideGainSlide;
+    //std::unique_ptr<SliderAttachment> sideGainAttach;
     
     Slider attackSlide;
     std::unique_ptr<SliderAttachment> attackAttach;
@@ -50,8 +56,16 @@ private:
     Slider releaseSlide;
     std::unique_ptr<SliderAttachment> releaseAttach;
 
-    ToggleButton stereoOnButton;
-    std::unique_ptr<ButtonAttachment> stereoOnAttach;
+    Slider driveSlide;
+    std::unique_ptr<SliderAttachment> driveAttach;
+
+    Slider stereoWidthSlide;
+    std::unique_ptr<SliderAttachment> stereoWidthAttach;
+
+    //ToggleButton stereoOnButton;
+    //std::unique_ptr<ButtonAttachment> stereoOnAttach;
+
+
 
 
 

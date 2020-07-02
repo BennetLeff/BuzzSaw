@@ -65,22 +65,36 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
     
-    /*
+    std::atomic<float>* driveParam;
+    std::atomic<float>* outGainParam;
+    std::atomic<float>* mainBlend; //0 to 100
+    float mainDryLevel;//0 to 1
+    float mainWetLevel;//0 to 1
+    float mainDryGain; 
+    float mainWetGain;
+    
+    //Waveshaper params
     std::atomic<float>* freqParam;
-    std::atomic<float>* depthParam;
-    std::atomic<float>* ffParam;
-    std::atomic<float>* fbParam;
-    std::atomic<float>* satParam;
-    std::atomic<float>* waveParam;
-    */
+    std::atomic<float>* depthParam; 
+    //std::atomic<float>* ffParam;
+    //const float ffParam = 1.0f; //just setting this to 1 here for now, need to set it in the Wavefolder class instead
+    std::atomic<float>* fbParam; 
+    std::atomic<float>* satParam; //set this at Atanh
+    std::atomic<float>* waveParam; //set this at none
+    
 
     //Subharmonic Generator Params
     std::atomic<float>* shgPreCutoffParam;
     std::atomic<float>* shgPostCutoffParam;
-    std::atomic<float>* shgMainGainParam;
-    std::atomic<float>* shgSideGainParam;
-    std::atomic<float>* shgAttackParam;
-    std::atomic<float>* shgReleaseParam;
+    //std::atomic<float>* shgMainGainParam;
+    //std::atomic<float>* shgSideGainParam;
+    //std::atomic<float>* shgAttackParam;
+    //std::atomic<float>* shgReleaseParam;
+
+    const float shgAttack = 0.1;
+    const float shgRelease = 0.1;
+
+ 
     
 
     // Parameters for CompressorProcessor
@@ -89,25 +103,31 @@ private:
     std::atomic<float>* outputGainDBParameter;
 
     //stereo params
-    std::atomic<float>* stereoOnParam;
+    //std::atomic<float>* stereoOnParam;
 
     const float butterQs[3] = { 0.51763809f, 0.70710678f, 1.93185165f };
 
     //stereo effect comes from 2 slightly out of sync channels
+    //MAY want to parameterize this effect for more control over sound
+    std::atomic<float>* stereoWidthParam;
     const float leftDelayTime = 0.04;
     const float rightDelayTime = 0.07;
     const float feedback = 0.1;
-    const float wetLevel = 0.5;
-    const float dryLevel = 0.5;
+    const float delayWetLevel = 0.5;
+    const float delayDryLevel = 0.5;
 
     AudioBuffer<float> sidechainBuffer;
 
+    WavefolderProcessor wfProc[2];
     SubharmonicProcessor subProc[2];
-    EQFilter preEQ[2];
-    EQFilter postEQ[3][2];
+    //EQFilter preEQ[2];
+    //EQFilter postEQ[3][2];
+    IIRFilter postEQ[2];
     EQFilter dcBlocker[2];
-    Gain mainGain[2];
-    Gain sideGain[2];
+    Gain drive[2];
+    Gain dryGain[2];
+    Gain wetGain[2];
+    Gain outGain[2];
     Delay delay[2];
 
     dsp::Oversampling<float> oversampling;
