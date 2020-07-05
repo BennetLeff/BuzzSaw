@@ -17,6 +17,7 @@
 #include "EQFilter.h"
 #include "Gain.h"
 #include "Delay.h"
+#include "juce_dsp/juce_dsp.h"
 
 //==============================================================================
 /**
@@ -133,6 +134,8 @@ private:
     Delay delay[2];
 
     dsp::Oversampling<float> oversampling;
+
+    juce::dsp::Limiter<float> limiter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessor)
 };
