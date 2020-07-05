@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -336,11 +336,6 @@ public:
         @see startBackgroundThread
     */
     void stopBackgroundThread();
-
-    /** Returns true if the background thread used to send blocks of data is running.
-        @see startBackgroundThread, stopBackgroundThread
-    */
-    bool isBackgroundThreadRunning() const noexcept  { return isThreadRunning(); }
 
     //==============================================================================
     /** Deprecated. */

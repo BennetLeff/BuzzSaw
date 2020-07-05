@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -105,8 +105,7 @@ bool Random::nextBool() noexcept
 
 float Random::nextFloat() noexcept
 {
-    auto result = static_cast<uint32> (nextInt()) / (std::numeric_limits<uint32>::max() + 1.0f);
-    return result == 1.0f ? 1.0f - std::numeric_limits<float>::epsilon() : result;
+    return static_cast<uint32> (nextInt()) / (std::numeric_limits<uint32>::max() + 1.0f);
 }
 
 double Random::nextDouble() noexcept

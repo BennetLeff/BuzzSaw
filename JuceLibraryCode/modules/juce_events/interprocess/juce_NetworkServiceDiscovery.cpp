@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -67,20 +67,11 @@ void NetworkServiceDiscovery::Advertiser::run()
 
 void NetworkServiceDiscovery::Advertiser::sendBroadcast()
 {
-    static IPAddress local = IPAddress::local();
-
-    for (auto& address : IPAddress::getAllAddresses())
-    {
-        if (address == local)
-            continue;
-
-        message.setAttribute ("address", address.toString());
-
-        auto broadcastAddress = IPAddress::getInterfaceBroadcastAddress (address);
-        auto data = message.toString (XmlElement::TextFormat().singleLine().withoutHeader());
-
-        socket.write (broadcastAddress.toString(), broadcastPort, data.toRawUTF8(), (int) data.getNumBytesAsUTF8());
-    }
+    auto localAddress = IPAddress::getLocalAddress();
+    message.setAttribute ("address", localAddress.toString());
+    auto broadcastAddress = IPAddress::getInterfaceBroadcastAddress (localAddress);
+    auto data = message.toString (XmlElement::TextFormat().singleLine().withoutHeader());
+    socket.write (broadcastAddress.toString(), broadcastPort, data.toRawUTF8(), (int) data.getNumBytesAsUTF8());
 }
 
 //==============================================================================

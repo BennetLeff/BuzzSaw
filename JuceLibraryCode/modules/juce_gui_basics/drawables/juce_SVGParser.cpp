@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -1023,8 +1024,7 @@ private:
 
     float getStrokeWidth (const String& strokeWidth) const noexcept
     {
-        auto transformScale = std::sqrt (std::abs (transform.getDeterminant()));
-        return transformScale * getCoordLength (strokeWidth, viewBoxW);
+        return transform.getScaleFactor() * getCoordLength (strokeWidth, viewBoxW);
     }
 
     PathStrokeType getStrokeFor (const XmlPath& xml) const
@@ -1197,7 +1197,7 @@ private:
             auto linkedFile = originalFile.getParentDirectory().getChildFile (link);
 
             if (linkedFile.existsAsFile())
-                inputStream = linkedFile.createInputStream();
+                inputStream.reset (linkedFile.createInputStream());
         }
 
         if (inputStream != nullptr)
@@ -1525,18 +1525,16 @@ private:
 
         if (text.startsWithChar ('#'))
         {
-            uint32 hex[8] = { 0 };
-            hex[6] = hex[7] = 15;
-
+            uint32 hex[6] = { 0 };
             int numChars = 0;
             auto s = text.getCharPointer();
 
-            while (numChars < 8)
+            while (numChars < 6)
             {
                 auto hexValue = CharacterFunctions::getHexDigitValue (*++s);
 
                 if (hexValue >= 0)
-                    hex[numChars++] = (uint32) hexValue;
+                    hex [numChars++] = (uint32) hexValue;
                 else
                     break;
             }
@@ -1548,53 +1546,30 @@ private:
 
             return Colour ((uint8) ((hex[0] << 4) + hex[1]),
                            (uint8) ((hex[2] << 4) + hex[3]),
-                           (uint8) ((hex[4] << 4) + hex[5]),
-                           (uint8) ((hex[6] << 4) + hex[7]));
+                           (uint8) ((hex[4] << 4) + hex[5]));
         }
 
-        if (text.startsWith ("rgb") || text.startsWith ("hsl"))
+        if (text.startsWith ("rgb"))
         {
-            auto tokens = [&text]
+            auto openBracket = text.indexOfChar ('(');
+            auto closeBracket = text.indexOfChar (openBracket, ')');
+
+            if (openBracket >= 3 && closeBracket > openBracket)
             {
-                auto openBracket = text.indexOfChar ('(');
-                auto closeBracket = text.indexOfChar (openBracket, ')');
+                StringArray tokens;
+                tokens.addTokens (text.substring (openBracket + 1, closeBracket), ",", "");
+                tokens.trim();
+                tokens.removeEmptyStrings();
 
-                StringArray arr;
+                if (tokens[0].containsChar ('%'))
+                    return Colour ((uint8) roundToInt (2.55 * tokens[0].getDoubleValue()),
+                                   (uint8) roundToInt (2.55 * tokens[1].getDoubleValue()),
+                                   (uint8) roundToInt (2.55 * tokens[2].getDoubleValue()));
 
-                if (openBracket >= 3 && closeBracket > openBracket)
-                {
-                    arr.addTokens (text.substring (openBracket + 1, closeBracket), ",", "");
-                    arr.trim();
-                    arr.removeEmptyStrings();
-                }
-
-                return arr;
-            }();
-
-            auto alpha = [&tokens, &text]
-            {
-                if ((text.startsWith ("rgba") || text.startsWith ("hsla")) && tokens.size() == 4)
-                    return tokens[3].getFloatValue();
-
-                return 1.0f;
-            }();
-
-            if (text.startsWith ("hsl"))
-                return Colour::fromHSL ((float) (tokens[0].getDoubleValue() / 360.0),
-                                        (float) (tokens[1].getDoubleValue() / 100.0),
-                                        (float) (tokens[2].getDoubleValue() / 100.0),
-                                        alpha);
-
-            if (tokens[0].containsChar ('%'))
-                return Colour ((uint8) roundToInt (2.55 * tokens[0].getDoubleValue()),
-                               (uint8) roundToInt (2.55 * tokens[1].getDoubleValue()),
-                               (uint8) roundToInt (2.55 * tokens[2].getDoubleValue()),
-                               alpha);
-
-            return Colour ((uint8) tokens[0].getIntValue(),
-                           (uint8) tokens[1].getIntValue(),
-                           (uint8) tokens[2].getIntValue(),
-                           alpha);
+                return Colour ((uint8) tokens[0].getIntValue(),
+                               (uint8) tokens[1].getIntValue(),
+                               (uint8) tokens[2].getIntValue());
+            }
         }
 
         if (text == "inherit")

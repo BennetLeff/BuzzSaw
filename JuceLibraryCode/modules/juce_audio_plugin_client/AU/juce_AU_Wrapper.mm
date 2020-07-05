@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -22,7 +23,7 @@
 
   ==============================================================================
 */
-#include <juce_core/system/juce_CompilerWarnings.h>
+#include "../../juce_core/system/juce_TargetPlatform.h"
 #include "../utility/juce_CheckSettingMacros.h"
 
 #if JucePlugin_Build_AU
@@ -32,20 +33,24 @@
  #define JUCE_SUPPORT_CARBON 0
 #endif
 
-JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wshorten-64-to-32",
-                                     "-Wunused-parameter",
-                                     "-Wdeprecated-declarations",
-                                     "-Wsign-conversion",
-                                     "-Wconversion",
-                                     "-Woverloaded-virtual",
-                                     "-Wextra-semi",
-                                     "-Wcast-align",
-                                     "-Wshadow",
-                                     "-Wswitch-enum",
-                                     "-Wzero-as-null-pointer-constant",
-                                     "-Wnullable-to-nonnull-conversion",
-                                     "-Wgnu-zero-variadic-macro-arguments",
-                                     "-Wformat-pedantic")
+#ifdef JUCE_CLANG
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wshorten-64-to-32"
+ #pragma clang diagnostic ignored "-Wunused-parameter"
+ #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ #pragma clang diagnostic ignored "-Wsign-conversion"
+ #pragma clang diagnostic ignored "-Wconversion"
+ #pragma clang diagnostic ignored "-Woverloaded-virtual"
+ #pragma clang diagnostic ignored "-Wextra-semi"
+ #pragma clang diagnostic ignored "-Wcast-align"
+ #pragma clang diagnostic ignored "-Wshadow"
+ #if __has_warning("-Wzero-as-null-pointer-constant")
+  #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+ #endif
+ #if __has_warning("-Wnullable-to-nonnull-conversion")
+  #pragma clang diagnostic ignored "-Wnullable-to-nonnull-conversion"
+ #endif
+#endif
 
 #include "../utility/juce_IncludeSystemHeaders.h"
 
@@ -72,7 +77,9 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wshorten-64-to-32",
  #include "CoreAudioUtilityClasses/AUCarbonViewBase.h"
 #endif
 
-JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+#ifdef JUCE_CLANG
+ #pragma clang diagnostic pop
+#endif
 
 #define JUCE_MAC_WINDOW_VISIBITY_BODGE 1
 #define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
@@ -81,9 +88,9 @@ JUCE_END_IGNORE_WARNINGS_GCC_LIKE
 #include "../utility/juce_FakeMouseMoveGenerator.h"
 #include "../utility/juce_CarbonVisibility.h"
 
-#include <juce_audio_basics/native/juce_mac_CoreAudioLayouts.h>
-#include <juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp>
-#include <juce_audio_processors/format_types/juce_AU_Shared.h>
+#include "../../juce_audio_basics/native/juce_mac_CoreAudioLayouts.h"
+#include "../../juce_audio_processors/format_types/juce_LegacyAudioParameter.cpp"
+#include "../../juce_audio_processors/format_types/juce_AU_Shared.h"
 
 //==============================================================================
 using namespace juce;
@@ -122,11 +129,12 @@ class JuceAU   : public AudioProcessorHolder,
                  public MusicDeviceBase,
                  public AudioProcessorListener,
                  public AudioPlayHead,
+                 public ComponentListener,
                  public AudioProcessorParameter::Listener
 {
 public:
     JuceAU (AudioUnit component)
-        : AudioProcessorHolder (activePlugins.size() + activeUIs.size() == 0),
+        : AudioProcessorHolder(activePlugins.size() + activeUIs.size() == 0),
           MusicDeviceBase (component,
                            (UInt32) AudioUnitHelpers::getBusCount (juceFilter.get(), true),
                            (UInt32) AudioUnitHelpers::getBusCount (juceFilter.get(), false)),
@@ -1077,19 +1085,16 @@ public:
 
         switch (lastTimeStamp.mSMPTETime.mType)
         {
-            case kSMPTETimeType2398:        info.frameRate = AudioPlayHead::fps23976;    break;
-            case kSMPTETimeType24:          info.frameRate = AudioPlayHead::fps24;       break;
-            case kSMPTETimeType25:          info.frameRate = AudioPlayHead::fps25;       break;
-            case kSMPTETimeType30Drop:      info.frameRate = AudioPlayHead::fps30drop;   break;
-            case kSMPTETimeType30:          info.frameRate = AudioPlayHead::fps30;       break;
-            case kSMPTETimeType2997:        info.frameRate = AudioPlayHead::fps2997;     break;
+            case kSMPTETimeType2398:        info.frameRate = AudioPlayHead::fps23976; break;
+            case kSMPTETimeType24:          info.frameRate = AudioPlayHead::fps24; break;
+            case kSMPTETimeType25:          info.frameRate = AudioPlayHead::fps25; break;
+            case kSMPTETimeType30Drop:      info.frameRate = AudioPlayHead::fps30drop; break;
+            case kSMPTETimeType30:          info.frameRate = AudioPlayHead::fps30; break;
+            case kSMPTETimeType2997:        info.frameRate = AudioPlayHead::fps2997; break;
             case kSMPTETimeType2997Drop:    info.frameRate = AudioPlayHead::fps2997drop; break;
-            case kSMPTETimeType60:          info.frameRate = AudioPlayHead::fps60;       break;
-            case kSMPTETimeType60Drop:      info.frameRate = AudioPlayHead::fps60drop;   break;
-            case kSMPTETimeType5994:
-            case kSMPTETimeType5994Drop:
-            case kSMPTETimeType50:
-            default:                        info.frameRate = AudioPlayHead::fpsUnknown;  break;
+            case kSMPTETimeType60:          info.frameRate = AudioPlayHead::fps60; break;
+            case kSMPTETimeType60Drop:      info.frameRate = AudioPlayHead::fps60drop; break;
+            default:                        info.frameRate = AudioPlayHead::fpsUnknown; break;
         }
 
         if (CallHostBeatAndTempo (&info.ppqPosition, &info.bpm) != noErr)
@@ -1451,6 +1456,25 @@ public:
         return noErr;
     }
 
+    void componentMovedOrResized (Component& component, bool /*wasMoved*/, bool /*wasResized*/) override
+    {
+        NSView* view = (NSView*) component.getWindowHandle();
+        NSRect r = [[view superview] frame];
+        r.origin.y = r.origin.y + r.size.height - component.getHeight();
+        r.size.width = component.getWidth();
+        r.size.height = component.getHeight();
+
+        [CATransaction begin];
+        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+
+        [[view superview] setFrame: r];
+        [view setFrame: makeNSRect (component.getLocalBounds())];
+
+        [CATransaction commit];
+
+        [view setNeedsDisplay: YES];
+    }
+
     //==============================================================================
     class EditorCompHolder  : public Component
     {
@@ -1467,8 +1491,6 @@ public:
 
             ignoreUnused (fakeMouseGenerator);
             setBounds (getSizeToContainChild());
-
-            lastBounds = getBounds();
         }
 
         ~EditorCompHolder() override
@@ -1488,7 +1510,7 @@ public:
         static NSView* createViewFor (AudioProcessor* filter, JuceAU* au, AudioProcessorEditor* const editor)
         {
             auto* editorCompHolder = new EditorCompHolder (editor);
-            auto r = convertToHostBounds (makeNSRect (editorCompHolder->getSizeToContainChild()));
+            auto r = makeNSRect (editorCompHolder->getSizeToContainChild());
 
             static JuceUIViewClass cls;
             auto* view = [[cls.createInstance() initWithFrame: r] autorelease];
@@ -1512,14 +1534,6 @@ public:
             return view;
         }
 
-        void parentSizeChanged() override
-        {
-            resizeHostWindow();
-
-            if (auto* editor = getChildComponent (0))
-                editor->repaint();
-        }
-
         void childBoundsChanged (Component*) override
         {
             auto b = getSizeToContainChild();
@@ -1527,9 +1541,25 @@ public:
             if (lastBounds != b)
             {
                 lastBounds = b;
-                setSize (jmax (32, b.getWidth()), jmax (32, b.getHeight()));
 
-                resizeHostWindow();
+                auto w = jmax (32, b.getWidth());
+                auto h = jmax (32, b.getHeight());
+
+                setSize (w, h);
+
+                auto* view = (NSView*) getWindowHandle();
+                auto r = [[view superview] frame];
+                r.size.width  = w;
+                r.size.height = h;
+
+                [CATransaction begin];
+                [CATransaction setValue:(id) kCFBooleanTrue forKey:kCATransactionDisableActions];
+
+                [[view superview] setFrame: r];
+                [view setFrame: makeNSRect (b)];
+                [CATransaction commit];
+
+                [view setNeedsDisplay: YES];
             }
         }
 
@@ -1555,25 +1585,6 @@ public:
             }
 
             return false;
-        }
-
-        void resizeHostWindow()
-        {
-            [CATransaction begin];
-            [CATransaction setValue:(id) kCFBooleanTrue forKey:kCATransactionDisableActions];
-
-            auto rect = convertToHostBounds (makeNSRect (lastBounds));
-            auto* view = (NSView*) getWindowHandle();
-
-            auto superRect = [[view superview] frame];
-            superRect.size.width  = rect.size.width;
-            superRect.size.height = rect.size.height;
-
-            [[view superview] setFrame: superRect];
-            [view setFrame: rect];
-            [CATransaction commit];
-
-            [view setNeedsDisplay: YES];
         }
 
     private:
@@ -1769,33 +1780,6 @@ private:
     AudioProcessorParameter* bypassParam = nullptr;
 
     //==============================================================================
-    static NSRect convertToHostBounds (NSRect pluginRect)
-    {
-        auto desktopScale = Desktop::getInstance().getGlobalScaleFactor();
-
-        if (approximatelyEqual (desktopScale, 1.0f))
-            return pluginRect;
-
-        return NSMakeRect (static_cast<CGFloat> (pluginRect.origin.x    * desktopScale),
-                           static_cast<CGFloat> (pluginRect.origin.y    * desktopScale),
-                           static_cast<CGFloat> (pluginRect.size.width  * desktopScale),
-                           static_cast<CGFloat> (pluginRect.size.height * desktopScale));
-    }
-
-    static NSRect convertFromHostBounds (NSRect hostRect)
-    {
-        auto desktopScale = Desktop::getInstance().getGlobalScaleFactor();
-
-        if (approximatelyEqual (desktopScale, 1.0f))
-            return hostRect;
-
-        return NSMakeRect (static_cast<CGFloat> (hostRect.origin.x    / desktopScale),
-                           static_cast<CGFloat> (hostRect.origin.y    / desktopScale),
-                           static_cast<CGFloat> (hostRect.size.width  / desktopScale),
-                           static_cast<CGFloat> (hostRect.size.height / desktopScale));
-    }
-
-    //==============================================================================
     void pullInputAudio (AudioUnitRenderActionFlags& flags, const AudioTimeStamp& timestamp, const UInt32 nFrames) noexcept
     {
         const unsigned int numInputBuses = GetScope (kAudioUnitScope_Input).GetNumberOfElements();
@@ -1827,7 +1811,7 @@ private:
         }
     }
 
-    void processBlock (juce::AudioBuffer<float>& buffer, MidiBuffer& midiBuffer) noexcept
+    void processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiBuffer) noexcept
     {
         const ScopedLock sl (juceFilter->getCallbackLock());
 
@@ -1850,12 +1834,15 @@ private:
         UInt32 numPackets = 0;
         size_t dataSize = 0;
 
-        for (const auto metadata : midiEvents)
+        const juce::uint8* midiEventData;
+        int midiEventSize, midiEventPosition;
+
+        for (MidiBuffer::Iterator i (midiEvents); i.getNextEvent (midiEventData, midiEventSize, midiEventPosition);)
         {
-            jassert (isPositiveAndBelow (metadata.samplePosition, nFrames));
+            jassert (isPositiveAndBelow (midiEventPosition, nFrames));
             ignoreUnused (nFrames);
 
-            dataSize += (size_t) metadata.numBytes;
+            dataSize += (size_t) midiEventSize;
             ++numPackets;
         }
 
@@ -1869,11 +1856,11 @@ private:
 
         p = packetList->packet;
 
-        for (const auto metadata : midiEvents)
+        for (MidiBuffer::Iterator i (midiEvents); i.getNextEvent (midiEventData, midiEventSize, midiEventPosition);)
         {
-            p->timeStamp = (MIDITimeStamp) metadata.samplePosition;
-            p->length = (UInt16) metadata.numBytes;
-            memcpy (p->data, metadata.data, (size_t) metadata.numBytes);
+            p->timeStamp = (MIDITimeStamp) midiEventPosition;
+            p->length = (UInt16) midiEventSize;
+            memcpy (p->data, midiEventData, (size_t) midiEventSize);
             p = MIDIPacketNext (p);
         }
 
@@ -2515,11 +2502,19 @@ JUCE_FACTORY_ENTRY   (JuceAU, JucePlugin_AUExportPrefix)
 #endif
 
 #if ! JUCE_DISABLE_AU_FACTORY_ENTRY
- JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wcast-align", "-Wzero-as-null-pointer-constant")
+ #ifdef JUCE_CLANG
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wcast-align"
+  #if __has_warning("-Wzero-as-null-pointer-constant")
+   #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
+ #endif
 
  #include "CoreAudioUtilityClasses/AUPlugInDispatch.cpp"
 
- JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+ #ifdef JUCE_CLANG
+  #pragma clang diagnostic push
+ #endif
 #endif
 
 #endif

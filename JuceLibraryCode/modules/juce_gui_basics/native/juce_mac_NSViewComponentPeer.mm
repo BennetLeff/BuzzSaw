@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -880,7 +881,7 @@ public:
        #if USE_COREGRAPHICS_RENDERING
         if (usingCoreGraphics)
         {
-            CoreGraphicsContext context (cg, (float) [view frame].size.height);
+            CoreGraphicsContext context (cg, (float) [view frame].size.height, displayScale);
             invokePaint (context);
         }
         else
@@ -916,7 +917,7 @@ public:
                     invokePaint (*context);
                 }
 
-                CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceSRGB);
+                CGColorSpaceRef colourSpace = CGColorSpaceCreateDeviceRGB();
                 CGImageRef image = juce_createCoreGraphicsImage (temp, colourSpace, false);
                 CGColorSpaceRelease (colourSpace);
                 CGContextDrawImage (cg, CGRectMake (r.origin.x, r.origin.y, clipW, clipH), image);
@@ -1073,13 +1074,11 @@ public:
 
     void liveResizingStart()
     {
-        if (constrainer == nullptr)
-            return;
-
-        constrainer->resizeStart();
-        isFirstLiveResize = true;
-
-        setFullScreenSizeConstraints (*constrainer);
+        if (constrainer != nullptr)
+        {
+            constrainer->resizeStart();
+            isFirstLiveResize = true;
+        }
     }
 
     void liveResizingEnd()
@@ -1088,34 +1087,37 @@ public:
             constrainer->resizeEnd();
     }
 
-    NSRect constrainRect (const NSRect r)
+    NSRect constrainRect (NSRect r)
     {
-        if (constrainer == nullptr || isKioskMode())
-            return r;
-
-        const auto scale = getComponent().getDesktopScaleFactor();
-
-        auto pos            = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect (r)));
-        const auto original = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect ([window frame])));
-
-        const auto screenBounds = Desktop::getInstance().getDisplays().getTotalBounds (true);
-
-        const bool inLiveResize = [window inLiveResize];
-
-        if (! inLiveResize || isFirstLiveResize)
+        if (constrainer != nullptr && ! isKioskMode())
         {
-            isFirstLiveResize = false;
+            auto scale = getComponent().getDesktopScaleFactor();
 
-            isStretchingTop    = (pos.getY() != original.getY() && pos.getBottom() == original.getBottom());
-            isStretchingLeft   = (pos.getX() != original.getX() && pos.getRight()  == original.getRight());
-            isStretchingBottom = (pos.getY() == original.getY() && pos.getBottom() != original.getBottom());
-            isStretchingRight  = (pos.getX() == original.getX() && pos.getRight()  != original.getRight());
+            auto pos      = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect (r)));
+            auto original = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect ([window frame])));
+
+            auto screenBounds = Desktop::getInstance().getDisplays().getTotalBounds (true);
+
+            const bool inLiveResize = [window inLiveResize];
+
+            if (! inLiveResize || isFirstLiveResize)
+            {
+                isFirstLiveResize = false;
+
+                isStretchingTop    = (pos.getY() != original.getY() && pos.getBottom() == original.getBottom());
+                isStretchingLeft   = (pos.getX() != original.getX() && pos.getRight()  == original.getRight());
+                isStretchingBottom = (pos.getY() == original.getY() && pos.getBottom() != original.getBottom());
+                isStretchingRight  = (pos.getX() == original.getX() && pos.getRight()  != original.getRight());
+            }
+
+            constrainer->checkBounds (pos, original, screenBounds,
+                                      isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight);
+
+            pos = ScalingHelpers::scaledScreenPosToUnscaled (scale, pos);
+            r = flippedScreenRect (makeNSRect (pos));
         }
 
-        constrainer->checkBounds (pos, original, screenBounds,
-                                  isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight);
-
-        return flippedScreenRect (makeNSRect (ScalingHelpers::scaledScreenPosToUnscaled (scale, pos)));
+        return r;
     }
 
     static void showArrowCursorIfNeeded()
@@ -1523,30 +1525,6 @@ private:
             case NSEventTypeTabletProximity:
                 break;
 
-            case NSEventTypeFlagsChanged:
-            case NSEventTypeAppKitDefined:
-            case NSEventTypeSystemDefined:
-            case NSEventTypeApplicationDefined:
-            case NSEventTypePeriodic:
-            case NSEventTypeGesture:
-            case NSEventTypeMagnify:
-            case NSEventTypeSwipe:
-            case NSEventTypeRotate:
-            case NSEventTypeBeginGesture:
-            case NSEventTypeEndGesture:
-            case NSEventTypeQuickLook:
-           #if JUCE_64BIT
-            case NSEventTypeSmartMagnify:
-            case NSEventTypePressure:
-           #endif
-          #if defined (MAC_OS_X_VERSION_10_12) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
-           #if JUCE_64BIT
-            case NSEventTypeDirectTouch:
-           #endif
-           #if defined (MAC_OS_X_VERSION_10_15) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_15
-            case NSEventTypeChangeMode:
-           #endif
-          #endif
             default:
                 return false;
         }
@@ -1583,13 +1561,6 @@ private:
         }
 
         return true;
-    }
-
-    void setFullScreenSizeConstraints (const ComponentBoundsConstrainer& c)
-    {
-        const auto minSize = NSMakeSize (static_cast<float> (c.getMinimumWidth()),
-                                         0.0f);
-        [window setMinFullScreenContentSize: minSize];
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NSViewComponentPeer)
@@ -2221,8 +2192,7 @@ void Desktop::setKioskComponent (Component* kioskComp, bool shouldBeEnabled, boo
 
             [NSApp setPresentationOptions: (allowMenusAndBars ? (NSApplicationPresentationAutoHideDock | NSApplicationPresentationAutoHideMenuBar)
                                                               : (NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar))];
-
-            kioskComp->setBounds (getDisplays().findDisplayForRect (kioskComp->getScreenBounds()).totalArea);
+            kioskComp->setBounds (Desktop::getInstance().getDisplays().getMainDisplay().totalArea);
             peer->becomeKeyWindow();
         }
         else

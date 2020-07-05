@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -186,7 +186,7 @@ public:
     /** Returns the number of bytes that would be needed to represent the given
         unicode character in this encoding format.
     */
-    static size_t getBytesRequiredFor (juce_wchar) noexcept
+    static inline size_t getBytesRequiredFor (juce_wchar) noexcept
     {
         return sizeof (CharType);
     }

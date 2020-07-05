@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -38,7 +39,7 @@ struct Oversampling<SampleType>::OversamplingStage
     virtual ~OversamplingStage() {}
 
     //==============================================================================
-    virtual SampleType getLatencyInSamples() const = 0;
+    virtual SampleType getLatencyInSamples() = 0;
 
     virtual void initProcessing (size_t maximumNumberOfSamplesBeforeOversampling)
     {
@@ -77,7 +78,7 @@ struct OversamplingDummy   : public Oversampling<SampleType>::OversamplingStage
     OversamplingDummy (size_t numChans) : ParentType (numChans, 1) {}
 
     //==============================================================================
-    SampleType getLatencyInSamples() const override
+    SampleType getLatencyInSamples() override
     {
         return 0;
     }
@@ -138,7 +139,7 @@ struct Oversampling2TimesEquirippleFIR  : public Oversampling<SampleType>::Overs
     }
 
     //==============================================================================
-    SampleType getLatencyInSamples() const override
+    SampleType getLatencyInSamples() override
     {
         return static_cast<SampleType> (coefficientsUp.getFilterOrder() + coefficientsDown.getFilterOrder()) * 0.5f;
     }
@@ -299,7 +300,7 @@ struct Oversampling2TimesPolyphaseIIR  : public Oversampling<SampleType>::Oversa
     }
 
     //==============================================================================
-    SampleType getLatencyInSamples() const override
+    SampleType getLatencyInSamples() override
     {
         return latency;
     }
@@ -363,9 +364,8 @@ struct Oversampling2TimesPolyphaseIIR  : public Oversampling<SampleType>::Oversa
             }
         }
 
-       #if JUCE_SNAP_TO_ZERO
+        // Snap To Zero
         snapToZero (true);
-       #endif
     }
 
     void processSamplesDown (AudioBlock<SampleType>& outputBlock) override
@@ -422,9 +422,8 @@ struct Oversampling2TimesPolyphaseIIR  : public Oversampling<SampleType>::Oversa
             delayDown.setUnchecked (static_cast<int> (channel), delay);
         }
 
-       #if JUCE_SNAP_TO_ZERO
+        // Snap To Zero
         snapToZero (false);
-       #endif
     }
 
     void snapToZero (bool snapUpProcessing)
@@ -507,10 +506,10 @@ private:
         coeffs.coefficients.clear();
         auto inversion = one / denominator[0];
 
-        for (int i = 0; i <= numerator.getOrder(); ++i)
+        for (auto i = 0; i <= numerator.getOrder(); ++i)
             coeffs.coefficients.add (numerator[i] * inversion);
 
-        for (int i = 1; i <= denominator.getOrder(); ++i)
+        for (auto i = 1; i <= denominator.getOrder(); ++i)
             coeffs.coefficients.add (denominator[i] * inversion);
 
         return coeffs;
@@ -540,9 +539,8 @@ Oversampling<SampleType>::Oversampling (size_t newNumChannels)
 
 template <typename SampleType>
 Oversampling<SampleType>::Oversampling (size_t newNumChannels, size_t newFactor,
-                                        FilterType newType, bool isMaximumQuality,
-                                        bool useIntegerLatency)
-    : numChannels (newNumChannels), shouldUseIntegerLatency (useIntegerLatency)
+                                        FilterType newType, bool isMaximumQuality)
+    : numChannels (newNumChannels)
 {
     jassert (isPositiveAndBelow (newFactor, 5) && numChannels > 0);
 
@@ -631,20 +629,7 @@ void Oversampling<SampleType>::clearOversamplingStages()
 
 //==============================================================================
 template <typename SampleType>
-void Oversampling<SampleType>::setUsingIntegerLatency (bool useIntegerLatency) noexcept
-{
-    shouldUseIntegerLatency = useIntegerLatency;
-}
-
-template <typename SampleType>
-SampleType Oversampling<SampleType>::getLatencyInSamples() const noexcept
-{
-    auto latency = getUncompensatedLatency();
-    return shouldUseIntegerLatency ? latency + fractionalDelay : latency;
-}
-
-template <typename SampleType>
-SampleType Oversampling<SampleType>::getUncompensatedLatency() const noexcept
+SampleType Oversampling<SampleType>::getLatencyInSamples() noexcept
 {
     auto latency = static_cast<SampleType> (0);
     size_t order = 1;
@@ -659,7 +644,7 @@ SampleType Oversampling<SampleType>::getUncompensatedLatency() const noexcept
 }
 
 template <typename SampleType>
-size_t Oversampling<SampleType>::getOversamplingFactor() const noexcept
+size_t Oversampling<SampleType>::getOversamplingFactor() noexcept
 {
     return factorOversampling;
 }
@@ -677,10 +662,6 @@ void Oversampling<SampleType>::initProcessing (size_t maximumNumberOfSamplesBefo
         currentNumSamples *= stage->factor;
     }
 
-    ProcessSpec spec = { 0.0, (uint32) maximumNumberOfSamplesBeforeOversampling, (uint32) numChannels };
-    delay.prepare (spec);
-    updateDelayLine();
-
     isReady = true;
     reset();
 }
@@ -693,8 +674,6 @@ void Oversampling<SampleType>::reset() noexcept
     if (isReady)
         for (auto* stage : stages)
            stage->reset();
-
-    delay.reset();
 }
 
 template <typename SampleType>
@@ -741,26 +720,6 @@ void Oversampling<SampleType>::processSamplesDown (AudioBlock<SampleType>& outpu
     }
 
     stages.getFirst()->processSamplesDown (outputBlock);
-
-    if (shouldUseIntegerLatency && fractionalDelay > static_cast<SampleType> (0.0))
-    {
-        auto context = ProcessContextReplacing<SampleType> (outputBlock);
-        delay.process (context);
-    }
-}
-
-template <typename SampleType>
-void Oversampling<SampleType>::updateDelayLine()
-{
-    auto latency = getUncompensatedLatency();
-    fractionalDelay = static_cast<SampleType> (1.0) - (latency - std::floor (latency));
-
-    if (fractionalDelay == static_cast<SampleType> (1.0))
-        fractionalDelay = static_cast<SampleType> (0.0);
-    else if (fractionalDelay < static_cast<SampleType> (0.618))
-        fractionalDelay += static_cast<SampleType> (1.0);
-
-    delay.setDelay (fractionalDelay);
 }
 
 template class Oversampling<float>;

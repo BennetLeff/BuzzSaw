@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -199,11 +199,15 @@ void UnitTestRunner::beginNewTest (UnitTest* const test, const String& subCatego
     endTest();
     currentTest = test;
 
-    auto testName = test->getName();
-    results.add (new TestResult (testName, subCategory));
+    auto* r = new TestResult();
+    results.add (r);
+    r->unitTestName = test->getName();
+    r->subcategoryName = subCategory;
+    r->passes = 0;
+    r->failures = 0;
 
     logMessage ("-----------------------------------------------------------------");
-    logMessage ("Starting test: " + testName + " / " + subCategory + "...");
+    logMessage ("Starting test: " + r->unitTestName + " / " + subCategory + "...");
 
     resultsUpdated();
 }
@@ -212,8 +216,6 @@ void UnitTestRunner::endTest()
 {
     if (auto* r = results.getLast())
     {
-        r->endTime = Time::getCurrentTime();
-
         if (r->failures > 0)
         {
             String m ("FAILED!!  ");

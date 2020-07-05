@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -23,7 +24,7 @@
   ==============================================================================
 */
 
-#include <juce_core/system/juce_TargetPlatform.h>
+#include "../../juce_core/system/juce_TargetPlatform.h"
 #include "../utility/juce_CheckSettingMacros.h"
 
 #if JucePlugin_Build_RTAS
@@ -44,9 +45,12 @@
  #include <Mac2Win.H>
 #endif
 
-JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Widiomatic-parentheses",
-                                     "-Wnon-virtual-dtor",
-                                     "-Wcomment")
+#ifdef __clang__
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Widiomatic-parentheses"
+ #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
+ #pragma clang diagnostic ignored "-Wcomment"
+#endif
 
 /* Note about include paths
    ------------------------
@@ -95,10 +99,15 @@ JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Widiomatic-parentheses",
 #include <FicProcessTokens.h>
 #include <ExternalVersionDefines.h>
 
-JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+#ifdef __clang__
+ #pragma clang diagnostic pop
+#endif
 
 //==============================================================================
-JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4263 4264 4250)
+#ifdef _MSC_VER
+ #pragma pack (push, 8)
+ #pragma warning (disable: 4263 4264 4250)
+#endif
 
 #include "../utility/juce_IncludeModuleHeaders.h"
 
@@ -597,9 +606,13 @@ public:
         if (! midiEvents.isEmpty())
         {
            #if JucePlugin_ProducesMidiOutput
-            for (const auto metadata : midiEvents)
+            const juce::uint8* midiEventData;
+            int midiEventSize, midiEventPosition;
+            MidiBuffer::Iterator i (midiEvents);
+
+            while (i.getNextEvent (midiEventData, midiEventSize, midiEventPosition))
             {
-                //jassert (metadata.samplePosition >= 0 && metadata.samplePosition < (int) numSamples);
+                //jassert (midiEventPosition >= 0 && midiEventPosition < (int) numSamples);
             }
            #elif JUCE_DEBUG || JUCE_LOG_ASSERTIONS
             // if your plugin creates midi messages, you'll need to set
@@ -1047,7 +1060,5 @@ CProcessGroupInterface* CProcessGroup::CreateProcessGroup()
 
     return new JucePlugInGroup();
 }
-
-JUCE_END_IGNORE_WARNINGS_MSVC
 
 #endif

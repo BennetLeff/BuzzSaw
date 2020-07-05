@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -156,8 +157,8 @@ const char* const WavAudioFormat::tracktionLoopInfo    = "tracktion loop info";
 //==============================================================================
 namespace WavFileHelpers
 {
-    constexpr inline int chunkName (const char* name) noexcept         { return (int) ByteOrder::littleEndianInt (name); }
-    constexpr inline size_t roundUpSize (size_t sz) noexcept           { return (sz + 3) & ~3u; }
+    JUCE_CONSTEXPR inline int chunkName (const char* name) noexcept         { return (int) ByteOrder::littleEndianInt (name); }
+    JUCE_CONSTEXPR inline size_t roundUpSize (size_t sz) noexcept           { return (sz + 3) & ~3u; }
 
     #if JUCE_MSVC
      #pragma pack (push, 1)
@@ -1702,7 +1703,7 @@ AudioFormatReader* WavAudioFormat::createReaderFor (InputStream* sourceStream, b
 
 MemoryMappedAudioFormatReader* WavAudioFormat::createMemoryMappedReader (const File& file)
 {
-    return createMemoryMappedReader (file.createInputStream().release());
+    return createMemoryMappedReader (file.createInputStream());
 }
 
 MemoryMappedAudioFormatReader* WavAudioFormat::createMemoryMappedReader (FileInputStream* fin)
@@ -1747,7 +1748,7 @@ namespace WavFileHelpers
         TemporaryFile tempFile (file);
         WavAudioFormat wav;
 
-        std::unique_ptr<AudioFormatReader> reader (wav.createReaderFor (file.createInputStream().release(), true));
+        std::unique_ptr<AudioFormatReader> reader (wav.createReaderFor (file.createInputStream(), true));
 
         if (reader != nullptr)
         {
@@ -1780,7 +1781,7 @@ bool WavAudioFormat::replaceMetadataInFile (const File& wavFile, const StringPai
 {
     using namespace WavFileHelpers;
 
-    std::unique_ptr<WavAudioFormatReader> reader (static_cast<WavAudioFormatReader*> (createReaderFor (wavFile.createInputStream().release(), true)));
+    std::unique_ptr<WavAudioFormatReader> reader (static_cast<WavAudioFormatReader*> (createReaderFor (wavFile.createInputStream(), true)));
 
     if (reader != nullptr)
     {

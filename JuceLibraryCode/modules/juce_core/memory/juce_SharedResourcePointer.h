@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -116,10 +116,12 @@ public:
     /** Returns the shared object. */
     SharedObjectType& get() const noexcept              { return *sharedObject; }
 
-    /** Returns the object that this pointer references. */
+    /** Returns the object that this pointer references.
+        The pointer returned may be a nullptr, of course.
+    */
     SharedObjectType& getObject() const noexcept        { return *sharedObject; }
 
-    /** Returns the shared object pointer. */
+    /** Returns the shared object. */
     SharedObjectType* operator->() const noexcept       { return sharedObject; }
 
     /** Returns the number of SharedResourcePointers that are currently holding the shared object. */

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -30,7 +30,7 @@ namespace FloatVectorHelpers
     #define JUCE_INCREMENT_DEST             dest += (16 / sizeof (*dest));
 
    #if JUCE_USE_SSE_INTRINSICS
-    static bool isAligned (const void* p) noexcept
+    inline static bool isAligned (const void* p) noexcept
     {
         return (((pointer_sized_int) p) & 15) == 0;
     }

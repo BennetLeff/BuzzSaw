@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -55,42 +56,42 @@ struct CmplxSIMDOps
 {
     using vSIMDType = typename SIMDNativeOps<Scalar>::vSIMDType;
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE load (const Scalar* a) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE load (const Scalar* a) noexcept
     {
         return SIMDNativeOps<Scalar>::load (a);
     }
 
-    static void JUCE_VECTOR_CALLTYPE store (vSIMDType value, Scalar* dest) noexcept
+    static inline void JUCE_VECTOR_CALLTYPE store (vSIMDType value, Scalar* dest) noexcept
     {
         SIMDNativeOps<Scalar>::store (value, dest);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE expand (Scalar s) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE expand (Scalar s) noexcept
     {
         return SIMDNativeOps<Scalar>::expand (s);
     }
 
-    static Scalar JUCE_VECTOR_CALLTYPE get (vSIMDType v, std::size_t i) noexcept
+    static inline Scalar JUCE_VECTOR_CALLTYPE get (vSIMDType v, std::size_t i) noexcept
     {
         return SIMDNativeOps<Scalar>::get (v, i);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE set (vSIMDType v, std::size_t i, Scalar s) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE set (vSIMDType v, std::size_t i, Scalar s) noexcept
     {
         return SIMDNativeOps<Scalar>::set (v, i, s);
     }
 
-    static Scalar JUCE_VECTOR_CALLTYPE sum (vSIMDType a)  noexcept
+    static inline Scalar JUCE_VECTOR_CALLTYPE sum (vSIMDType a)  noexcept
     {
         return SIMDNativeOps<Scalar>::sum (a);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE mul (vSIMDType a, vSIMDType b) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE mul (vSIMDType a, vSIMDType b) noexcept
     {
         return SIMDNativeOps<Scalar>::mul (a, b);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE muladd (vSIMDType a, vSIMDType b, vSIMDType c) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE muladd (vSIMDType a, vSIMDType b, vSIMDType c) noexcept
     {
         return SIMDNativeOps<Scalar>::multiplyAdd (a, b, c);
     }
@@ -102,17 +103,17 @@ struct CmplxSIMDOps<std::complex<Scalar>>
 {
     using vSIMDType = typename SIMDNativeOps<Scalar>::vSIMDType;
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE load (const std::complex<Scalar>* a) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE load (const std::complex<Scalar>* a) noexcept
     {
         return SIMDNativeOps<Scalar>::load (reinterpret_cast<const Scalar*> (a));
     }
 
-    static void JUCE_VECTOR_CALLTYPE store (vSIMDType value, std::complex<Scalar>* dest) noexcept
+    static inline void JUCE_VECTOR_CALLTYPE store (vSIMDType value, std::complex<Scalar>* dest) noexcept
     {
         SIMDNativeOps<Scalar>::store (value, reinterpret_cast<Scalar*> (dest));
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE expand (std::complex<Scalar> s) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE expand (std::complex<Scalar> s) noexcept
     {
         const int n = sizeof (vSIMDType) / sizeof (Scalar);
 
@@ -128,31 +129,31 @@ struct CmplxSIMDOps<std::complex<Scalar>>
         return u.v;
     }
 
-    static std::complex<Scalar> JUCE_VECTOR_CALLTYPE get (vSIMDType v, std::size_t i) noexcept
+    static inline std::complex<Scalar> JUCE_VECTOR_CALLTYPE get (vSIMDType v, std::size_t i) noexcept
     {
         auto j = i << 1;
         return std::complex<Scalar> (SIMDNativeOps<Scalar>::get (v, j), SIMDNativeOps<Scalar>::get (v, j + 1));
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE set (vSIMDType v, std::size_t i, std::complex<Scalar> s) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE set (vSIMDType v, std::size_t i, std::complex<Scalar> s) noexcept
     {
         auto j = i << 1;
         return SIMDNativeOps<Scalar>::set (SIMDNativeOps<Scalar>::set (v, j, s.real()), j + 1, s.imag());
     }
 
-    static std::complex<Scalar> JUCE_VECTOR_CALLTYPE sum (vSIMDType a)  noexcept
+    static inline std::complex<Scalar> JUCE_VECTOR_CALLTYPE sum (vSIMDType a)  noexcept
     {
         vSIMDType result = SIMDNativeOps<Scalar>::oddevensum (a);
         auto* ptr = reinterpret_cast<const Scalar*> (&result);
         return std::complex<Scalar> (ptr[0], ptr[1]);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE mul (vSIMDType a, vSIMDType b)  noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE mul (vSIMDType a, vSIMDType b)  noexcept
     {
         return SIMDNativeOps<Scalar>::cmplxmul (a, b);
     }
 
-    static vSIMDType JUCE_VECTOR_CALLTYPE muladd (vSIMDType a, vSIMDType b, vSIMDType c) noexcept
+    static inline vSIMDType JUCE_VECTOR_CALLTYPE muladd (vSIMDType a, vSIMDType b, vSIMDType c) noexcept
     {
         return SIMDNativeOps<Scalar>::add (a, SIMDNativeOps<Scalar>::cmplxmul (b, c));
     }

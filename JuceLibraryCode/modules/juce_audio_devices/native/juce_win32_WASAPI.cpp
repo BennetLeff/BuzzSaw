@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -352,8 +352,8 @@ void copyWavFormat (WAVEFORMATEXTENSIBLE& dest, const WAVEFORMATEX* src) noexcep
 class WASAPIDeviceBase
 {
 public:
-    WASAPIDeviceBase (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode)
-        : device (d), useExclusiveMode (exclusiveMode)
+    WASAPIDeviceBase (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode, std::function<void()>&& cb)
+        : device (d), useExclusiveMode (exclusiveMode), reopenCallback (cb)
     {
         clientEvent = CreateEvent (nullptr, false, false, nullptr);
 
@@ -429,8 +429,7 @@ public:
              && tryInitialisingWithBufferSize (bufferSizeSamples))
         {
             sampleRateHasChanged = false;
-            shouldShutdown = false;
-
+            shouldClose = false;
             channelMaps.clear();
 
             for (int i = 0; i <= channels.getHighestBit(); ++i)
@@ -469,19 +468,9 @@ public:
         sampleRateHasChanged = true;
     }
 
-    void deviceSessionBecameInactive()
+    void deviceBecameInactive()
     {
-        isActive = false;
-    }
-
-    void deviceSessionExpired()
-    {
-        shouldShutdown = true;
-    }
-
-    void deviceSessionBecameActive()
-    {
-        isActive = true;
+        shouldClose = true;
     }
 
     //==============================================================================
@@ -498,7 +487,8 @@ public:
     Array<int> channelMaps;
     UINT32 actualBufferSize = 0;
     int bytesPerSample = 0, bytesPerFrame = 0;
-    std::atomic<bool> sampleRateHasChanged { false }, shouldShutdown { false }, isActive { true };
+    bool sampleRateHasChanged = false, shouldClose = false;
+    std::function<void()> reopenCallback;
 
     virtual void updateFormat (bool isFloat) = 0;
 
@@ -514,20 +504,13 @@ private:
         JUCE_COMRESULT OnChannelVolumeChanged (DWORD, float*, DWORD, LPCGUID)  { return S_OK; }
         JUCE_COMRESULT OnGroupingParamChanged (LPCGUID, LPCGUID)               { return S_OK; }
 
-        JUCE_COMRESULT OnStateChanged (AudioSessionState state)
+        JUCE_COMRESULT OnStateChanged(AudioSessionState state)
         {
-            switch (state)
-            {
-            case AudioSessionStateInactive:
-                owner.deviceSessionBecameInactive();
-                break;
-            case AudioSessionStateExpired:
-                owner.deviceSessionExpired();
-                break;
-            case AudioSessionStateActive:
-                owner.deviceSessionBecameActive();
-                break;
-            }
+            if (state == AudioSessionStateActive)
+                owner.reopenCallback();
+
+            if (state == AudioSessionStateInactive || state == AudioSessionStateExpired)
+                owner.deviceBecameInactive();
 
             return S_OK;
         }
@@ -709,8 +692,8 @@ private:
 class WASAPIInputDevice  : public WASAPIDeviceBase
 {
 public:
-    WASAPIInputDevice (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode)
-        : WASAPIDeviceBase (d, exclusiveMode)
+    WASAPIInputDevice (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode, std::function<void()>&& reopenCallback)
+        : WASAPIDeviceBase (d, exclusiveMode, std::move (reopenCallback))
     {
     }
 
@@ -763,8 +746,6 @@ public:
             return false;
 
         purgeInputBuffers();
-        isActive = true;
-
         return true;
     }
 
@@ -872,8 +853,8 @@ private:
 class WASAPIOutputDevice  : public WASAPIDeviceBase
 {
 public:
-    WASAPIOutputDevice (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode)
-        : WASAPIDeviceBase (d, exclusiveMode)
+    WASAPIOutputDevice (const ComSmartPtr<IMMDevice>& d, bool exclusiveMode, std::function<void()>&& reopenCallback)
+        : WASAPIDeviceBase (d, exclusiveMode, std::move (reopenCallback))
     {
     }
 
@@ -918,12 +899,7 @@ public:
         if (check (renderClient->GetBuffer (samplesToDo, &outputData)))
             renderClient->ReleaseBuffer (samplesToDo, AUDCLNT_BUFFERFLAGS_SILENT);
 
-        if (! check (client->Start()))
-            return false;
-
-        isActive = true;
-
-        return true;
+        return check (client->Start());
     }
 
     int getNumSamplesAvailableToCopy() const
@@ -1148,8 +1124,7 @@ public:
         if (inputDevice != nullptr)   ResetEvent (inputDevice->clientEvent);
         if (outputDevice != nullptr)  ResetEvent (outputDevice->clientEvent);
 
-        shouldShutdown = false;
-        deviceSampleRateChanged = false;
+        deviceBecameInactive = false;
 
         startThread (8);
         Thread::sleep (5);
@@ -1258,6 +1233,7 @@ public:
         auto bufferSize        = currentBufferSizeSamples;
         auto numInputBuffers   = getActiveInputChannels().countNumberOfSetBits();
         auto numOutputBuffers  = getActiveOutputChannels().countNumberOfSetBits();
+        bool sampleRateHasChanged = false;
 
         AudioBuffer<float> ins  (jmax (1, numInputBuffers),  bufferSize + 32);
         AudioBuffer<float> outs (jmax (1, numOutputBuffers), bufferSize + 32);
@@ -1268,23 +1244,14 @@ public:
 
         while (! threadShouldExit())
         {
-            if ((outputDevice != nullptr && outputDevice->shouldShutdown)
-                || (inputDevice != nullptr && inputDevice->shouldShutdown))
+            if (outputDevice != nullptr && outputDevice->shouldClose)
+                deviceBecameInactive = true;
+
+            if (inputDevice != nullptr && ! deviceBecameInactive)
             {
-                shouldShutdown = true;
-                triggerAsyncUpdate();
+                if (inputDevice->shouldClose)
+                    deviceBecameInactive = true;
 
-                break;
-            }
-
-            auto inputDeviceActive = (inputDevice != nullptr && inputDevice->isActive);
-            auto outputDeviceActive = (outputDevice != nullptr && outputDevice->isActive);
-
-            if (! inputDeviceActive && ! outputDeviceActive)
-                continue;
-
-            if (inputDeviceActive)
-            {
                 if (outputDevice == nullptr)
                 {
                     if (WaitForSingleObject (inputDevice->clientEvent, 1000) == WAIT_TIMEOUT)
@@ -1305,13 +1272,12 @@ public:
 
                 if (inputDevice->sampleRateHasChanged)
                 {
-                    deviceSampleRateChanged = true;
-                    triggerAsyncUpdate();
-
-                    break;
+                    sampleRateHasChanged = true;
+                    sampleRateChangedByOutput = false;
                 }
             }
 
+            if (! deviceBecameInactive)
             {
                 const ScopedTryLock sl (startStopLock);
 
@@ -1322,7 +1288,7 @@ public:
                     outs.clear();
             }
 
-            if (outputDeviceActive)
+            if (outputDevice != nullptr && ! deviceBecameInactive)
             {
                 // Note that this function is handed the input device so it can check for the event and make sure
                 // the input reservoir is filled up correctly even when bufferSize > device actualBufferSize
@@ -1330,11 +1296,15 @@ public:
 
                 if (outputDevice->sampleRateHasChanged)
                 {
-                    deviceSampleRateChanged = true;
-                    triggerAsyncUpdate();
-
-                    break;
+                    sampleRateHasChanged = true;
+                    sampleRateChangedByOutput = true;
                 }
+            }
+
+            if (sampleRateHasChanged || deviceBecameInactive)
+            {
+                triggerAsyncUpdate();
+                break; // Quit the thread... will restart it later!
             }
         }
     }
@@ -1362,7 +1332,7 @@ private:
     AudioIODeviceCallback* callback = {};
     CriticalSection startStopLock;
 
-    std::atomic<bool> shouldShutdown { false }, deviceSampleRateChanged { false };
+    bool sampleRateChangedByOutput = false, deviceBecameInactive = false;
 
     BigInteger lastKnownInputChannels, lastKnownOutputChannels;
 
@@ -1398,54 +1368,57 @@ private:
 
             auto flow = getDataFlow (device);
 
+            auto deviceReopenCallback = [this]
+            {
+                if (deviceBecameInactive)
+                {
+                    deviceBecameInactive = false;
+                    MessageManager::callAsync ([this] { reopenDevices(); });
+                }
+            };
+
             if (deviceId == inputDeviceId && flow == eCapture)
-                inputDevice.reset (new WASAPIInputDevice (device, useExclusiveMode));
+                inputDevice.reset (new WASAPIInputDevice (device, useExclusiveMode, deviceReopenCallback));
             else if (deviceId == outputDeviceId && flow == eRender)
-                outputDevice.reset (new WASAPIOutputDevice (device, useExclusiveMode));
+                outputDevice.reset (new WASAPIOutputDevice (device, useExclusiveMode, deviceReopenCallback));
         }
 
         return (outputDeviceId.isEmpty() || (outputDevice != nullptr && outputDevice->isOk()))
              && (inputDeviceId.isEmpty() || (inputDevice != nullptr && inputDevice->isOk()));
     }
 
+    void reopenDevices()
+    {
+        outputDevice = nullptr;
+        inputDevice = nullptr;
+
+        initialise();
+
+        open (lastKnownInputChannels, lastKnownOutputChannels,
+              getChangedSampleRate(), currentBufferSizeSamples);
+
+        start (callback);
+    }
+
     //==============================================================================
     void handleAsyncUpdate() override
     {
-        auto closeDevices = [this]
-        {
-            close();
+        stop();
 
-            outputDevice = nullptr;
-            inputDevice = nullptr;
-        };
+        // sample rate change
+        if (! deviceBecameInactive)
+            reopenDevices();
+    }
 
-        if (shouldShutdown)
-        {
-            closeDevices();
-        }
-        else if (deviceSampleRateChanged)
-        {
-            auto sampleRateChangedByInput = (inputDevice != nullptr && inputDevice->sampleRateHasChanged);
+    double getChangedSampleRate() const
+    {
+        if (outputDevice != nullptr && sampleRateChangedByOutput)
+            return outputDevice->defaultSampleRate;
 
-            closeDevices();
-            initialise();
+        if (inputDevice != nullptr && ! sampleRateChangedByOutput)
+            return inputDevice->defaultSampleRate;
 
-            auto changedSampleRate = [this, sampleRateChangedByInput]()
-            {
-                if (inputDevice != nullptr && sampleRateChangedByInput)
-                    return inputDevice->defaultSampleRate;
-
-                if (outputDevice != nullptr && ! sampleRateChangedByInput)
-                    return outputDevice->defaultSampleRate;
-
-                return 0.0;
-            }();
-
-            open (lastKnownInputChannels, lastKnownOutputChannels,
-                  changedSampleRate, currentBufferSizeSamples);
-
-            start (callback);
-        }
+        return 0.0;
     }
 
     //==============================================================================
@@ -1566,7 +1539,7 @@ private:
         HRESULT notify()
         {
             if (device != nullptr)
-                device->triggerAsyncDeviceChangeCallback();
+            device->triggerAsyncDeviceChangeCallback();
 
             return S_OK;
         }

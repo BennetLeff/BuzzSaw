@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -319,8 +319,9 @@ private:
                 return {};
 
             auto rootFsDevice = info.st_dev;
+            DirectoryIterator iter (mountFolder, false, "*", File::findDirectories);
 
-            for (const auto& iter : RangedDirectoryIterator (mountFolder, false, "*", File::findDirectories))
+            while (iter.next())
             {
                 auto candidate = iter.getFile();
 

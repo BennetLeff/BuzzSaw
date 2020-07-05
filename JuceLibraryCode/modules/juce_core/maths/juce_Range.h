@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -41,22 +41,22 @@ class Range
 public:
     //==============================================================================
     /** Constructs an empty range. */
-    constexpr Range() = default;
+    JUCE_CONSTEXPR Range() = default;
 
     /** Constructs a range with given start and end values. */
-    constexpr Range (const ValueType startValue, const ValueType endValue) noexcept
+    JUCE_CONSTEXPR Range (const ValueType startValue, const ValueType endValue) noexcept
         : start (startValue), end (jmax (startValue, endValue))
     {
     }
 
     /** Constructs a copy of another range. */
-    constexpr Range (const Range&) = default;
+    JUCE_CONSTEXPR Range (const Range&) = default;
 
     /** Copies another range object. */
     Range& operator= (const Range&) = default;
 
     /** Returns the range that lies between two positions (in either order). */
-    constexpr static Range between (const ValueType position1, const ValueType position2) noexcept
+    JUCE_CONSTEXPR static Range between (const ValueType position1, const ValueType position2) noexcept
     {
         return position1 < position2 ? Range (position1, position2)
                                      : Range (position2, position1);
@@ -70,23 +70,23 @@ public:
     }
 
     /** Returns a range with the specified start position and a length of zero. */
-    constexpr static Range emptyRange (const ValueType start) noexcept
+    JUCE_CONSTEXPR static Range emptyRange (const ValueType start) noexcept
     {
         return Range (start, start);
     }
 
     //==============================================================================
     /** Returns the start of the range. */
-    constexpr inline ValueType getStart() const noexcept          { return start; }
+    JUCE_CONSTEXPR inline ValueType getStart() const noexcept          { return start; }
 
     /** Returns the length of the range. */
-    constexpr inline ValueType getLength() const noexcept         { return end - start; }
+    JUCE_CONSTEXPR inline ValueType getLength() const noexcept         { return end - start; }
 
     /** Returns the end of the range. */
-    constexpr inline ValueType getEnd() const noexcept            { return end; }
+    JUCE_CONSTEXPR inline ValueType getEnd() const noexcept            { return end; }
 
     /** Returns true if the range has a length of zero. */
-    constexpr inline bool isEmpty() const noexcept                { return start == end; }
+    JUCE_CONSTEXPR inline bool isEmpty() const noexcept                { return start == end; }
 
     //==============================================================================
     /** Changes the start position of the range, leaving the end position unchanged.
@@ -104,13 +104,13 @@ public:
         If the new start position is higher than the current end of the range, the end point
         will be pushed along to equal it, returning an empty range at the new position.
     */
-    constexpr Range withStart (const ValueType newStart) const noexcept
+    JUCE_CONSTEXPR Range withStart (const ValueType newStart) const noexcept
     {
         return Range (newStart, jmax (newStart, end));
     }
 
     /** Returns a range with the same length as this one, but moved to have the given start position. */
-    constexpr Range movedToStartAt (const ValueType newStart) const noexcept
+    JUCE_CONSTEXPR Range movedToStartAt (const ValueType newStart) const noexcept
     {
         return Range (newStart, end + (newStart - start));
     }
@@ -130,13 +130,13 @@ public:
         If the new end position is below the current start of the range, the start point
         will be pushed back to equal the new end point.
     */
-    constexpr Range withEnd (const ValueType newEnd) const noexcept
+    JUCE_CONSTEXPR Range withEnd (const ValueType newEnd) const noexcept
     {
         return Range (jmin (start, newEnd), newEnd);
     }
 
     /** Returns a range with the same length as this one, but moved to have the given end position. */
-    constexpr Range movedToEndAt (const ValueType newEnd) const noexcept
+    JUCE_CONSTEXPR Range movedToEndAt (const ValueType newEnd) const noexcept
     {
         return Range (start + (newEnd - end), newEnd);
     }
@@ -152,7 +152,7 @@ public:
     /** Returns a range with the same start as this one, but a different length.
         Lengths less than zero are treated as zero.
     */
-    constexpr Range withLength (const ValueType newLength) const noexcept
+    JUCE_CONSTEXPR Range withLength (const ValueType newLength) const noexcept
     {
         return Range (start, start + newLength);
     }
@@ -161,7 +161,7 @@ public:
         given amount.
         @returns The returned range will be (start - amount, end + amount)
     */
-    constexpr Range expanded (ValueType amount) const noexcept
+    JUCE_CONSTEXPR Range expanded (ValueType amount) const noexcept
     {
         return Range (start - amount, end + amount);
     }
@@ -186,27 +186,27 @@ public:
     /** Returns a range that is equal to this one with an amount added to its
         start and end.
     */
-    constexpr Range operator+ (const ValueType amountToAdd) const noexcept
+    JUCE_CONSTEXPR Range operator+ (const ValueType amountToAdd) const noexcept
     {
         return Range (start + amountToAdd, end + amountToAdd);
     }
 
     /** Returns a range that is equal to this one with the specified amount
         subtracted from its start and end. */
-    constexpr Range operator- (const ValueType amountToSubtract) const noexcept
+    JUCE_CONSTEXPR Range operator- (const ValueType amountToSubtract) const noexcept
     {
         return Range (start - amountToSubtract, end - amountToSubtract);
     }
 
-    constexpr bool operator== (Range other) const noexcept     { return start == other.start && end == other.end; }
-    constexpr bool operator!= (Range other) const noexcept     { return start != other.start || end != other.end; }
+    JUCE_CONSTEXPR bool operator== (Range other) const noexcept     { return start == other.start && end == other.end; }
+    JUCE_CONSTEXPR bool operator!= (Range other) const noexcept     { return start != other.start || end != other.end; }
 
     //==============================================================================
     /** Returns true if the given position lies inside this range.
         When making this comparison, the start value is considered to be inclusive,
         and the end of the range exclusive.
     */
-    constexpr bool contains (const ValueType position) const noexcept
+    JUCE_CONSTEXPR bool contains (const ValueType position) const noexcept
     {
         return start <= position && position < end;
     }
@@ -218,34 +218,34 @@ public:
     }
 
     /** Returns true if the given range lies entirely inside this range. */
-    constexpr bool contains (Range other) const noexcept
+    JUCE_CONSTEXPR bool contains (Range other) const noexcept
     {
         return start <= other.start && end >= other.end;
     }
 
     /** Returns true if the given range intersects this one. */
-    constexpr bool intersects (Range other) const noexcept
+    JUCE_CONSTEXPR bool intersects (Range other) const noexcept
     {
         return other.start < end && start < other.end;
     }
 
     /** Returns the range that is the intersection of the two ranges, or an empty range
         with an undefined start position if they don't overlap. */
-    constexpr Range getIntersectionWith (Range other) const noexcept
+    JUCE_CONSTEXPR Range getIntersectionWith (Range other) const noexcept
     {
         return Range (jmax (start, other.start),
                       jmin (end, other.end));
     }
 
     /** Returns the smallest range that contains both this one and the other one. */
-    constexpr Range getUnionWith (Range other) const noexcept
+    JUCE_CONSTEXPR Range getUnionWith (Range other) const noexcept
     {
         return Range (jmin (start, other.start),
                       jmax (end, other.end));
     }
 
     /** Returns the smallest range that contains both this one and the given value. */
-    constexpr Range getUnionWith (const ValueType valueToInclude) const noexcept
+    JUCE_CONSTEXPR Range getUnionWith (const ValueType valueToInclude) const noexcept
     {
         return Range (jmin (valueToInclude, start),
                       jmax (valueToInclude, end));

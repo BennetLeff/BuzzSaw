@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -38,6 +38,10 @@
   #error "JUCE requires that GCC has C++11 compatibility enabled"
  #endif
 
+ #if (__GNUC__ * 100 + __GNUC_MINOR__) >= 500
+  #define JUCE_HAS_CONSTEXPR 1
+ #endif
+
  #ifndef JUCE_EXCEPTIONS_DISABLED
   #if ! __EXCEPTIONS
    #define JUCE_EXCEPTIONS_DISABLED 1
@@ -56,6 +60,8 @@
  #if (__clang_major__ < 3) || (__clang_major__ == 3 && __clang_minor__ < 3)
   #error "JUCE requires Clang 3.3 or later"
  #endif
+
+ #define JUCE_HAS_CONSTEXPR 1
 
  #ifndef JUCE_COMPILER_SUPPORTS_ARC
   #define JUCE_COMPILER_SUPPORTS_ARC 1
@@ -80,6 +86,8 @@
    #error "JUCE requires Visual Studio 2015 or later"
  #endif
 
+ #define JUCE_HAS_CONSTEXPR 1
+
  #ifndef JUCE_EXCEPTIONS_DISABLED
   #if ! _CPPUNWIND
    #define JUCE_EXCEPTIONS_DISABLED 1
@@ -97,6 +105,12 @@
 #endif
 
 //==============================================================================
+#if JUCE_HAS_CONSTEXPR
+ #define JUCE_CONSTEXPR constexpr
+#else
+ #define JUCE_CONSTEXPR
+#endif
+
 #if (! JUCE_MSVC) && (! JUCE_CXX14_IS_AVAILABLE)
 namespace std
 {
@@ -108,7 +122,6 @@ namespace std
 }
 #endif
 
-//==============================================================================
 #if ! DOXYGEN
  // These are old flags that are now supported on all compatible build targets
  #define JUCE_COMPILER_SUPPORTS_OVERRIDE_AND_FINAL 1
@@ -116,5 +129,4 @@ namespace std
  #define JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS 1
  #define JUCE_COMPILER_SUPPORTS_NOEXCEPT 1
  #define JUCE_DELETED_FUNCTION = delete
- #define JUCE_CONSTEXPR constexpr
 #endif

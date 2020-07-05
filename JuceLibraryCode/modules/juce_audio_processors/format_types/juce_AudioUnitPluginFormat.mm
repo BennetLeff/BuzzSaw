@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -51,8 +52,8 @@
  #include <CoreAudioKit/AUViewController.h>
 #endif
 
-#include <juce_audio_basics/native/juce_mac_CoreAudioLayouts.h>
-#include <juce_audio_devices/native/juce_MidiDataConcatenator.h>
+#include "../../juce_audio_basics/native/juce_mac_CoreAudioLayouts.h"
+#include "../../juce_audio_devices/native/juce_MidiDataConcatenator.h"
 #include "juce_AU_Shared.h"
 
 namespace juce
@@ -1079,14 +1080,17 @@ public:
 
             if (wantsMidiMessages)
             {
-                for (const auto metadata : midiMessages)
+                const uint8* midiEventData;
+                int midiEventSize, midiEventPosition;
+
+                for (MidiBuffer::Iterator i (midiMessages); i.getNextEvent (midiEventData, midiEventSize, midiEventPosition);)
                 {
-                    if (metadata.numBytes <= 3)
+                    if (midiEventSize <= 3)
                         MusicDeviceMIDIEvent (audioUnit,
-                                              metadata.data[0], metadata.data[1], metadata.data[2],
-                                              (UInt32) metadata.samplePosition);
+                                              midiEventData[0], midiEventData[1], midiEventData[2],
+                                              (UInt32) midiEventPosition);
                     else
-                        MusicDeviceSysEx (audioUnit, metadata.data, (UInt32) metadata.numBytes);
+                        MusicDeviceSysEx (audioUnit, midiEventData, (UInt32) midiEventSize);
                 }
 
                 midiMessages.clear();
@@ -1397,10 +1401,8 @@ public:
         if (audioUnit != nullptr)
         {
             UInt32 paramListSize = 0;
-            auto err = AudioUnitGetPropertyInfo (audioUnit, kAudioUnitProperty_ParameterList, kAudioUnitScope_Global,
-                                                 0, &paramListSize, nullptr);
-
-            haveParameterList = (paramListSize > 0 && err == noErr);
+            haveParameterList = AudioUnitGetPropertyInfo (audioUnit, kAudioUnitProperty_ParameterList, kAudioUnitScope_Global,
+                                                          0, &paramListSize, nullptr) == noErr;
 
             if (! haveParameterList)
                 return;
@@ -1446,16 +1448,28 @@ public:
                                         || info.unit == kAudioUnitParameterUnit_Boolean);
                         bool isBoolean = info.unit == kAudioUnitParameterUnit_Boolean;
 
-                        auto label = [info]() -> String
-                        {
-                            if (info.unit == kAudioUnitParameterUnit_Percent)       return "%";
-                            if (info.unit == kAudioUnitParameterUnit_Seconds)       return "s";
-                            if (info.unit == kAudioUnitParameterUnit_Hertz)         return "Hz";
-                            if (info.unit == kAudioUnitParameterUnit_Decibels)      return "dB";
-                            if (info.unit == kAudioUnitParameterUnit_Milliseconds)  return "ms";
+                        String label;
 
-                            return {};
-                        }();
+                        switch (info.unit)
+                        {
+                            case kAudioUnitParameterUnit_Percent:
+                                label = "%";
+                                break;
+                            case kAudioUnitParameterUnit_Seconds:
+                                label = "s";
+                                break;
+                            case kAudioUnitParameterUnit_Hertz:
+                                label = "Hz";
+                                break;
+                            case kAudioUnitParameterUnit_Decibels:
+                                label = "dB";
+                                break;
+                            case kAudioUnitParameterUnit_Milliseconds:
+                                label = "ms";
+                                break;
+                            default:
+                                break;
+                        }
 
                         auto* parameter = new AUInstanceParameter (*this,
                                                                    ids[i],
@@ -1816,7 +1830,6 @@ private:
 
                 break;
 
-            case kAudioUnitEvent_PropertyChange:
             default:
                 if (event.mArgument.mProperty.mPropertyID == kAudioUnitProperty_ParameterList)
                 {
@@ -2023,7 +2036,7 @@ private:
     }
 
     //==============================================================================
-    static UInt64 GetCurrentHostTime (int numSamples, double sampleRate, bool isAUv3) noexcept
+    static inline UInt64 GetCurrentHostTime (int numSamples, double sampleRate, bool isAUv3) noexcept
     {
      #if ! JUCE_IOS
        if (! isAUv3)

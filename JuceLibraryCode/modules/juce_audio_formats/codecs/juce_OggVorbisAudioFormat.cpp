@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -35,18 +36,24 @@ namespace juce
 namespace OggVorbisNamespace
 {
 #if JUCE_INCLUDE_OGGVORBIS_CODE || ! defined (JUCE_INCLUDE_OGGVORBIS_CODE)
- JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4267 4127 4244 4996 4100 4701 4702 4013 4133 4206 4305 4189 4706 4995 4365 4456 4457 4459)
-
- JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wconversion",
-                                      "-Wshadow",
-                                      "-Wfloat-conversion",
-                                      "-Wdeprecated-register",
-                                      "-Wdeprecated-declarations",
-                                      "-Wswitch-enum",
-                                      "-Wzero-as-null-pointer-constant",
-                                      "-Wsign-conversion",
-                                      "-Wswitch-default",
-                                      "-Wredundant-decls")
+ #if JUCE_MSVC
+  #pragma warning (push)
+  #pragma warning (disable: 4267 4127 4244 4996 4100 4701 4702 4013 4133 4206 4305 4189 4706 4995 4365 4456 4457 4459)
+ #elif JUCE_CLANG
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wconversion"
+  #pragma clang diagnostic ignored "-Wshadow"
+  #pragma clang diagnostic ignored "-Wdeprecated-register"
+  #if __has_warning("-Wzero-as-null-pointer-constant")
+   #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
+ #elif JUCE_GCC
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wconversion"
+  #pragma GCC diagnostic ignored "-Wshadow"
+  #pragma GCC diagnostic ignored "-Wsign-conversion"
+  #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+ #endif
 
  #include "oggvorbis/vorbisenc.h"
  #include "oggvorbis/codec.h"
@@ -76,8 +83,13 @@ namespace OggVorbisNamespace
  #include "oggvorbis/libvorbis-1.3.2/lib/vorbisfile.c"
  #include "oggvorbis/libvorbis-1.3.2/lib/window.c"
 
- JUCE_END_IGNORE_WARNINGS_MSVC
- JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+ #if JUCE_MSVC
+  #pragma warning (pop)
+ #elif JUCE_CLANG
+  #pragma clang diagnostic pop
+ #elif JUCE_GCC
+  #pragma GCC diagnostic pop
+ #endif
 #else
  #include <vorbis/vorbisenc.h>
  #include <vorbis/codec.h>
@@ -196,7 +208,7 @@ public:
                 while (numToRead > 0)
                 {
                     float** dataIn = nullptr;
-                    auto samps = static_cast<int> (ov_read_float (&ovFile, &dataIn, numToRead, &bitStream));
+                    auto samps = ov_read_float (&ovFile, &dataIn, numToRead, &bitStream);
 
                     if (samps <= 0)
                         break;
@@ -478,9 +490,9 @@ StringArray OggVorbisAudioFormat::getQualityOptions()
 
 int OggVorbisAudioFormat::estimateOggFileQuality (const File& source)
 {
-    if (auto in = source.createInputStream())
+    if (auto* in = source.createInputStream())
     {
-        if (auto r = std::unique_ptr<AudioFormatReader> (createReaderFor (in.release(), true)))
+        if (auto r = std::unique_ptr<AudioFormatReader> (createReaderFor (in, true)))
         {
             auto lengthSecs = r->lengthInSamples / r->sampleRate;
             auto approxBitsPerSecond = (int) (source.getSize() * 8 / lengthSecs);

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -35,7 +35,7 @@
 #define JUCE_CORE_INCLUDE_COM_SMART_PTR 1
 #define JUCE_EVENTS_INCLUDE_WIN32_MESSAGE_WINDOW 1
 
-#if JUCE_USE_WINRT_MIDI || JUCE_USE_WIN_WEBVIEW2
+#if JUCE_USE_WINRT_MIDI
  #define JUCE_EVENTS_INCLUDE_WINRT_WRAPPER 1
 #endif
 
@@ -73,7 +73,10 @@
 
  #include "native/juce_osx_MessageQueue.h"
 
- JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
+ #if JUCE_CLANG
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wundeclared-selector"
+ #endif
 
  #if JUCE_MAC
   #include "native/juce_mac_MessageManager.mm"
@@ -81,7 +84,9 @@
   #include "native/juce_ios_MessageManager.mm"
  #endif
 
- JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+ #if JUCE_CLANG
+  #pragma clang diagnostic pop
+ #endif
 
 #elif JUCE_WINDOWS
  #include "native/juce_win32_Messaging.cpp"

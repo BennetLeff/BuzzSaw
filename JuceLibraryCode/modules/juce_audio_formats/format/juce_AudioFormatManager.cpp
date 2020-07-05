@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -125,14 +126,14 @@ AudioFormatReader* AudioFormatManager::createReaderFor (const File& file)
 
     for (auto* af : knownFormats)
         if (af->canHandleFile (file))
-            if (auto in = file.createInputStream())
-                if (auto* r = af->createReaderFor (in.release(), true))
+            if (auto* in = file.createInputStream())
+                if (auto* r = af->createReaderFor (in, true))
                     return r;
 
     return nullptr;
 }
 
-AudioFormatReader* AudioFormatManager::createReaderFor (std::unique_ptr<InputStream> audioFileStream)
+AudioFormatReader* AudioFormatManager::createReaderFor (InputStream* audioFileStream)
 {
     // you need to actually register some formats before the manager can
     // use them to open a file!
@@ -140,21 +141,22 @@ AudioFormatReader* AudioFormatManager::createReaderFor (std::unique_ptr<InputStr
 
     if (audioFileStream != nullptr)
     {
-        auto originalStreamPos = audioFileStream->getPosition();
+        std::unique_ptr<InputStream> in (audioFileStream);
+        auto originalStreamPos = in->getPosition();
 
         for (auto* af : knownFormats)
         {
-            if (auto* r = af->createReaderFor (audioFileStream.get(), false))
+            if (auto* r = af->createReaderFor (in.get(), false))
             {
-                audioFileStream.release();
+                in.release();
                 return r;
             }
 
-            audioFileStream->setPosition (originalStreamPos);
+            in->setPosition (originalStreamPos);
 
             // the stream that is passed-in must be capable of being repositioned so
             // that all the formats can have a go at opening it.
-            jassert (audioFileStream->getPosition() == originalStreamPos);
+            jassert (in->getPosition() == originalStreamPos);
         }
     }
 

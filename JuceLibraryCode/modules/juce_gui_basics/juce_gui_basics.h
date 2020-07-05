@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -28,14 +29,14 @@
  The block below describes the properties of this module, and is read by
  the Projucer to automatically generate project code that uses it.
  For details about the syntax and how to create or use a module, see the
- JUCE Module Format.md file.
+ JUCE Module Format.txt file.
 
 
  BEGIN_JUCE_MODULE_DECLARATION
 
   ID:                 juce_gui_basics
   vendor:             juce
-  version:            6.0.0
+  version:            5.4.7
   name:               JUCE GUI core classes
   description:        Basic user-interface components and related classes.
   website:            http://www.juce.com/juce
@@ -44,6 +45,7 @@
   dependencies:       juce_graphics juce_data_structures
   OSXFrameworks:      Cocoa Carbon QuartzCore
   iOSFrameworks:      UIKit MobileCoreServices
+  linuxPackages:      x11 xinerama xext
 
  END_JUCE_MODULE_DECLARATION
 
@@ -157,7 +159,9 @@ namespace juce
     class Displays;
 
     class FlexBox;
-    class Grid;
+    #if JUCE_HAS_CONSTEXPR
+     class Grid;
+    #endif
 }
 
 #include "mouse/juce_MouseCursor.h"
@@ -295,55 +299,13 @@ namespace juce
 #include "mouse/juce_LassoComponent.h"
 
 #if JUCE_LINUX
- #if JUCE_GUI_BASICS_INCLUDE_XHEADERS
-  // If you're missing these headers, you need to install the libx11-dev package
-  #include <X11/Xlib.h>
-  #include <X11/Xatom.h>
-  #include <X11/Xresource.h>
-  #include <X11/Xutil.h>
-  #include <X11/Xmd.h>
-  #include <X11/keysym.h>
-  #include <X11/XKBlib.h>
-  #include <X11/cursorfont.h>
-  #include <unistd.h>
-
-  #if JUCE_USE_XRANDR
-   // If you're missing this header, you need to install the libxrandr-dev package
-   #include <X11/extensions/Xrandr.h>
-  #endif
-
-  #if JUCE_USE_XINERAMA
-   // If you're missing this header, you need to install the libxinerama-dev package
-   #include <X11/extensions/Xinerama.h>
-  #endif
-
-  #if JUCE_USE_XSHM
-   #include <X11/extensions/XShm.h>
-   #include <sys/shm.h>
-   #include <sys/ipc.h>
-  #endif
-
-  #if JUCE_USE_XRENDER
-   // If you're missing these headers, you need to install the libxrender-dev and libxcomposite-dev packages
-   #include <X11/extensions/Xrender.h>
-   #include <X11/extensions/Xcomposite.h>
-  #endif
-
-  #if JUCE_USE_XCURSOR
-   // If you're missing this header, you need to install the libxcursor-dev package
-   #include <X11/Xcursor/Xcursor.h>
-  #endif
-
-  #undef SIZEOF
-  #undef KeyPress
-
-  #include "native/x11/juce_linux_XWindowSystem.h"
-  #include "native/x11/juce_linux_X11_Symbols.h"
- #endif
+ #include "native/juce_linux_X11.h"
 #endif
 
 #include "layout/juce_FlexItem.h"
 #include "layout/juce_FlexBox.h"
 
-#include "layout/juce_GridItem.h"
-#include "layout/juce_Grid.h"
+#if JUCE_HAS_CONSTEXPR
+ #include "layout/juce_GridItem.h"
+ #include "layout/juce_Grid.h"
+#endif

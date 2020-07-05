@@ -159,9 +159,7 @@ void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newNam
 
 void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    limiter.prepare({ sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2 });
-    limiter.setThreshold(-3.0f);
-    limiter.setRelease(100.0f);
+    //DBG("50db to gain is "<<Decibels::decibelsToGain(50.f));
     oversampling.initProcessing(samplesPerBlock);
 
     //WaveFolder Processing
@@ -214,8 +212,6 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     delay[0].setDelaySec(leftDelayTime);
     delay[1].setDelaySec(rightDelayTime);
 
-
-
     sidechainBuffer.setSize(2, samplesPerBlock);
 }
 
@@ -224,7 +220,6 @@ void ThaiBasilAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     oversampling.reset();
-    limiter.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -370,11 +365,6 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
         outGain[ch].processBlock(buffer.getWritePointer(ch),numSamples);
 
     }
-    
-    //limit
-    juce::dsp::AudioBlock<float> block(buffer, 0);
-    juce::dsp::ProcessContextReplacing<float> context(block);
-    limiter.process(context);
 
     //oversampling.processSamplesDown(block);
 

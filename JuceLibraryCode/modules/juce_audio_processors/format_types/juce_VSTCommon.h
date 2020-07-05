@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -48,14 +49,14 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
 
         bool matches (const Array<ChannelType>& chans) const noexcept
         {
-            auto n = static_cast<int> (sizeof (channels) / sizeof (ChannelType));
+            const int n = sizeof (channels) / sizeof (ChannelType);
 
             for (int i = 0; i < n; ++i)
             {
                 if (channels[i] == unknown)  return (i == chans.size());
                 if (i == chans.size())       return (channels[i] == unknown);
 
-                if (channels[i] != chans.getUnchecked (i))
+                if (channels[i] != chans.getUnchecked(i))
                     return false;
             }
 
@@ -124,56 +125,27 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
         else if (channels == AudioChannelSet::create7point1SDDS())  return Vst2::kSpeakerArr71Cine;
         else if (channels == AudioChannelSet::quadraphonic())       return Vst2::kSpeakerArr40Music;
 
+        Array<AudioChannelSet::ChannelType> chans (channels.getChannelTypes());
+
         if (channels == AudioChannelSet::disabled())
             return Vst2::kSpeakerArrEmpty;
 
-        auto chans = channels.getChannelTypes();
-
-        for (auto* m = getMappings(); m->vst2 != Vst2::kSpeakerArrEmpty; ++m)
+        for (const Mapping* m = getMappings(); m->vst2 != Vst2::kSpeakerArrEmpty; ++m)
             if (m->matches (chans))
                 return m->vst2;
 
         return Vst2::kSpeakerArrUserDefined;
     }
 
-    static void channelSetToVstArrangement (const AudioChannelSet& channels, Vst2::VstSpeakerArrangement& result)
-    {
-        result.type = channelSetToVstArrangementType (channels);
-        result.numChannels = channels.size();
-
-        for (int i = 0; i < result.numChannels; ++i)
-        {
-            auto& speaker = result.speakers[i];
-
-            zeromem (&speaker, sizeof (Vst2::VstSpeakerProperties));
-            speaker.type = getSpeakerType (channels.getTypeOfChannel (i));
-        }
-    }
-
     /** Class to hold a speaker configuration */
     class VstSpeakerConfigurationHolder
     {
     public:
-        VstSpeakerConfigurationHolder()
-        {
-            clear();
-        }
-
-        VstSpeakerConfigurationHolder (const Vst2::VstSpeakerArrangement& vstConfig)
-        {
-            operator= (vstConfig);
-        }
-
-        VstSpeakerConfigurationHolder (const VstSpeakerConfigurationHolder& other)
-        {
-            operator= (other.get());
-        }
-
+        VstSpeakerConfigurationHolder()                                            { clear(); }
+        VstSpeakerConfigurationHolder (const Vst2::VstSpeakerArrangement& vstConfig)   { operator= (vstConfig); }
+        VstSpeakerConfigurationHolder (const VstSpeakerConfigurationHolder& other) { operator= (other.get()); }
         VstSpeakerConfigurationHolder (VstSpeakerConfigurationHolder&& other)
-            : storage (std::move (other.storage))
-        {
-            other.clear();
-        }
+            : storage (std::move (other.storage)) { other.clear(); }
 
         VstSpeakerConfigurationHolder (const AudioChannelSet& channels)
         {
@@ -269,47 +241,45 @@ struct SpeakerMappings  : private AudioChannelSet // (inheritance only to give e
             { Vst2::kSpeakerArr71Music,        { left, right, centre, LFE, leftSurround, rightSurround, leftSurroundRear, rightSurroundRear, unknown } },
             { Vst2::kSpeakerArr80Cine,         { left, right, centre, leftSurround, rightSurround, topFrontLeft, topFrontRight, surround, unknown } },
             { Vst2::kSpeakerArr80Music,        { left, right, centre, leftSurround, rightSurround, surround, leftSurroundRear, rightSurroundRear, unknown } },
-            { Vst2::kSpeakerArr81Cine,         { left, right, centre, LFE, leftSurround, rightSurround, topFrontLeft, topFrontRight, surround, unknown } },
-            { Vst2::kSpeakerArr81Music,        { left, right, centre, LFE, leftSurround, rightSurround, surround, leftSurroundRear, rightSurroundRear, unknown } },
-            { Vst2::kSpeakerArr102,            { left, right, centre, LFE, leftSurround, rightSurround, topFrontLeft, topFrontCentre, topFrontRight, topRearLeft, topRearRight, LFE2, unknown } },
+            { Vst2::kSpeakerArr81Cine,  { left, right, centre, LFE, leftSurround, rightSurround, topFrontLeft, topFrontRight, surround, unknown } },
+            { Vst2::kSpeakerArr81Music, { left, right, centre, LFE, leftSurround, rightSurround, surround, leftSurroundRear, rightSurroundRear, unknown } },
+            { Vst2::kSpeakerArr102,     { left, right, centre, LFE, leftSurround, rightSurround, topFrontLeft, topFrontCentre, topFrontRight, topRearLeft, topRearRight, LFE2, unknown } },
             { Vst2::kSpeakerArrEmpty,          { unknown } }
         };
 
         return mappings;
     }
 
-    static int32 getSpeakerType (AudioChannelSet::ChannelType type) noexcept
+    static inline int32 getSpeakerType (AudioChannelSet::ChannelType type) noexcept
     {
-        static const std::map<AudioChannelSet::ChannelType, int32> speakerTypeMap =
+        switch (type)
         {
-            { AudioChannelSet::left,              Vst2::kSpeakerL },
-            { AudioChannelSet::right,             Vst2::kSpeakerR },
-            { AudioChannelSet::centre,            Vst2::kSpeakerC },
-            { AudioChannelSet::LFE,               Vst2::kSpeakerLfe },
-            { AudioChannelSet::leftSurround,      Vst2::kSpeakerLs },
-            { AudioChannelSet::rightSurround,     Vst2::kSpeakerRs },
-            { AudioChannelSet::leftCentre,        Vst2::kSpeakerLc },
-            { AudioChannelSet::rightCentre,       Vst2::kSpeakerRc },
-            { AudioChannelSet::surround,          Vst2::kSpeakerS },
-            { AudioChannelSet::leftSurroundRear,  Vst2::kSpeakerSl },
-            { AudioChannelSet::rightSurroundRear, Vst2::kSpeakerSr },
-            { AudioChannelSet::topMiddle,         Vst2::kSpeakerTm },
-            { AudioChannelSet::topFrontLeft,      Vst2::kSpeakerTfl },
-            { AudioChannelSet::topFrontCentre,    Vst2::kSpeakerTfc },
-            { AudioChannelSet::topFrontRight,     Vst2::kSpeakerTfr },
-            { AudioChannelSet::topRearLeft,       Vst2::kSpeakerTrl },
-            { AudioChannelSet::topRearCentre,     Vst2::kSpeakerTrc },
-            { AudioChannelSet::topRearRight,      Vst2::kSpeakerTrr },
-            { AudioChannelSet::LFE2,              Vst2::kSpeakerLfe2 }
-        };
+            case AudioChannelSet::left:              return Vst2::kSpeakerL;
+            case AudioChannelSet::right:             return Vst2::kSpeakerR;
+            case AudioChannelSet::centre:            return Vst2::kSpeakerC;
+            case AudioChannelSet::LFE:               return Vst2::kSpeakerLfe;
+            case AudioChannelSet::leftSurround:      return Vst2::kSpeakerLs;
+            case AudioChannelSet::rightSurround:     return Vst2::kSpeakerRs;
+            case AudioChannelSet::leftCentre:        return Vst2::kSpeakerLc;
+            case AudioChannelSet::rightCentre:       return Vst2::kSpeakerRc;
+            case AudioChannelSet::surround:          return Vst2::kSpeakerS;
+            case AudioChannelSet::leftSurroundRear:  return Vst2::kSpeakerSl;
+            case AudioChannelSet::rightSurroundRear: return Vst2::kSpeakerSr;
+            case AudioChannelSet::topMiddle:         return Vst2::kSpeakerTm;
+            case AudioChannelSet::topFrontLeft:      return Vst2::kSpeakerTfl;
+            case AudioChannelSet::topFrontCentre:    return Vst2::kSpeakerTfc;
+            case AudioChannelSet::topFrontRight:     return Vst2::kSpeakerTfr;
+            case AudioChannelSet::topRearLeft:       return Vst2::kSpeakerTrl;
+            case AudioChannelSet::topRearCentre:     return Vst2::kSpeakerTrc;
+            case AudioChannelSet::topRearRight:      return Vst2::kSpeakerTrr;
+            case AudioChannelSet::LFE2:              return Vst2::kSpeakerLfe2;
+            default: break;
+        }
 
-        if (speakerTypeMap.find (type) == speakerTypeMap.end())
-            return 0;
-
-        return speakerTypeMap.at (type);
+        return 0;
     }
 
-    static AudioChannelSet::ChannelType getChannelType (int32 type) noexcept
+    static inline AudioChannelSet::ChannelType getChannelType (int32 type) noexcept
     {
         switch (type)
         {

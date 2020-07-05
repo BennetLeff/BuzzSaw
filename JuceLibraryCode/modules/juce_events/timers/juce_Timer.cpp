@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -136,7 +136,7 @@ public:
         callTimers();
     }
 
-    static void add (Timer* tim) noexcept
+    static inline void add (Timer* tim) noexcept
     {
         if (instance == nullptr)
             instance = new TimerThread();
@@ -144,13 +144,13 @@ public:
         instance->addTimer (tim);
     }
 
-    static void remove (Timer* tim) noexcept
+    static inline void remove (Timer* tim) noexcept
     {
         if (instance != nullptr)
             instance->removeTimer (tim);
     }
 
-    static void resetCounter (Timer* tim) noexcept
+    static inline void resetCounter (Timer* tim) noexcept
     {
         if (instance != nullptr)
             instance->resetTimerCounter (tim);
@@ -187,7 +187,7 @@ private:
         // Trying to add a timer that's already here - shouldn't get to this point,
         // so if you get this assertion, let me know!
         jassert (std::find_if (timers.begin(), timers.end(),
-                               [t] (TimerCountdown i) { return i.timer == t; }) == timers.end());
+                               [t](TimerCountdown i) { return i.timer == t; }) == timers.end());
 
         auto pos = timers.size();
 

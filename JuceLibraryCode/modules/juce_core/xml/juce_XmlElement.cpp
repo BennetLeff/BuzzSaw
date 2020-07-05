@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -23,7 +23,7 @@
 namespace juce
 {
 
-static bool isValidXmlNameStartCharacter (juce_wchar character) noexcept
+inline static bool isValidXmlNameStartCharacter (juce_wchar character) noexcept
 {
     return character == ':'
         || character == '_'
@@ -43,7 +43,7 @@ static bool isValidXmlNameStartCharacter (juce_wchar character) noexcept
         || (character >= 0x10000 && character <= 0xeffff);
 }
 
-static bool isValidXmlNameBodyCharacter (juce_wchar character) noexcept
+inline static bool isValidXmlNameBodyCharacter (juce_wchar character) noexcept
 {
     return isValidXmlNameStartCharacter (character)
         || character == '-'
@@ -237,7 +237,7 @@ namespace XmlOutputFunctions
                             outputStream << (char) character;
                             break;
                         }
-                        JUCE_FALLTHROUGH
+                        // Note: Deliberate fall-through here!
                     default:
                         outputStream << "&#" << ((int) character) << ';';
                         break;

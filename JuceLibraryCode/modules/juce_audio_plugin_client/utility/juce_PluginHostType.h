@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -259,7 +260,6 @@ public:
             case VBVSTScanner:             return "VBVSTScanner";
             case ViennaEnsemblePro:        return "Vienna Ensemble Pro";
             case WaveBurner:               return "WaveBurner";
-            case UnknownHost:
             default:                       break;
         }
 
@@ -271,8 +271,10 @@ public:
     bool isInterAppAudioConnected() const;
     /** Switches to the host application when Inter-App Audio is used on iOS. */
     void switchToHostApplication() const;
-    /** Gets the host app's icon when Inter-App Audio is used on iOS. */
+
+   #if JUCE_MODULE_AVAILABLE_juce_gui_basics
     Image getHostIcon (int size) const;
+   #endif
 
     //==============================================================================
     /** Returns the complete absolute path of the host application executable. */
@@ -300,7 +302,7 @@ public:
    #ifndef DOXYGEN
     // @internal
     static AudioProcessor::WrapperType jucePlugInClientCurrentWrapperType;
-    static std::function<bool (AudioProcessor&)> jucePlugInIsRunningInAudioSuiteFn;
+    static std::function<bool(AudioProcessor&)> jucePlugInIsRunningInAudioSuiteFn;
    #endif
 
 private:

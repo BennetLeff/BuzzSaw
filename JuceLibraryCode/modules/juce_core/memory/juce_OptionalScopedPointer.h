@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -49,8 +49,7 @@ public:
         OptionalScopedPointer just holds a normal pointer to the object, and won't delete it.
     */
     OptionalScopedPointer (ObjectType* objectToHold, bool takeOwnership)
-        : object (objectToHold),
-          shouldDelete (takeOwnership)
+        : object (objectToHold), shouldDelete (takeOwnership)
     {
     }
 
@@ -62,21 +61,9 @@ public:
         The flag to indicate whether or not to delete the managed object is also
         copied from the source object.
     */
-    OptionalScopedPointer (OptionalScopedPointer&& other) noexcept
-        : object (std::move (other.object)),
-          shouldDelete (std::move (other.shouldDelete))
-    {
-    }
-
-    /** Takes ownership of the object owned by `ptr`. */
-    explicit OptionalScopedPointer (std::unique_ptr<ObjectType>&& ptr) noexcept
-        : OptionalScopedPointer (ptr.release(), true)
-    {
-    }
-
-    /** Points to the same object as `ref`, but does not take ownership. */
-    explicit OptionalScopedPointer (ObjectType& ref) noexcept
-        : OptionalScopedPointer (std::addressof (ref), false)
+    OptionalScopedPointer (OptionalScopedPointer& objectToTransferFrom)
+        : object (objectToTransferFrom.release()),
+          shouldDelete (objectToTransferFrom.shouldDelete)
     {
     }
 
@@ -88,10 +75,15 @@ public:
         The ownership flag that says whether or not to delete the managed object is also
         copied from the source object.
     */
-    OptionalScopedPointer& operator= (OptionalScopedPointer&& other) noexcept
+    OptionalScopedPointer& operator= (OptionalScopedPointer& objectToTransferFrom)
     {
-        swapWith (other);
-        other.reset();
+        if (object != objectToTransferFrom.object)
+        {
+            reset();
+            object.reset (objectToTransferFrom.object.release());
+        }
+
+        shouldDelete = objectToTransferFrom.shouldDelete;
         return *this;
     }
 
@@ -99,23 +91,23 @@ public:
         takeOwnership flag that was specified when the object was first passed into an
         OptionalScopedPointer constructor.
     */
-    ~OptionalScopedPointer() noexcept
+    ~OptionalScopedPointer()
     {
         reset();
     }
 
     //==============================================================================
     /** Returns the object that this pointer is managing. */
-    operator ObjectType*() const noexcept                    { return object.get(); }
+    inline operator ObjectType*() const noexcept                    { return object.get(); }
 
     /** Returns the object that this pointer is managing. */
-    ObjectType* get() const noexcept                         { return object.get(); }
+    inline ObjectType* get() const noexcept                         { return object.get(); }
 
     /** Returns the object that this pointer is managing. */
-    ObjectType& operator*() const noexcept                   { return *object; }
+    inline ObjectType& operator*() const noexcept                   { return *object; }
 
     /** Lets you access methods and properties of the object that this pointer is holding. */
-    ObjectType* operator->() const noexcept                  { return object.get(); }
+    inline ObjectType* operator->() const noexcept                  { return object.get(); }
 
     //==============================================================================
     /** Removes the current object from this OptionalScopedPointer without deleting it.
@@ -126,7 +118,7 @@ public:
     /** Resets this pointer to null, possibly deleting the object that it holds, if it has
         ownership of it.
     */
-    void reset() noexcept
+    void reset()
     {
         if (! shouldDelete)
             object.release();
@@ -178,8 +170,8 @@ public:
     */
     void swapWith (OptionalScopedPointer<ObjectType>& other) noexcept
     {
-        std::swap (other.object, object);
-        std::swap (other.shouldDelete, shouldDelete);
+        object.swapWith (other.object);
+        std::swap (shouldDelete, other.shouldDelete);
     }
 
 private:

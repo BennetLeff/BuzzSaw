@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -107,8 +108,7 @@ public:
         @see loadDocument, loadFromUserSpecifiedFile
     */
     Result loadFrom (const File& fileToLoadFrom,
-                     bool showMessageOnFailure,
-                     bool showWaitCursor = true);
+                     bool showMessageOnFailure);
 
     /** Asks the user for a file and tries to load it.
 
@@ -183,15 +183,12 @@ public:
                                             filename
         @param showMessageOnFailure         if true and the write operation fails, it'll show
                                             a message box to warn the user
-        @param showWaitCursor               if true, the 'wait' mouse cursor will be showin during
-                                            saving
         @see saveIfNeededAndUserAgrees, save, saveAsInteractive
     */
     SaveResult saveAs (const File& newFile,
                        bool warnAboutOverwritingExistingFiles,
                        bool askUserForFileIfNotSpecified,
-                       bool showMessageOnFailure,
-                       bool showWaitCursor = true);
+                       bool showMessageOnFailure);
 
     /** Prompts the user for a filename and tries to save to it.
 
@@ -290,7 +287,7 @@ protected:
 private:
     //==============================================================================
     File documentFile;
-    bool changedSinceSave = false;
+    bool changedSinceSave;
     String fileExtension, fileWildcard, openFileDialogTitle, saveFileDialogTitle;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileBasedDocument)

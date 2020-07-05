@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -36,7 +37,6 @@
 #define JUCE_CORE_INCLUDE_JNI_HELPERS 1
 #define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
 #define JUCE_GRAPHICS_INCLUDE_COREGRAPHICS_HELPERS 1
-#define JUCE_GUI_BASICS_INCLUDE_XHEADERS 1
 
 #include "juce_opengl.h"
 
@@ -263,7 +263,10 @@ private:
 //==============================================================================
 #if JUCE_MAC || JUCE_IOS
 
- JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wundeclared-selector")
+ #if JUCE_CLANG
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wundeclared-selector"
+ #endif
 
  #if JUCE_MAC
   #include "native/juce_OpenGL_osx.h"
@@ -271,7 +274,9 @@ private:
   #include "native/juce_OpenGL_ios.h"
  #endif
 
- JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+ #if JUCE_CLANG
+  #pragma clang diagnostic pop
+ #endif
 
 #elif JUCE_WINDOWS
  #include "native/juce_OpenGL_win32.h"

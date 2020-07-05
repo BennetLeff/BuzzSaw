@@ -2,16 +2,17 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
 
-   By using JUCE, you agree to the terms of both the JUCE 6 End-User License
-   Agreement and JUCE Privacy Policy (both effective as of the 16th June 2020).
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   End User License Agreement: www.juce.com/juce-6-licence
-   Privacy Policy: www.juce.com/juce-privacy-policy
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
    Or: You may also use this code under the terms of the GPL v3 (see
    www.gnu.org/licenses).
@@ -46,7 +47,10 @@
 
 #elif JUCE_WINDOWS
   // get rid of some warnings in Window's own headers
- JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4458)
+ #ifdef JUCE_MSVC
+  #pragma warning (push)
+  #pragma warning (disable : 4458)
+ #endif
 
  #if JUCE_MINGW && JUCE_USE_DIRECTWRITE
   #warning "DirectWrite not currently implemented with mingw..."
@@ -69,7 +73,9 @@
 
  #include <unordered_map>
 
- JUCE_END_IGNORE_WARNINGS_MSVC
+ #ifdef JUCE_MSVC
+  #pragma warning (pop)
+ #endif
 
 #elif JUCE_IOS
  #import <QuartzCore/QuartzCore.h>

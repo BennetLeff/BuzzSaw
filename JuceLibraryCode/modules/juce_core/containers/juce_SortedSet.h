@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -23,7 +23,10 @@
 namespace juce
 {
 
-JUCE_BEGIN_IGNORE_WARNINGS_MSVC (4512)
+#if JUCE_MSVC
+ #pragma warning (push)
+ #pragma warning (disable: 4512)
+#endif
 
 //==============================================================================
 /**
@@ -377,7 +380,7 @@ public:
         @param valueToRemove   the object to try to remove
         @see remove, removeRange
     */
-    void removeValue (const ElementType& valueToRemove) noexcept
+    void removeValue (const ElementType valueToRemove) noexcept
     {
         const ScopedLockType lock (getLock());
         data.remove (indexOf (valueToRemove));
@@ -484,6 +487,8 @@ private:
     Array<ElementType, TypeOfCriticalSectionToUse> data;
 };
 
-JUCE_END_IGNORE_WARNINGS_MSVC
+#if JUCE_MSVC
+ #pragma warning (pop)
+#endif
 
 } // namespace juce

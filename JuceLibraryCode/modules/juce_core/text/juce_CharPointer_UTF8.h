@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -36,44 +36,44 @@ class CharPointer_UTF8  final
 public:
     using CharType = char;
 
-    explicit CharPointer_UTF8 (const CharType* rawPointer) noexcept
+    inline explicit CharPointer_UTF8 (const CharType* rawPointer) noexcept
         : data (const_cast<CharType*> (rawPointer))
     {
     }
 
-    CharPointer_UTF8 (const CharPointer_UTF8& other) = default;
+    inline CharPointer_UTF8 (const CharPointer_UTF8& other) = default;
 
-    CharPointer_UTF8 operator= (CharPointer_UTF8 other) noexcept
+    inline CharPointer_UTF8 operator= (CharPointer_UTF8 other) noexcept
     {
         data = other.data;
         return *this;
     }
 
-    CharPointer_UTF8 operator= (const CharType* text) noexcept
+    inline CharPointer_UTF8 operator= (const CharType* text) noexcept
     {
         data = const_cast<CharType*> (text);
         return *this;
     }
 
     /** This is a pointer comparison, it doesn't compare the actual text. */
-    bool operator== (CharPointer_UTF8 other) const noexcept      { return data == other.data; }
-    bool operator!= (CharPointer_UTF8 other) const noexcept      { return data != other.data; }
-    bool operator<= (CharPointer_UTF8 other) const noexcept      { return data <= other.data; }
-    bool operator<  (CharPointer_UTF8 other) const noexcept      { return data <  other.data; }
-    bool operator>= (CharPointer_UTF8 other) const noexcept      { return data >= other.data; }
-    bool operator>  (CharPointer_UTF8 other) const noexcept      { return data >  other.data; }
+    inline bool operator== (CharPointer_UTF8 other) const noexcept      { return data == other.data; }
+    inline bool operator!= (CharPointer_UTF8 other) const noexcept      { return data != other.data; }
+    inline bool operator<= (CharPointer_UTF8 other) const noexcept      { return data <= other.data; }
+    inline bool operator<  (CharPointer_UTF8 other) const noexcept      { return data <  other.data; }
+    inline bool operator>= (CharPointer_UTF8 other) const noexcept      { return data >= other.data; }
+    inline bool operator>  (CharPointer_UTF8 other) const noexcept      { return data >  other.data; }
 
     /** Returns the address that this pointer is pointing to. */
-    CharType* getAddress() const noexcept        { return data; }
+    inline CharType* getAddress() const noexcept        { return data; }
 
     /** Returns the address that this pointer is pointing to. */
-    operator const CharType*() const noexcept    { return data; }
+    inline operator const CharType*() const noexcept    { return data; }
 
     /** Returns true if this pointer is pointing to a null character. */
-    bool isEmpty() const noexcept                { return *data == 0; }
+    inline bool isEmpty() const noexcept                { return *data == 0; }
 
     /** Returns true if this pointer is not pointing to a null character. */
-    bool isNotEmpty() const noexcept             { return *data != 0; }
+    inline bool isNotEmpty() const noexcept             { return *data != 0; }
 
     /** Returns the unicode character that this pointer is pointing to. */
     juce_wchar operator*() const noexcept
@@ -124,7 +124,7 @@ public:
             while ((static_cast<uint8> (n) & bit) != 0 && bit > 0x8)
             {
                 ++data;
-                bit = static_cast<uint8> (bit >> 1);
+                bit >>= 1;
             }
         }
 
@@ -348,7 +348,7 @@ public:
     }
 
     /** Writes a null character to this string (leaving the pointer's position unchanged). */
-    void writeNull() const noexcept
+    inline void writeNull() const noexcept
     {
         *data = 0;
     }

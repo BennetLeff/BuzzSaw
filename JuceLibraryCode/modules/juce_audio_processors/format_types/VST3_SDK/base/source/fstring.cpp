@@ -287,6 +287,7 @@ static inline int strnicmp16 (const Steinberg::char16* s1, const Steinberg::char
 //-----------------------------------------------------------------------------
 static inline int sprintf16 (Steinberg::char16* wcs, const Steinberg::char16* format, ...)
 {
+#warning DEPRECATED No Linux implementation
     assert(false && "DEPRECATED No Linux implementation");
 	return 0;
 }
@@ -310,6 +311,7 @@ static inline int vsnwprintf (Steinberg::char16* wcs, size_t maxlen,
 //-----------------------------------------------------------------------------
 static inline Steinberg::char16* strrchr16 (const Steinberg::char16* str, Steinberg::char16 c)
 {
+#warning DEPRECATED No Linux implementation
     assert(false && "DEPRECATED No Linux implementation");
 	return nullptr;
 }
@@ -1584,6 +1586,7 @@ char16 ConstString::toLower (char16 c)
 		}
 		return c;
 	#elif SMTG_OS_LINUX
+	#warning DEPRECATED No Linux implementation
 	assert(false && "DEPRECATED No Linux implementation");
 		return c;
 	#else
@@ -1612,6 +1615,7 @@ char16 ConstString::toUpper (char16 c)
 		}
 		return c;
     #elif SMTG_OS_LINUX
+	#warning DEPRECATED No Linux implementation
 	assert(false && "DEPRECATED No Linux implementation");
 		return c;
 	#else
@@ -1909,7 +1913,8 @@ int32 ConstString::multiByteToWideString (char16* dest, const char8* source, int
 		}
 	}
 	else
-    {
+	{
+#warning DEPRECATED No Linux implementation
 		assert(false && "DEPRECATED No Linux implementation");
 	}
 
@@ -1989,7 +1994,8 @@ int32 ConstString::wideStringToMultiByte (char8* dest, const char16* wideString,
 		}
 	}
 	else
-    {
+	{
+#warning DEPRECATED No Linux implementation
 		assert(false && "DEPRECATED No Linux implementation");
 	}
 	return result;

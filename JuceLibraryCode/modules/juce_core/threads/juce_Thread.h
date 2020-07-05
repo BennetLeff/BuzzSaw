@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -352,7 +352,7 @@ public:
         following java method:
 
         @code
-        com.rmsl.juce.Java.initialiseJUCE (myContext);
+        com.roli.juce.Java.initialiseJUCE (myContext);
         @endcode
 
         Note that the above java method is only available in Android Studio projects
@@ -361,7 +361,7 @@ public:
         your project:
 
         @code
-        package com.rmsl.juce;
+        package com.roli.juce;
 
         public class Java
         {

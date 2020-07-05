@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -49,7 +49,6 @@ MemoryInputStream::MemoryInputStream (MemoryBlock&& source)
     : internalCopy (std::move (source))
 {
     data = internalCopy.getData();
-    dataSize = internalCopy.getSize();
 }
 
 MemoryInputStream::~MemoryInputStream()

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2020 - Raw Material Software Limited
+   Copyright (c) 2017 - ROLI Ltd.
 
    JUCE is an open source library subject to commercial or open-source
    licensing.
@@ -23,7 +23,7 @@
 namespace juce
 {
 
-static int calcBufferStreamBufferSize (int requestedSize, InputStream* source) noexcept
+static inline int calcBufferStreamBufferSize (int requestedSize, InputStream* source) noexcept
 {
     // You need to supply a real stream when creating a BufferedInputStream
     jassert (source != nullptr);
