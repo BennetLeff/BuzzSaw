@@ -21,7 +21,7 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
     addAndMakeVisible(*subharmonicComponent);
     //addAndMakeVisible(*wavefolderComponent);
 
-    setSize(620, 400);
+    setSize(windowWidth, windowHeight);
 }
 
 ThaiBasilAudioProcessorEditor::~ThaiBasilAudioProcessorEditor()
@@ -39,7 +39,8 @@ void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
 
     //background
     //Image background = ImageCache::getFromMemory(BinaryData::thaibasiltest_png, BinaryData::thaibasiltest_pngSize);
-    //g.drawImageAt(background, 0, 0);
+    Image background = ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
+    g.drawImageWithin(background, 0, 0,windowWidth,windowHeight,RectanglePlacement::stretchToFit);
 
     subharmonicComponent->paint(g);
     //wavefolderComponent->paint(g);

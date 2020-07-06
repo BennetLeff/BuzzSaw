@@ -47,8 +47,6 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
         //button.setButtonStyle(DrawableButton::ImageAboveTextLabel);
         button.setName(name);
         //button.textFromValueFunction = textFromValue;
-        //slider.valueFromTextFunction = valueFromText;
-        //slider.setNumDecimalPlacesToDisplay(2);
         //button.setTextBoxStyle(Slider::TextBoxBelow, false, 60, 15);
         button.setColour(DrawableButton::backgroundColourId, Colours::transparentBlack);
         button.setColour(DrawableButton::backgroundOnColourId, Colours::peru);
@@ -62,11 +60,8 @@ SubharmonicComponent::SubharmonicComponent(AudioProcessorValueTreeState& valueTr
     setupSlider(blendSlide, valueTreeState, "mainBlend", blendAttach, "Blend", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(driveSlide, valueTreeState, "drive", driveAttach, "Drive", [this] { /*nlViewer.updateCurve();*/ });
     setupSlider(stereoWidthSlide, valueTreeState, "stereoWidth", stereoWidthAttach, "StereoWidth", [this] { /*nlViewer.updateCurve();*/ });
-    //setupSlider(sideGainSlide, valueTreeState, "shgSideGain", sideGainAttach, "SideGain", [this] { /*nlViewer.updateCurve();*/ });
-    //setupSlider(attackSlide, valueTreeState, "shgAttack", attackAttach, "Attack", [this] { /*nlViewer.updateCurve();*/ });
-    //setupSlider(releaseSlide, valueTreeState, "shgRelease", releaseAttach, "Release", [this] { /*nlViewer.updateCurve();*/ });
+   
     
-    //setupToggleButton(stereoOnButton, valueTreeState, "stereoOn", stereoOnAttach, "Widen", [this] {});
 
     auto setupBox = [this](ComboBox& box, AudioProcessorValueTreeState& vts, String paramID,
         std::unique_ptr<ComboBoxAttachment>& attachment, StringArray choices,
@@ -91,7 +86,7 @@ SubharmonicComponent::~SubharmonicComponent()
 
 void SubharmonicComponent::paint(Graphics& g)
 {
-    g.fillAll(customLookAndFeel.findColour(ResizableWindow::backgroundColourId));   // clear the background
+    //g.fillAll(customLookAndFeel.findColour(ResizableWindow::backgroundColourId));   // clear the background
 
     g.setColour(Colours::grey);
     g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
@@ -113,17 +108,13 @@ void SubharmonicComponent::paint(Graphics& g)
     makeName(postCutoffSlide, "PostCutoff");
     makeName(outGainSlide, "Gain");
     makeName(driveSlide, "Drive");
-   // makeName(sideGainSlide, "SideGain");
     makeName(blendSlide, "Blend");
-    //makeName(attackSlide, "Attack");
-    //makeName(releaseSlide, "Release");
 
     makeName(stereoWidthSlide,"Morph");
-    //makeName(stereoOnButton, "Widen");
 
     //big stripe
-    g.setColour(customLookAndFeel.dialColour);
-    g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
+    //g.setColour(customLookAndFeel.dialColour);
+    //g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
 
 }
 
@@ -150,12 +141,7 @@ void SubharmonicComponent::resized()
     outGainSlide.setBounds(driveSlide.getRight() + xSpacing, baseHeight+bigYSpacing, bigDiam, bigDiam + nameHeightPad);
     blendSlide.setBounds(outGainSlide.getRight() + xSpacing, baseHeight+smallYSpacing, smallDiam, smallDiam+nameHeightPad);
    
-    //stereoOnButton.setBounds(width/4, baseHeight-50, 40, 20);
-
-    //old knobs
-    // sideGainSlide.setBounds(mainGainSlide.getRight() - 30, this->getHeight() / 4, 90, 80);
-    //attackSlide.setBounds(blendSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
-    //releaseSlide.setBounds(attackSlide.getRight() + spacing, height / 4, smallDiam, smallDiam + nameHeightPad);
+ 
 
 
 }

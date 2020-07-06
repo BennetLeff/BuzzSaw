@@ -5,6 +5,7 @@
               displaySplashScreen="1">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
     <GROUP id="{C9A71708-2534-D05A-C1B6-09E714A45A9D}" name="Images">
+      <FILE id="zyXWNG" name="background.png" compile="0" resource="1" file="../../OneDrive/Pictures/vst assets/background.png"/>
       <FILE id="MOIMCq" name="thaibasiltest.png" compile="0" resource="1"
             file="../../OneDrive/Pictures/vst assets/thaibasiltest.png"/>
     </GROUP>
