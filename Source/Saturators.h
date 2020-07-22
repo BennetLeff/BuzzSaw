@@ -19,11 +19,11 @@ static float aSinHlookupTable[LUTSize];
 
 enum SatType
 {
-    none,
-    hard,
-    soft,
-    hyptan,
-    ahypsin,
+    None,
+    Hard,
+    Soft,
+    HypTan,
+    AHypSin,
 };
 
 using SatFunc = std::function<float(float)>;
@@ -33,23 +33,24 @@ class Saturators
 public:
     static SatFunc getSaturator(SatType type)
     {
-        if (type == SatType::hard)
-            return [](float x) { return hardClip(x); };
+        if (type == Hard)
+            return [](auto x) { return hardClip(x); };
 
-        if (type == SatType::soft)
-            return [](float x) { return softClip(x); };
+        if (type == Soft)
+            return [](auto x) { return softClip(x); };
 
-        if (type == SatType::hyptan)
-            return [](float x) { return tanhClip(x); };
+        if (type == HypTan)
+            return [](auto x) { return tanhClip(x); };
 
-        if (type == SatType::ahypsin)
-            return [](float x) { return aSinhClip(x); };
+        if (type == AHypSin)
+            return [](auto x) { return aSinhClip(x); };
 
         // None
-        return [](float x) { return x; };
+        return [](auto x) { return x; };
     }
 
-    constexpr static inline float hardClip(float x)
+	template <typename Numeric>
+    constexpr static inline auto hardClip(Numeric x)
     {
         if (x > 1.0f)
             return 1.0f;
@@ -60,7 +61,8 @@ public:
         return x;
     }
 
-    constexpr static inline float softClip(float x)
+	template <typename Numeric>
+    constexpr static inline float softClip(Numeric x)
     {
         if (x > 1.0f)
             return 2.0f / 3.0f;
@@ -71,17 +73,20 @@ public:
         return x - x * x * x / 3.0f;
     }
 
-    static inline float tanhClip(float x)
+	template <typename Numeric>
+    static inline float tanhClip(Numeric x)
     {
         return tanhf(x);
     }
 
-    static inline float aSinhClip(float x)
+	template <typename Numeric>
+    static inline float aSinhClip(Numeric x)
     {
         return asinhf(x);
     }    
     
-    static inline float aSinhClipLUT(float x)
+	template <typename Numeric>
+    static inline float aSinhClipLUT(Numeric x)
     {
         float pi = MathConstants<float>::pi;
         int inputToIndex = jmax(0, static_cast<int>(LUTHalfSize + floor(LUTHalfSize * x / pi)));

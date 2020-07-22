@@ -30,7 +30,7 @@ public:
 
 private:
     float fs = 44100.0f;
-    SatFunc ffSat = Saturators::getSaturator(SatType::ahypsin); //removed box
+    SatFunc ffSat = Saturators::getSaturator(SatType::AHypSin); //removed box
     WaveFunc wave = Waves::getWave(WaveType::zero); //removed box (no waves, could set this to something else later)
 
     SmoothedValue<float, ValueSmoothingTypes::Linear> freq = 0.5f;//removed slider
