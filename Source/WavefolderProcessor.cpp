@@ -28,7 +28,7 @@ void WavefolderProcessor::reset(float sampleRate)
     fs = sampleRate;
     y1 = 0.0f;
 
-    Saturators::fillLUT();
+    Saturators::fillLUT<float>();
 
     freq.setCurrentAndTargetValue(freq.getTargetValue());
     depth.setCurrentAndTargetValue(depth.getTargetValue());

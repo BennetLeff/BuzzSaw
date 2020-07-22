@@ -96,11 +96,12 @@ public:
     }
 
     //fills table with asinh values 
+	template <typename Numeric>
     constexpr static void fillLUT() {
-        int minVal = LUTSize / -2;
+        auto minVal = LUTSize / -2;
 
-        for (int i = 0; i < LUTSize; i++) {
-            float piRangeFromIndex = ((minVal + i) * MathConstants<float>::pi) / (LUTSize / 2);
+        for (auto i = 0; i < LUTSize; i++) {
+            auto piRangeFromIndex = ((minVal + i) * MathConstants<Numeric>::pi) / (LUTSize / 2);
             aSinHlookupTable[i] = asinhf(piRangeFromIndex);
         }
     }
