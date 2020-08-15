@@ -228,9 +228,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\synthesisers\juce_Synthesiser.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_CatmullRomInterpolator.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_IIRFilter.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1260,9 +1257,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LadderFilter.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LinkwitzRileyFilter.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1938,15 +1932,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_Windowing.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11_Clipboard.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11_Windowing.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_win32_DragAndDrop.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -2256,12 +2241,10 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\sources\juce_ToneGeneratorAudioSource.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\synthesisers\juce_Synthesiser.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_ADSR.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_CatmullRomInterpolator.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Decibels.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_GenericInterpolator.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_IIRFilter.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Interpolators.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_LagrangeInterpolator.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Reverb.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_SmoothedValue.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_audio_basics.h"/>
@@ -2727,27 +2710,21 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\native\juce_neon_SIMDNativeOps.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\native\juce_sse_SIMDNativeOps.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_BallisticsFilter.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Bias.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_DelayLine.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_DryWetMixer.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_FIRFilter.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_FirstOrderTPTFilter.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Gain.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter_Impl.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LadderFilter.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LinkwitzRileyFilter.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Oscillator.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Oversampling.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Panner.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_ProcessContext.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_ProcessorChain.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_ProcessorDuplicator.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_ProcessorWrapper.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Reverb.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_StateVariableFilter.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_StateVariableTPTFilter.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_WaveShaper.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\widgets\juce_Bias.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\widgets\juce_Chorus.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\widgets\juce_Compressor.h"/>
@@ -2944,7 +2921,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\mouse\juce_TooltipClient.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\x11\juce_linux_X11_Symbols.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\x11\juce_linux_XWindowSystem.h"/>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_MultiTouchMapper.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\positioning\juce_MarkerList.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\positioning\juce_RelativeCoordinate.h"/>
@@ -3043,7 +3019,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JucePluginDefines.h"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\OneDrive\Pictures\vst assets\thaibasiltest.png"/>
+    <None Include="..\..\Assets\background.png"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_devices\native\oboe\CMakeLists.txt"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_devices\native\oboe\readme.md"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_formats\codecs\flac\Flac Licence.txt"/>

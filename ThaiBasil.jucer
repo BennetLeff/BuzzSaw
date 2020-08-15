@@ -4,9 +4,8 @@
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3"
               displaySplashScreen="1">
   <MAINGROUP id="uC0pZp" name="ThaiBasil">
-    <GROUP id="{C9A71708-2534-D05A-C1B6-09E714A45A9D}" name="Images">
-      <FILE id="MOIMCq" name="thaibasiltest.png" compile="0" resource="1"
-            file="../../OneDrive/Pictures/vst assets/thaibasiltest.png"/>
+    <GROUP id="{EBDA89EF-8381-98D3-D0B2-32ABF841B6AE}" name="Assets">
+      <FILE id="L8yA3G" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
     </GROUP>
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
       <FILE id="c7Q4Ee" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
