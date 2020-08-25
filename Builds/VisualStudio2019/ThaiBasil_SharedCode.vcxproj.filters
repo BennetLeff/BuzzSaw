@@ -2,8 +2,8 @@
 
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ThaiBasil\Images">
-      <UniqueIdentifier>{D17D93DB-A0E3-0C75-5008-E310B89CE593}</UniqueIdentifier>
+    <Filter Include="ThaiBasil\Assets">
+      <UniqueIdentifier>{78BEAB56-DE74-127C-B430-7124580E9B64}</UniqueIdentifier>
     </Filter>
     <Filter Include="ThaiBasil\Source">
       <UniqueIdentifier>{5143344C-FF21-C548-5A9E-AA4A9F1956E8}</UniqueIdentifier>
@@ -585,9 +585,6 @@
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\synthesisers\juce_Synthesiser.cpp">
       <Filter>JUCE Modules\juce_audio_basics\synthesisers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_CatmullRomInterpolator.cpp">
-      <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_IIRFilter.cpp">
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
@@ -1675,9 +1672,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter.cpp">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LadderFilter.cpp">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LinkwitzRileyFilter.cpp">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClCompile>
@@ -2383,15 +2377,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_Windowing.cpp">
       <Filter>JUCE Modules\juce_gui_basics\native</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11.cpp">
-      <Filter>JUCE Modules\juce_gui_basics\native</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11_Clipboard.cpp">
-      <Filter>JUCE Modules\juce_gui_basics\native</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11_Windowing.cpp">
-      <Filter>JUCE Modules\juce_gui_basics\native</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_mac_FileChooser.mm">
       <Filter>JUCE Modules\juce_gui_basics\native</Filter>
     </ClCompile>
@@ -2865,9 +2850,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_ADSR.h">
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_CatmullRomInterpolator.h">
-      <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Decibels.h">
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClInclude>
@@ -2878,9 +2860,6 @@
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Interpolators.h">
-      <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_LagrangeInterpolator.h">
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\utilities\juce_Reverb.h">
@@ -4278,9 +4257,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_BallisticsFilter.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Bias.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_DelayLine.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
@@ -4293,22 +4269,13 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_FirstOrderTPTFilter.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Gain.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_IIRFilter_Impl.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LadderFilter.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_LinkwitzRileyFilter.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Oscillator.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Oversampling.h">
@@ -4329,16 +4296,10 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_ProcessorWrapper.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_Reverb.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_StateVariableFilter.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_StateVariableTPTFilter.h">
-      <Filter>JUCE Modules\juce_dsp\processors</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\processors\juce_WaveShaper.h">
       <Filter>JUCE Modules\juce_dsp\processors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_dsp\widgets\juce_Bias.h">
@@ -4929,9 +4890,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\x11\juce_linux_XWindowSystem.h">
       <Filter>JUCE Modules\juce_gui_basics\native\x11</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_linux_X11.h">
-      <Filter>JUCE Modules\juce_gui_basics\native</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\native\juce_MultiTouchMapper.h">
       <Filter>JUCE Modules\juce_gui_basics\native</Filter>
     </ClInclude>
@@ -5222,8 +5180,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\OneDrive\Pictures\vst assets\thaibasiltest.png">
-      <Filter>ThaiBasil\Images</Filter>
+    <None Include="..\..\Assets\background.png">
+      <Filter>ThaiBasil\Assets</Filter>
     </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_devices\native\oboe\CMakeLists.txt">
       <Filter>JUCE Modules\juce_audio_devices\native\oboe</Filter>

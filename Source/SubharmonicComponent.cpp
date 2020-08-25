@@ -91,7 +91,7 @@ SubharmonicComponent::~SubharmonicComponent()
 
 void SubharmonicComponent::paint(Graphics& g)
 {
-    g.fillAll(customLookAndFeel.findColour(ResizableWindow::backgroundColourId));   // clear the background
+    //g.fillAll(customLookAndFeel.findColour(ResizableWindow::backgroundColourId));   // clear the background
 
     g.setColour(Colours::grey);
     g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
@@ -122,8 +122,8 @@ void SubharmonicComponent::paint(Graphics& g)
     //makeName(stereoOnButton, "Widen");
 
     //big stripe
-    g.setColour(customLookAndFeel.dialColour);
-    g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
+    //g.setColour(customLookAndFeel.dialColour);
+    //g.fillRect(0,this->getHeight()/6,this->getWidth(), 44);
 
 }
 
