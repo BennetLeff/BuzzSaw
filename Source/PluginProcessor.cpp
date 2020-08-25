@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-buzzsawAudioProcessor::buzzsawAudioProcessor()
+BuzzSawAudioProcessor::BuzzSawAudioProcessor()
      : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo()) 
 		 .withOutput("Output", AudioChannelSet::stereo())),
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
@@ -49,7 +49,7 @@ buzzsawAudioProcessor::buzzsawAudioProcessor()
     //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
-AudioProcessorValueTreeState::ParameterLayout buzzsawAudioProcessor::createParameterLayout()
+AudioProcessorValueTreeState::ParameterLayout BuzzSawAudioProcessor::createParameterLayout()
 {
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
@@ -92,16 +92,16 @@ AudioProcessorValueTreeState::ParameterLayout buzzsawAudioProcessor::createParam
     return { params.begin(), params.end() };
 }
 
-buzzsawAudioProcessor::~buzzsawAudioProcessor()
+BuzzSawAudioProcessor::~BuzzSawAudioProcessor()
 {
 }
 
-const String buzzsawAudioProcessor::getName() const
+const String BuzzSawAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool buzzsawAudioProcessor::acceptsMidi() const
+bool BuzzSawAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -110,7 +110,7 @@ bool buzzsawAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool buzzsawAudioProcessor::producesMidi() const
+bool BuzzSawAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -119,7 +119,7 @@ bool buzzsawAudioProcessor::producesMidi() const
    #endif
 }
 
-bool buzzsawAudioProcessor::isMidiEffect() const
+bool BuzzSawAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -128,36 +128,36 @@ bool buzzsawAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double buzzsawAudioProcessor::getTailLengthSeconds() const
+double BuzzSawAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int buzzsawAudioProcessor::getNumPrograms()
+int BuzzSawAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int buzzsawAudioProcessor::getCurrentProgram()
+int BuzzSawAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void buzzsawAudioProcessor::setCurrentProgram (int index)
+void BuzzSawAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String buzzsawAudioProcessor::getProgramName (int index)
+const String BuzzSawAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void buzzsawAudioProcessor::changeProgramName (int index, const String& newName)
+void BuzzSawAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
-void buzzsawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void BuzzSawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     limiter.prepare({ sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2 });
     limiter.setThreshold(-3.0f);
@@ -219,7 +219,7 @@ void buzzsawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     sidechainBuffer.setSize(2, samplesPerBlock);
 }
 
-void buzzsawAudioProcessor::releaseResources()
+void BuzzSawAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
@@ -228,7 +228,7 @@ void buzzsawAudioProcessor::releaseResources()
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool buzzsawAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool BuzzSawAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -251,7 +251,7 @@ bool buzzsawAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-void buzzsawAudioProcessor::updateParams()
+void BuzzSawAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
@@ -302,7 +302,7 @@ void buzzsawAudioProcessor::updateParams()
     delay[1].setDelaySec((*stereoWidthParam /100)*0.9);
 }
 
-void buzzsawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void BuzzSawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
 
@@ -380,17 +380,17 @@ void buzzsawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
 
 }
 
-bool buzzsawAudioProcessor::hasEditor() const
+bool BuzzSawAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* buzzsawAudioProcessor::createEditor()
+AudioProcessorEditor* BuzzSawAudioProcessor::createEditor()
 {
-    return new buzzsawAudioProcessorEditor (*this);
+    return new BuzzSawAudioProcessorEditor (*this);
 }
 
-void buzzsawAudioProcessor::getStateInformation (MemoryBlock& destData)
+void BuzzSawAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
@@ -400,7 +400,7 @@ void buzzsawAudioProcessor::getStateInformation (MemoryBlock& destData)
     copyXmlToBinary(*xml, destData);
 }
 
-void buzzsawAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void BuzzSawAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -414,5 +414,5 @@ void buzzsawAudioProcessor::setStateInformation (const void* data, int sizeInByt
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new buzzsawAudioProcessor();
+    return new BuzzSawAudioProcessor();
 }

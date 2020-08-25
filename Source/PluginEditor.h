@@ -21,12 +21,12 @@ using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
 //==============================================================================
 /**
 */
-class buzzsawAudioProcessorEditor  : public AudioProcessorEditor,
+class BuzzSawAudioProcessorEditor  : public AudioProcessorEditor,
 									   private Slider::Listener
 {
 public:
-    buzzsawAudioProcessorEditor (buzzsawAudioProcessor&);
-    ~buzzsawAudioProcessorEditor();
+    BuzzSawAudioProcessorEditor (BuzzSawAudioProcessor&);
+    ~BuzzSawAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -37,7 +37,7 @@ private:
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    buzzsawAudioProcessor& processor;
+    BuzzSawAudioProcessor& processor;
 
 	//Slider gainControl;
     //Slider preGainControl;
@@ -66,5 +66,5 @@ private:
     //const StringArray waveChoices = StringArray({ "Zero", "Tri", "Sine" });
 
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (buzzsawAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BuzzSawAudioProcessorEditor)
 };

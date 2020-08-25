@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-buzzsawAudioProcessorEditor::buzzsawAudioProcessorEditor (buzzsawAudioProcessor& p)
+BuzzSawAudioProcessorEditor::BuzzSawAudioProcessorEditor (BuzzSawAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     subharmonicComponent= std::make_unique<SubharmonicComponent>(p.getVTS());
@@ -24,12 +24,12 @@ buzzsawAudioProcessorEditor::buzzsawAudioProcessorEditor (buzzsawAudioProcessor&
     setSize(620, 400);
 }
 
-buzzsawAudioProcessorEditor::~buzzsawAudioProcessorEditor()
+BuzzSawAudioProcessorEditor::~BuzzSawAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void buzzsawAudioProcessorEditor::paint (Graphics& g)
+void BuzzSawAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
@@ -40,7 +40,7 @@ void buzzsawAudioProcessorEditor::paint (Graphics& g)
     g.setFont (15.0f);
 
     //background
-    //Image background = ImageCache::getFromMemory(BinaryData::buzzsawtest_png, BinaryData::buzzsawtest_pngSize);
+    //Image background = ImageCache::getFromMemory(BinaryData::BuzzSawtest_png, BinaryData::BuzzSawtest_pngSize);
     //g.drawImageAt(background, 0, 0);
 
     subharmonicComponent->paint(g);
@@ -48,13 +48,13 @@ void buzzsawAudioProcessorEditor::paint (Graphics& g)
 
 }
 
-void buzzsawAudioProcessorEditor::resized()
+void BuzzSawAudioProcessorEditor::resized()
 {
     subharmonicComponent->setBounds(0, 0, getWidth(), getHeight());
     //wavefolderComponent->setBounds(0, getHeight()/2, getWidth(), getHeight()/2);
 }
 
-void buzzsawAudioProcessorEditor::sliderValueChanged(Slider* slider)
+void BuzzSawAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
 
 }

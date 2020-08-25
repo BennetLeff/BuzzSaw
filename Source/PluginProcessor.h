@@ -22,12 +22,12 @@
 //==============================================================================
 /**
 */
-class buzzsawAudioProcessor  : public AudioProcessor
+class BuzzSawAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    buzzsawAudioProcessor();
-    ~buzzsawAudioProcessor();
+    BuzzSawAudioProcessor();
+    ~BuzzSawAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -137,5 +137,5 @@ private:
 
     juce::dsp::Limiter<float> limiter;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (buzzsawAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BuzzSawAudioProcessor)
 };
