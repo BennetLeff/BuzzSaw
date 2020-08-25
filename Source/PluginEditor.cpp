@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProcessor& p)
+buzzsawAudioProcessorEditor::buzzsawAudioProcessorEditor (buzzsawAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     subharmonicComponent= std::make_unique<SubharmonicComponent>(p.getVTS());
@@ -24,12 +24,12 @@ ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProc
     setSize(620, 400);
 }
 
-ThaiBasilAudioProcessorEditor::~ThaiBasilAudioProcessorEditor()
+buzzsawAudioProcessorEditor::~buzzsawAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
+void buzzsawAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
@@ -40,7 +40,7 @@ void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
     g.setFont (15.0f);
 
     //background
-    //Image background = ImageCache::getFromMemory(BinaryData::thaibasiltest_png, BinaryData::thaibasiltest_pngSize);
+    //Image background = ImageCache::getFromMemory(BinaryData::buzzsawtest_png, BinaryData::buzzsawtest_pngSize);
     //g.drawImageAt(background, 0, 0);
 
     subharmonicComponent->paint(g);
@@ -48,13 +48,13 @@ void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
 
 }
 
-void ThaiBasilAudioProcessorEditor::resized()
+void buzzsawAudioProcessorEditor::resized()
 {
     subharmonicComponent->setBounds(0, 0, getWidth(), getHeight());
     //wavefolderComponent->setBounds(0, getHeight()/2, getWidth(), getHeight()/2);
 }
 
-void ThaiBasilAudioProcessorEditor::sliderValueChanged(Slider* slider)
+void buzzsawAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
 
 }

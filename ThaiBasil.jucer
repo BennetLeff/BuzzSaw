@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="Dmtb1k" name="ThaiBasil" projectType="audioplug" jucerVersion="5.4.7"
+<JUCERPROJECT id="Dmtb1k" name="BuzzSaw" projectType="audioplug" jucerVersion="5.4.7"
               pluginVST3Category="Distortion,Fx" pluginFormats="buildAU,buildStandalone,buildVST3"
               displaySplashScreen="1">
-  <MAINGROUP id="uC0pZp" name="ThaiBasil">
+  <MAINGROUP id="uC0pZp" name="BuzzSaw">
     <GROUP id="{EBDA89EF-8381-98D3-D0B2-32ABF841B6AE}" name="Assets">
-      <FILE id="L8yA3G" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
+      <FILE id="g5VL4s" name="background.png" compile="0" resource="1" file="Assets/background.png"/>
     </GROUP>
     <GROUP id="{780CA569-B906-4144-A255-024372B10F60}" name="Source">
       <FILE id="c7Q4Ee" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>

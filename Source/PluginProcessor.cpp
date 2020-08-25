@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
+buzzsawAudioProcessor::buzzsawAudioProcessor()
      : AudioProcessor(BusesProperties().withInput("Input", AudioChannelSet::stereo()) 
 		 .withOutput("Output", AudioChannelSet::stereo())),
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
@@ -49,7 +49,7 @@ ThaiBasilAudioProcessor::ThaiBasilAudioProcessor()
     //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
-AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createParameterLayout()
+AudioProcessorValueTreeState::ParameterLayout buzzsawAudioProcessor::createParameterLayout()
 {
     std::vector<std::unique_ptr<RangedAudioParameter>> params;
 
@@ -92,16 +92,16 @@ AudioProcessorValueTreeState::ParameterLayout ThaiBasilAudioProcessor::createPar
     return { params.begin(), params.end() };
 }
 
-ThaiBasilAudioProcessor::~ThaiBasilAudioProcessor()
+buzzsawAudioProcessor::~buzzsawAudioProcessor()
 {
 }
 
-const String ThaiBasilAudioProcessor::getName() const
+const String buzzsawAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool ThaiBasilAudioProcessor::acceptsMidi() const
+bool buzzsawAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -110,7 +110,7 @@ bool ThaiBasilAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool ThaiBasilAudioProcessor::producesMidi() const
+bool buzzsawAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -119,7 +119,7 @@ bool ThaiBasilAudioProcessor::producesMidi() const
    #endif
 }
 
-bool ThaiBasilAudioProcessor::isMidiEffect() const
+bool buzzsawAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -128,36 +128,36 @@ bool ThaiBasilAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double ThaiBasilAudioProcessor::getTailLengthSeconds() const
+double buzzsawAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int ThaiBasilAudioProcessor::getNumPrograms()
+int buzzsawAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int ThaiBasilAudioProcessor::getCurrentProgram()
+int buzzsawAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void ThaiBasilAudioProcessor::setCurrentProgram (int index)
+void buzzsawAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String ThaiBasilAudioProcessor::getProgramName (int index)
+const String buzzsawAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void ThaiBasilAudioProcessor::changeProgramName (int index, const String& newName)
+void buzzsawAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
-void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void buzzsawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     limiter.prepare({ sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2 });
     limiter.setThreshold(-3.0f);
@@ -219,7 +219,7 @@ void ThaiBasilAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     sidechainBuffer.setSize(2, samplesPerBlock);
 }
 
-void ThaiBasilAudioProcessor::releaseResources()
+void buzzsawAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
@@ -228,7 +228,7 @@ void ThaiBasilAudioProcessor::releaseResources()
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool ThaiBasilAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool buzzsawAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -251,7 +251,7 @@ bool ThaiBasilAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void ThaiBasilAudioProcessor::updateParams()
+void buzzsawAudioProcessor::updateParams()
 {
     for (int ch = 0; ch < 2; ++ch)
     {
@@ -302,7 +302,7 @@ void ThaiBasilAudioProcessor::updateParams()
     delay[1].setDelaySec((*stereoWidthParam /100)*0.9);
 }
 
-void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void buzzsawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
 
@@ -380,17 +380,17 @@ void ThaiBasilAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 
 }
 
-bool ThaiBasilAudioProcessor::hasEditor() const
+bool buzzsawAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* ThaiBasilAudioProcessor::createEditor()
+AudioProcessorEditor* buzzsawAudioProcessor::createEditor()
 {
-    return new ThaiBasilAudioProcessorEditor (*this);
+    return new buzzsawAudioProcessorEditor (*this);
 }
 
-void ThaiBasilAudioProcessor::getStateInformation (MemoryBlock& destData)
+void buzzsawAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
@@ -400,7 +400,7 @@ void ThaiBasilAudioProcessor::getStateInformation (MemoryBlock& destData)
     copyXmlToBinary(*xml, destData);
 }
 
-void ThaiBasilAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void buzzsawAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -414,5 +414,5 @@ void ThaiBasilAudioProcessor::setStateInformation (const void* data, int sizeInB
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new ThaiBasilAudioProcessor();
+    return new buzzsawAudioProcessor();
 }
