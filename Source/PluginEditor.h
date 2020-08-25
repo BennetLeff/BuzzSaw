@@ -12,16 +12,21 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "SubharmonicComponent.h"
+#include "WavefolderComponent.h"
+
+using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
+using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
 
 //==============================================================================
 /**
 */
-class ThaiBasilAudioProcessorEditor  : public AudioProcessorEditor,
+class BuzzSawAudioProcessorEditor  : public AudioProcessorEditor,
 									   private Slider::Listener
 {
 public:
-    ThaiBasilAudioProcessorEditor (ThaiBasilAudioProcessor&);
-    ~ThaiBasilAudioProcessorEditor();
+    BuzzSawAudioProcessorEditor (BuzzSawAudioProcessor&);
+    ~BuzzSawAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -32,9 +37,34 @@ private:
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    ThaiBasilAudioProcessor& processor;
+    BuzzSawAudioProcessor& processor;
 
-	Slider gainControl;
+	//Slider gainControl;
+    //Slider preGainControl;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessorEditor)
+    std::unique_ptr<SubharmonicComponent> subharmonicComponent;
+    //std::unique_ptr<WavefolderComponent> wavefolderComponent;
+
+    //Slider freqSlide;
+    //std::unique_ptr<SliderAttachment> freqAttach;
+
+    //Slider depthSlide;
+    //std::unique_ptr<SliderAttachment> depthAttach;
+
+    //Slider ffSlide;
+    //std::unique_ptr<SliderAttachment> ffAttach;
+
+    //Slider fbSlide;
+    //std::unique_ptr<SliderAttachment> fbAttach;
+
+    //ComboBox satBox;
+    //std::unique_ptr<ComboBoxAttachment> satBoxAttach;
+    //const StringArray satChoices = StringArray({ "None", "Hard", "Soft", "Tanh", "ASinh" });
+
+    //ComboBox waveBox;
+    //std::unique_ptr<ComboBoxAttachment> waveBoxAttach;
+    //const StringArray waveChoices = StringArray({ "Zero", "Tri", "Sine" });
+
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BuzzSawAudioProcessorEditor)
 };

@@ -12,49 +12,49 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-ThaiBasilAudioProcessorEditor::ThaiBasilAudioProcessorEditor (ThaiBasilAudioProcessor& p)
+BuzzSawAudioProcessorEditor::BuzzSawAudioProcessorEditor (BuzzSawAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-	gainControl.setSliderStyle(Slider::LinearBarVertical);
-	gainControl.setRange(0.0, 127.0, 1.0);
-	gainControl.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-	gainControl.setPopupDisplayEnabled(true, false, this);
-	gainControl.setTextValueSuffix(" Gain");
-	gainControl.setValue(1.0);
+    subharmonicComponent= std::make_unique<SubharmonicComponent>(p.getVTS());
+    //wavefolderComponent= std::make_unique<WavefolderComponent>(p.getVTS());
+ 
+    addAndMakeVisible(*subharmonicComponent);
+    //addAndMakeVisible(*wavefolderComponent);
 
-	// this function adds the slider to the editor
-	addAndMakeVisible(&gainControl);
-
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (800, 600);
-
-	gainControl.addListener(this);
+    setSize(620, 400);
 }
 
-ThaiBasilAudioProcessorEditor::~ThaiBasilAudioProcessorEditor()
+BuzzSawAudioProcessorEditor::~BuzzSawAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void ThaiBasilAudioProcessorEditor::paint (Graphics& g)
+void BuzzSawAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    //g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    Image background = ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
+    g.drawImageWithin(background,0,0,getWidth(),getHeight(), RectanglePlacement::stretchToFit);
 
     g.setColour (Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Distortion Effect Unit", getLocalBounds(), Justification::centred, 1);
+
+    //background
+    //Image background = ImageCache::getFromMemory(BinaryData::BuzzSawtest_png, BinaryData::BuzzSawtest_pngSize);
+    //g.drawImageAt(background, 0, 0);
+
+    subharmonicComponent->paint(g);
+    //wavefolderComponent->paint(g);
+
 }
 
-void ThaiBasilAudioProcessorEditor::resized()
+void BuzzSawAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
-	gainControl.setBounds(40, 30, 20, getHeight() - 60);
+    subharmonicComponent->setBounds(0, 0, getWidth(), getHeight());
+    //wavefolderComponent->setBounds(0, getHeight()/2, getWidth(), getHeight()/2);
 }
 
-void ThaiBasilAudioProcessorEditor::sliderValueChanged(Slider* slider)
+void BuzzSawAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
-	processor.gain = static_cast<float>(gainControl.getValue());
+
 }
