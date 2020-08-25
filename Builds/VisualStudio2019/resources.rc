@@ -15,9 +15,9 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "FileDescription",  "ThaiBasil\0"
+      VALUE "FileDescription",  "BuzzSaw\0"
       VALUE "FileVersion",  "1.0.0\0"
-      VALUE "ProductName",  "ThaiBasil\0"
+      VALUE "ProductName",  "BuzzSaw\0"
       VALUE "ProductVersion",  "1.0.0\0"
     END
   END

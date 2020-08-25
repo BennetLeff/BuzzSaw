@@ -22,12 +22,12 @@
 //==============================================================================
 /**
 */
-class ThaiBasilAudioProcessor  : public AudioProcessor
+class BuzzSawAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    ThaiBasilAudioProcessor();
-    ~ThaiBasilAudioProcessor();
+    BuzzSawAudioProcessor();
+    ~BuzzSawAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -137,5 +137,5 @@ private:
 
     juce::dsp::Limiter<float> limiter;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThaiBasilAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BuzzSawAudioProcessor)
 };
