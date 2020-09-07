@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 
+//CURRENTLY UNUSED/////////////////////////////////////////////////////////////////
+
 using SliderAttachment = AudioProcessorValueTreeState::SliderAttachment;
 using ComboBoxAttachment = AudioProcessorValueTreeState::ComboBoxAttachment;
 

@@ -45,6 +45,8 @@ private:
     std::unique_ptr<SubharmonicComponent> subharmonicComponent;
     //std::unique_ptr<WavefolderComponent> wavefolderComponent;
 
+
+    //In Case we want to add any of these controls back one day
     //Slider freqSlide;
     //std::unique_ptr<SliderAttachment> freqAttach;
 

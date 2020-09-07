@@ -18,10 +18,6 @@ BuzzSawAudioProcessor::BuzzSawAudioProcessor()
     vts(*this, nullptr, Identifier("Parameters"), createParameterLayout()),
     oversampling(2, 3, dsp::Oversampling<float>::filterHalfBandPolyphaseIIR)
 {
-    //Old Gain Controls
-	// addParameter(gain = new AudioParameterFloat("Gain", "Gain", 0, 6.0, 1.0));
-	//gain = 1.0;
-    //preGain = 1.0;
     
     //Standard Param Tree Pointers
     mainBlend = vts.getRawParameterValue("mainBlend"); //blend % is same as wet level, dry level is (100 - wet level)
@@ -38,15 +34,11 @@ BuzzSawAudioProcessor::BuzzSawAudioProcessor()
     //WaveFolder Param Tree Pointers
     shgPreCutoffParam = vts.getRawParameterValue("shgPreCutoff");
     shgPostCutoffParam = vts.getRawParameterValue("shgPostCutoff");
-    //shgMainGainParam = vts.getRawParameterValue("shgMainGain");
-    //shgSideGainParam = vts.getRawParameterValue("shgSideGain");
     outGainParam = vts.getRawParameterValue("outGain");
-    //shgAttackParam = vts.getRawParameterValue("shgAttack");
-    //shgReleaseParam = vts.getRawParameterValue("shgRelease");
+
 
     //Stereo Effect Param Tree Pointers
     stereoWidthParam = vts.getRawParameterValue("stereoWidth");
-    //stereoOnParam = vts.getRawParameterValue("stereoOn");
 }
 
 AudioProcessorValueTreeState::ParameterLayout BuzzSawAudioProcessor::createParameterLayout()
@@ -57,14 +49,6 @@ AudioProcessorValueTreeState::ParameterLayout BuzzSawAudioProcessor::createParam
     params.push_back(std::make_unique<AudioParameterFloat>("drive", "Drive", 0.0f, 100.0f, 0.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("mainBlend", "Blend", 0.0f, 100.0f, 50.0f));
 
-    //WaveFolder Params
-    //params.push_back(std::make_unique<AudioParameterFloat>("freq", "Freq", 0.0f, 1.0f, 0.5f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("depth", "Depth", 0.0f, 0.5f, 0.1f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("feedback", "Feedback", 0.0f, 0.9f, 0.0f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("feedforward", "Feedforward", 0.0f, 1.0f, 1.0f));
-
-    //params.push_back(std::make_unique<AudioParameterInt>("sat", "Saturator", SatType::none, SatType::ahypsin, SatType::none));
-    //params.push_back(std::make_unique<AudioParameterInt>("wave", "Wave", WaveType::zero, WaveType::sine, WaveType::zero));
     
     //Subharmonic Params
 
@@ -79,15 +63,9 @@ AudioProcessorValueTreeState::ParameterLayout BuzzSawAudioProcessor::createParam
 
     params.push_back(std::make_unique<AudioParameterFloat>("shgPreCutoff", "PreCutoff", freqRange, 500.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("shgPostCutoff", "PostCutoff", freqRange, 20000.0f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("shgMainGain", "MainGain", -60.0f, 30.0f, -4.0f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("shgSideGain", "SideGain", -60.0f, 30.0f, -4.0f));
     params.push_back(std::make_unique<AudioParameterFloat>("outGain", "OutGain", -50.0f, 20.0f, 0.0f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("shgAttack", "Attack", attackRange, 10.0f));
-    //params.push_back(std::make_unique<AudioParameterFloat>("shgRelease", "Release", releaseRange, 100.0f));
 
-    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.0, 3, 0.0));//10x the actual range, needed a smaller step
-    //params.push_back(std::make_unique<AudioParameterBool>("stereoOn", "Widen",false));
-
+    params.push_back(std::make_unique<AudioParameterFloat>("stereoWidth", "StereoWidth", 0.0, 3, 0.0));//10x the actual range (for step size)
    
     return { params.begin(), params.end() };
 }
@@ -162,14 +140,10 @@ void BuzzSawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     limiter.prepare({ sampleRate, static_cast<juce::uint32>(samplesPerBlock), 2 });
     limiter.setThreshold(-3.0f);
     limiter.setRelease(100.0f);
-    oversampling.initProcessing(samplesPerBlock);
 
-    //WaveFolder Processing
-    /*wfProc[0].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());
-    wfProc[1].reset((float)sampleRate * (float)oversampling.getOversamplingFactor());*/
-
-    //not used at the moment
-    auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
+    //Oversampling (NOT CURRENTLY IMPLEMENTED)
+    //oversampling.initProcessing(samplesPerBlock);
+    //auto oversampledRate = (float)sampleRate * (float)oversampling.getOversamplingFactor();
 
     for (int ch = 0; ch < 2; ++ch)
     {
@@ -181,10 +155,6 @@ void BuzzSawAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
         dryGain[ch].prepare();
         wetGain[ch].prepare();
         outGain[ch].prepare();
-
-        //preEQ[ch].reset(sampleRate);
-        //preEQ[ch].setEqShape(EqShape::lowPass);
-        //preEQ[ch].toggleOnOff(true);
 
         dcBlocker[ch].reset(sampleRate);
         dcBlocker[ch].setEqShape(EqShape::highPass);
@@ -265,25 +235,10 @@ void BuzzSawAudioProcessor::updateParams()
         dryGain[ch].setGain(mainDryLevel);//Decibels::decibelsToGain(shgMainGainParam->load()));
         wetGain[ch].setGain(mainWetLevel);//Decibels::decibelsToGain(shgSideGainParam->load()));
         outGain[ch].setGain(Decibels::decibelsToGain(outGainParam->load()));
-
-        //WaveFolder Param Updates
         
-       // wfProc[ch].setFreq(*freqParam);
-        //wfProc[ch].setDepth(*depthParam);
-        //wfProc[ch].setFF(ffParam); //we finalized this at 1.0f
-        //wfProc[ch].setFB(*fbParam);
-        //wfProc[ch].setSatType(static_cast<SatType> ((int)*satParam));
-        //wfProc[ch].setWaveType(static_cast<WaveType> ((int)*waveParam));
-
-        
-
-        //subProc[ch].setDetector(*shgAttackParam, *shgReleaseParam);
+        //Static attack and release
         subProc[ch].setDetector(shgAttack, shgRelease);
 
-        //preEQ[ch].setFrequency(*shgPreCutoffParam);
-        //preEQ[ch].setQ(butterQs[1]);
-
-        //delay[ch].setActive(*stereoOnParam);
 
         //Biquad version of filtering block
         /*
@@ -307,9 +262,9 @@ void BuzzSawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     ScopedNoDenormals noDenormals;
 
     sidechainBuffer.makeCopyOf(buffer, true);
-    //sidechainBuffer = buffer; //just gonna point straight to original buffer to test oversampling
 
-    //Oversample only sidechain buffer
+    //Oversampling processing (NOT CURRENTLY WORKING)
+    //sidechainBuffer = buffer;
     //dsp::AudioBlock<float> block(buffer);   //sidechainBuffer);
     //dsp::AudioBlock<float> osBlock(buffer);         //sidechainBuffer);
     //osBlock = oversampling.processSamplesUp(block);
@@ -325,14 +280,12 @@ void BuzzSawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
         auto main = buffer.getWritePointer(ch);
         auto side = sidechainBuffer.getWritePointer(ch); 
 
-        //drive[ch].processBlock(side, numSamples);
-
         //Subharmonic
-        //preEQ[ch].processBlock(side, numSamples);
         subProc[ch].processBlock(side, numSamples);
 
         drive[ch].processBlock(side, numSamples);
-        //temp solution to balance dry/wet volumes
+
+        //balance dry/wet volumes
         if (*driveParam < 30) {
             drive[ch].processBlock(main, numSamples);
         } else {
@@ -340,7 +293,6 @@ void BuzzSawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
                 main[i] *= Decibels::decibelsToGain(30.f);
             }
         }
-
 
 
         //wavefolder
@@ -371,7 +323,7 @@ void BuzzSawAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
 
     }
     
-    //limit
+    //Limit (will add some extra distortion)
     juce::dsp::AudioBlock<float> block(buffer, 0);
     juce::dsp::ProcessContextReplacing<float> context(block);
     limiter.process(context);

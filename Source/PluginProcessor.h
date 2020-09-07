@@ -67,9 +67,6 @@ public:
     
     void updateParams();
 
-    //old gain controls
-	//float gain;
-    //float preGain;
 private:
     //==============================================================================
     AudioProcessorValueTreeState vts;
@@ -85,20 +82,14 @@ private:
     //Waveshaper params
     std::atomic<float>* freqParam;
     std::atomic<float>* depthParam; 
-    //std::atomic<float>* ffParam;
-    //const float ffParam = 1.0f; //just setting this to 1 here for now, need to set it in the Wavefolder class instead
     std::atomic<float>* fbParam; 
     std::atomic<float>* satParam; //set this at Atanh
     std::atomic<float>* waveParam; //set this at none
     
 
     //Subharmonic Generator Params
-    std::atomic<float>* shgPreCutoffParam;
+    std::atomic<float>* shgPreCutoffParam; //is this still used?
     std::atomic<float>* shgPostCutoffParam;
-    //std::atomic<float>* shgMainGainParam;
-    //std::atomic<float>* shgSideGainParam;
-    //std::atomic<float>* shgAttackParam;
-    //std::atomic<float>* shgReleaseParam;
 
     const float shgAttack = 0.1;
     const float shgRelease = 0.1;
@@ -123,8 +114,7 @@ private:
 
     WavefolderProcessor wfProc[2];
     SubharmonicProcessor subProc[2];
-    //EQFilter preEQ[2];
-    //EQFilter postEQ[3][2];
+    //EQFilter postEQ[3][2]; //biquad version
     IIRFilter postEQ[2];
     EQFilter dcBlocker[2];
     Gain drive[2];

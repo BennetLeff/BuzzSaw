@@ -12,6 +12,9 @@
 #include "WavefolderComponent.h"
 
 //==============================================================================
+
+//CURRENTLY UNUSED////////////////////////////////////////////////////////////////////
+
 WavefolderComponent::WavefolderComponent(AudioProcessorValueTreeState& valueTreeState)
 {
     // In your constructor, you should add any child components, and

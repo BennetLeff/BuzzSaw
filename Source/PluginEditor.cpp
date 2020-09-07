@@ -31,17 +31,12 @@ BuzzSawAudioProcessorEditor::~BuzzSawAudioProcessorEditor()
 //==============================================================================
 void BuzzSawAudioProcessorEditor::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    //g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
     Image background = ImageCache::getFromMemory(BinaryData::background_png, BinaryData::background_pngSize);
     g.drawImageWithin(background,0,0,getWidth(),getHeight(), RectanglePlacement::stretchToFit);
 
     g.setColour (Colours::white);
     g.setFont (15.0f);
 
-    //background
-    //Image background = ImageCache::getFromMemory(BinaryData::BuzzSawtest_png, BinaryData::BuzzSawtest_pngSize);
-    //g.drawImageAt(background, 0, 0);
 
     subharmonicComponent->paint(g);
     //wavefolderComponent->paint(g);

@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+//CURRENTLY UNUSED
+
 enum WaveType
 {
     zero,
